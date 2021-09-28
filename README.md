@@ -1,3 +1,4 @@
 # RL and behavior_tree for decision
 
-使用文档待完善 ， 会同时发布在个人blog和GitHub
+代码使用教程请见 gbrain.top
+roboRTS快速上手
