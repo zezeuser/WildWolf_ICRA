@@ -1,0 +1,12 @@
+<launch>
+
+  <!-- Publish static tf -->
+  <!--include file="$(find roborts_bringup)/launch/static_tf.launch" /-->
+
+  <!-- Run the slam gmapping -->
+  <include file="$(find icra_robomaster_emulator)/launch/gmapping.launch"/>
+
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ydlidar_ros_driver)/launch/lidar.rviz" />
+</launch>
+
