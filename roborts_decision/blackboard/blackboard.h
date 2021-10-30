@@ -37,9 +37,6 @@
 #include "costmap/costmap_interface.h"
 #include "../executor/chassis_executor.h"
 #include "../executor/gimbal_executor.h"
-#include "/home/zeze/catkin_ws/src/roborts_base/roborts_sdk/sdk.h"
-#include "/home/zeze/catkin_ws/src/roborts_base/gimbal/gimbal.h"
-
 
 namespace roborts_decision{
   enum class GimbalMode{

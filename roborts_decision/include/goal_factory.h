@@ -16,7 +16,7 @@
 #include "io/io.h"
 #include "../proto/decision.pb.h"
 
-#include "/home/zeze/catkin_ws/src/roborts_costmap/include/costmap/line_iterator.h"
+#include "../action_node/line_iterator.h"
 
 namespace roborts_decision{
   class GoalFactory{
