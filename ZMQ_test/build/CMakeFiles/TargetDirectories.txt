@@ -1,3 +1,0 @@
-/home/zeze/ZMQ_test/build/CMakeFiles/rebuild_cache.dir
-/home/zeze/ZMQ_test/build/CMakeFiles/zmq_test.dir
-/home/zeze/ZMQ_test/build/CMakeFiles/edit_cache.dir
