@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/zeze/ZMQ_test/build",
+  "command": "/usr/bin/c++    -g   -o CMakeFiles/zmq_test.dir/ZMQ_server.cpp.o -c /home/zeze/ZMQ_test/ZMQ_server.cpp",
+  "file": "/home/zeze/ZMQ_test/ZMQ_server.cpp"
+}
+]
