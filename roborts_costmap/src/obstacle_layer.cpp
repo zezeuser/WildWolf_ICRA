@@ -76,6 +76,12 @@ void ObstacleLayer::OnInitialize() {
   topic_string = para_obstacle.topic_string();
   sensor_frame = para_obstacle.sensor_frame();
 
+  const std::string tf_prefix = tf::getPrefixParam(nh);
+  if (!tf_prefix.empty()){
+    sensor_frame = tf::resolve(tf_prefix, sensor_frame);
+    if (topic_string == "scan") topic_string = "base_scan";
+  }
+
   bool inf_is_valid = false, clearing = false, marking = true;
   inf_is_valid = para_obstacle.inf_is_valid();
   clearing = para_obstacle.clearing();

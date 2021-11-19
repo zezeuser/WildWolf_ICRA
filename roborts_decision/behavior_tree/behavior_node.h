@@ -17,7 +17,6 @@
 
 #ifndef ROBORTS_DECISION_BEHAVIOR_NODE_H
 #define ROBORTS_DECISION_BEHAVIOR_NODE_H
-
 #include <chrono>
 #include <thread>
 #include <vector>
@@ -31,19 +30,19 @@ namespace roborts_decision{
  */
 enum class BehaviorType {
   PARALLEL,       ///<Parallel Composite Node
-  SELECTOR,       ///<Selector Composite Node 
-  SEQUENCE,       ///<Sequence Composite Node 
+  SELECTOR,       ///<Selector Composite Node
+  SEQUENCE,       ///<Sequence Composite Node
   ACTION,         ///<Action Node
-  PRECONDITION,   ///<Precondition Node 
+  PRECONDITION,   ///<Precondition Node
 };
 /**
  * @brif Abort Type of behavior tree precondition node
  * @details For more information refer to https://docs.unrealengine.com/en-us/Engine/AI/BehaviorTrees/NodeReference/Decorators
  */
-enum class AbortType {                       //中止类型
+enum class AbortType {
   NONE,           ///<Do not abort anything
-  SELF,           ///<Abort self, and any sub-trees running under this node 中止此节点，及其所有子节点
-  LOW_PRIORITY,   ///<Abort any nodes to the right of this node 中止此节点右侧的任何节点
+  SELF,           ///<Abort self, and any sub-trees running under this node
+  LOW_PRIORITY,   ///<Abort any nodes to the right of this node
   BOTH            ///<Abort self, any sub-trees running under me, and any nodes to the right of this node
 };
 /**
@@ -271,10 +270,6 @@ class DecoratorNode: public BehaviorNode{
   //! the child/decorated node of the behavior node
   BehaviorNode::Ptr child_node_ptr_;
 };
-
-
-
-
 /**
  * @brief Behavior tree precondition node inherited from DecoratorNode
  */
@@ -746,10 +741,6 @@ class ParallelNode: public CompositeNode{
   //! the number of child nodes with success behavior state to determine success of the parallel node
   unsigned int threshold_;
 };
-
-
-
-
 
 bool PreconditionNode::Reevaluation(){
 

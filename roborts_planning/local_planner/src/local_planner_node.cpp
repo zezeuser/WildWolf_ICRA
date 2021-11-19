@@ -23,7 +23,7 @@ namespace roborts_local_planner {
 
 using roborts_common::NodeState;
 LocalPlannerNode::LocalPlannerNode() :
-   local_planner_nh_("~"),  
+    local_planner_nh_("~"),
     as_(local_planner_nh_, "/local_planner_node_action", boost::bind(&LocalPlannerNode::ExcuteCB, this, _1), false),
     initialized_(false), node_state_(roborts_common::NodeState::IDLE),
     node_error_info_(roborts_common::ErrorCode::OK), max_error_(5),
@@ -44,7 +44,6 @@ LocalPlannerNode::~LocalPlannerNode() {
 roborts_common::ErrorInfo LocalPlannerNode::Init() {
   ROS_INFO("local planner start");
   LocalAlgorithms local_algorithms;
-
   std::string full_path = ros::package::getPath("roborts_planning") + "/local_planner/config/local_planner.prototxt";
   roborts_common::ReadProtoFromTextFile(full_path.c_str(), &local_algorithms);
   if (&local_algorithms == nullptr) {
@@ -54,12 +53,9 @@ roborts_common::ErrorInfo LocalPlannerNode::Init() {
   selected_algorithm_ = local_algorithms.selected_algorithm();
   frequency_ = local_algorithms.frequency();
   tf_ = std::make_shared<tf::TransformListener>(ros::Duration(10));
-  std::string car_id;
-  ros::param::get("~car_id",car_id);
-  ROS_INFO("!!! local planner for %s",car_id.c_str());
-  int car_num = int(car_id.back());
+
   std::string map_path = ros::package::getPath("roborts_costmap") + \
-      "/config/costmap_parameter_config_for_local_plan"+std::to_string(car_num)+".prototxt";
+      "/config/costmap_parameter_config_for_local_plan.prototxt";
   local_cost_ = std::make_shared<roborts_costmap::CostmapInterface>("local_costmap",
                                                                           *tf_,
                                                                           map_path.c_str());
@@ -73,7 +69,7 @@ roborts_common::ErrorInfo LocalPlannerNode::Init() {
   std::string name;
   visual_frame_ = local_cost_->GetGlobalFrameID();
   visual_ = LocalVisualizationPtr(new LocalVisualization(local_planner_nh_, visual_frame_));
-  vel_pub_ = local_planner_nh_.advertise<roborts_msgs::TwistAccel>("cmd_vel_acc", 5);
+  vel_pub_ = local_planner_nh_.advertise<roborts_msgs::TwistAccel>("/cmd_vel_acc", 5);
 
   return roborts_common::ErrorInfo(roborts_common::ErrorCode::OK);
 }

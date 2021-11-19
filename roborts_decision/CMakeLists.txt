@@ -1,136 +1,240 @@
 project(roborts_decision)
 cmake_minimum_required(VERSION 3.1)
 
+set(Torch_PLACE ${CMAKE_CURRENT_SOURCE_DIR}/../../pytorch)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_module)
 set(CMAKE_BUILD_TYPE Release)
 
+set(Torch_DIR ${Torch_PLACE})
+
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  tf
-  nav_msgs
-  geometry_msgs
-  actionlib
-  roborts_common
-  roborts_msgs
-  roborts_costmap
-  roborts_base
-  actionlib_msgs
-  OpenCV
-  roslib
-  roscpp
-  std_msgs
-  message_generation
-  )
+roscpp
+tf
+nav_msgs
+geometry_msgs
+actionlib
+roborts_common
+roborts_msgs
+roborts_costmap
+)
+
 
 find_package(Eigen3 REQUIRED)
-find_package(Protobuf REQUIRED)
+find_package(ProtoBuf REQUIRED)
+find_package(Torch REQUIRED)
 
 include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
+include
+${catkin_INCLUDE_DIRS}
+${Torch_PLACE}/include
 )
-include_directories(${OpenCV_INCLUDE_DIRS})
+
+link_directories(
+${Torch_PLACE}/lib
+)
+
+
+
+
 
 #generate proto files
 file(GLOB ProtoFiles "${CMAKE_CURRENT_SOURCE_DIR}/proto/*.proto")
 rrts_protobuf_generate_cpp(${CMAKE_CURRENT_SOURCE_DIR}/proto
-  DecisionProtoSrc
-  DecisionProtoHds
-  ${ProtoFiles}
-  )
+DecisionProtoSrc
+DecisionProtoHds
+${ProtoFiles}
+)
+
 
 catkin_package()
 
-add_executable(behavior_test_node
-  ${DecisionProtoHds}
-  ${DecisionProtoSrc}
-  action_node/BackBootArea.h
-  action_node/ChaseAction.h
-  action_node/ChassisLimited.h
-  action_node/DefendAction.h
-  action_node/EscapeAction.h
-  action_node/FollowAction.h
-  action_node/FrozeAction.h
-  action_node/GainBloodAction.h
-  action_node/GainBulletAction.h
-  action_node/GimbalLimited.h
-  action_node/SearchAction.h
-  action_node/TurnToDetectedDirection.h
-  action_node/WaitBuffRefresh.h
-  action_node/BackAwayAction.h
-  action_node/DeckChaseAction.h
-  action_node/speech_area.h
-  behavior_test.cpp
-  behavior_tree/behavior_node.h
-  executor/chassis_executor.cpp
-  executor/gimbal_executor.cpp
-  )
 
-target_link_libraries(behavior_test_node
-  PRIVATE
-  roborts_costmap
-  ${catkin_LIBRARIES}
-  ${PROTOBUF_LIBRARIES}
-  )
-add_dependencies(behavior_test_node
-  roborts_msgs_generate_messages)
+# decision_node
+add_executable(decision_node
+decision_node.cpp
+${DecisionProtoHds}
+${DecisionProtoSrc}
+${TORCH_INCLUDE_DIRS}
+example_behavior/escape_behavior.h
+example_behavior/back_boot_area_behavior.h
+example_behavior/chase_behavior.h
+example_behavior/patrol_behavior.h
+example_behavior/search_behavior.h
+example_behavior/nn_behavior.h
+example_behavior/defense_behavior.h
+executor/chassis_executor.cpp
+)
 
+target_link_libraries(decision_node 
+PRIVATE
+${TORCH_LIBRARIES}
+roborts_costmap
+${catkin_LIBRARIES}
+#${PROTOBUF_LIBRARIES}
+-lzmq
+)
 
+# blue_master
+add_executable(blue_master
+blue_master.cpp
+${DecisionProtoHds}
+${DecisionProtoSrc}
+${TORCH_INCLUDE_DIRS}
+example_behavior/escape_behavior.h
+example_behavior/back_boot_area_behavior.h
+example_behavior/chase_behavior.h
+example_behavior/patrol_behavior.h
+example_behavior/search_behavior.h
+example_behavior/nn_behavior.h
+example_behavior/defense_behavior.h
+executor/chassis_executor.cpp
+)
 
-add_executable(icra_decision_node
-    ${DecisionProtoHds}
-    ${DecisionProtoSrc}
-    action_node/BackBootArea.h
-    action_node/BackAwayAction.h
-    action_node/ChaseAction.h
-    action_node/ChassisLimited.h
-    action_node/DeckChaseAction.h
-    action_node/DefendAction.h
-    action_node/EscapeAction.h
-    action_node/FollowAction.h
-    action_node/FrozeAction.h
-    action_node/GainBloodAction.h
-    action_node/GainBulletAction.h
-    action_node/GimbalLimited.h
-    action_node/SearchAction.h
-    action_node/TurnToDetectedDirection.h
-    action_node/WaitBuffRefresh.h
-    icra_decision_node.cpp
-    behavior_tree/behavior_node.h
-    executor/chassis_executor.cpp
-    executor/gimbal_executor.cpp
-    interact/mutualboard.h
- )
-
-target_link_libraries(icra_decision_node
-   PRIVATE
-   roborts_costmap
-   ${catkin_LIBRARIES}
-   ${PROTOBUF_LIBRARIES}
-   ${catkin_INCLUDE_DIRS}
-   )
-
- add_dependencies( icra_decision_node roborts_base_node
-   roborts_msgs_generate_messages)
+target_link_libraries(blue_master 
+PRIVATE
+${TORCH_LIBRARIES}
+roborts_costmap
+${catkin_LIBRARIES}
+#${PROTOBUF_LIBRARIES}
+-lzmq
+)
 
 
+# blue_wing
+add_executable(blue_wing
+blue_wing.cpp
+${DecisionProtoHds}
+${DecisionProtoSrc}
+${TORCH_INCLUDE_DIRS}
+example_behavior/escape_behavior.h
+example_behavior/back_boot_area_behavior.h
+example_behavior/chase_behavior.h
+example_behavior/patrol_behavior.h
+example_behavior/search_behavior.h
+example_behavior/nn_behavior.h
+example_behavior/defense_behavior.h
+executor/chassis_executor.cpp
+)
 
- add_executable(pos_reciever_node
-   ${DecisionProtoHds}
-   ${DecisionProtoSrc}
-   ./interact/pos_reciever.cpp
-   )
- 
- target_link_libraries(pos_reciever_node
-   PRIVATE
-   
-   ${catkin_LIBRARIES}
-   ${PROTOBUF_LIBRARIES}
-   )
- 
- add_dependencies(pos_reciever_node
-   roborts_msgs_generate_messages)
+target_link_libraries(blue_wing 
+PRIVATE
+${TORCH_LIBRARIES}
+roborts_costmap
+${catkin_LIBRARIES}
+#${PROTOBUF_LIBRARIES}
+-lzmq
+)
 
 
- 
+
+
+# red_master
+add_executable(red_master
+red_master.cpp
+${DecisionProtoHds}
+${DecisionProtoSrc}
+${TORCH_INCLUDE_DIRS}
+example_behavior/escape_behavior.h
+example_behavior/back_boot_area_behavior.h
+example_behavior/chase_behavior.h
+example_behavior/patrol_behavior.h
+example_behavior/search_behavior.h
+example_behavior/nn_behavior.h
+example_behavior/defense_behavior.h
+executor/chassis_executor.cpp
+)
+
+target_link_libraries(red_master 
+PRIVATE
+${TORCH_LIBRARIES}
+roborts_costmap
+${catkin_LIBRARIES}
+#${PROTOBUF_LIBRARIES}
+-lzmq
+)
+
+
+# red_wing
+add_executable(red_wing
+red_wing.cpp
+${DecisionProtoHds}
+${DecisionProtoSrc}
+${TORCH_INCLUDE_DIRS}
+example_behavior/escape_behavior.h
+example_behavior/back_boot_area_behavior.h
+example_behavior/chase_behavior.h
+example_behavior/patrol_behavior.h
+example_behavior/search_behavior.h
+example_behavior/nn_behavior.h
+example_behavior/defense_behavior.h
+executor/chassis_executor.cpp
+)
+
+target_link_libraries(red_wing 
+PRIVATE
+${TORCH_LIBRARIES}
+roborts_costmap
+${catkin_LIBRARIES}
+#${PROTOBUF_LIBRARIES}
+-lzmq
+)
+
+
+
+# red_wing
+add_executable(sel_behavior_node
+sel_behavior_node.cpp
+${DecisionProtoHds}
+${DecisionProtoSrc}
+${TORCH_INCLUDE_DIRS}
+example_behavior/escape_behavior.h
+example_behavior/back_boot_area_behavior.h
+example_behavior/chase_behavior.h
+example_behavior/patrol_behavior.h
+example_behavior/search_behavior.h
+example_behavior/nn_behavior.h
+example_behavior/defense_behavior.h
+executor/chassis_executor.cpp
+)
+
+target_link_libraries(sel_behavior_node 
+PRIVATE
+${TORCH_LIBRARIES}
+roborts_costmap
+${catkin_LIBRARIES}
+#${PROTOBUF_LIBRARIES}
+-lzmq
+)
+
+
+# red_wing
+add_executable(test_behavior_node
+test_behavior.cpp
+${DecisionProtoHds}
+${DecisionProtoSrc}
+${TORCH_INCLUDE_DIRS}
+example_behavior/escape_behavior.h
+example_behavior/back_boot_area_behavior.h
+example_behavior/chase_behavior.h
+example_behavior/patrol_behavior.h
+example_behavior/search_behavior.h
+example_behavior/nn_behavior.h
+example_behavior/defense_behavior.h
+executor/chassis_executor.cpp
+)
+
+target_link_libraries(test_behavior_node 
+PRIVATE
+${TORCH_LIBRARIES}
+roborts_costmap
+${catkin_LIBRARIES}
+#${PROTOBUF_LIBRARIES}
+-lzmq
+)
+
+
+
+
+

@@ -21,19 +21,18 @@ add_action_files(
 )
 
 add_message_files(
-    DIRECTORY msg/referee_system
-    FILES
-    BonusStatus.msg
-    GameResult.msg
-    GameStatus.msg
-    GameSurvivor.msg
-    ProjectileSupply.msg
-    RobotBonus.msg
-    RobotDamage.msg
-    RobotHeat.msg
-    RobotShoot.msg
-    RobotStatus.msg
-    SupplierStatus.msg
+        DIRECTORY msg/referee_system
+        FILES
+        GameStatus.msg
+        GameResult.msg
+        GameRobotHP.msg
+        GameRobotBullet.msg
+        GameZone.msg
+        GameZoneArray.msg
+        RobotStatus.msg
+        RobotHeat.msg
+        RobotDamage.msg
+        RobotShoot.msg
 )
 
 add_message_files(
@@ -48,9 +47,23 @@ add_message_files(
     ObstacleMsg.msg
     ShootInfo.msg
     ShootState.msg
+    ShooterCmd.msg
     SentryInfo.msg
+    ArmorPos.msg
+    ArmorsPos.msg
+    AllyPose.msg
+    Distance.msg
+    GimbalPID.msg
     GimbalControl.msg
+    TargetInfo.msg
+    FVector.msg
+    FusionTarget.msg
+    LaserTarget.msg
+    Target.msg
+    DodgeMode.msg
     PyArmorInfo.msg
+    GimbalInfo.msg
+    BallCollision.msg
     GimbalActionlib.msg
     Speech.msg
 )

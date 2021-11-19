@@ -73,6 +73,18 @@ CostmapInterface::CostmapInterface(std::string map_name,
   std::string tf_error;
   ros::NodeHandle private_nh(map_name);
   LoadParameter();
+
+  // tf_prefix is very important for every node.
+  const std::string tf_prefix = tf::getPrefixParam(private_nh);
+  if (!tf_prefix.empty()){
+    // if (true){
+    if (global_frame_ != "map"){
+        global_frame_ = tf::resolve(tf_prefix, global_frame_);
+    }
+    robot_base_frame_ = tf::resolve(tf_prefix, robot_base_frame_);
+  }
+
+
   layered_costmap_ = new CostmapLayers(global_frame_, is_rolling_window_, is_track_unknown_);
   layered_costmap_->SetFilePath(config_file_inflation_);
   ros::Time last_error = ros::Time::now();
@@ -94,6 +106,11 @@ CostmapInterface::CostmapInterface(std::string map_name,
     Layer *plugin_obstacle_layer = new ObstacleLayer;
     layered_costmap_->AddPlugin(plugin_obstacle_layer);
     plugin_obstacle_layer->Initialize(layered_costmap_, map_name + "/" + "obstacle_layer", &tf_);
+  }
+  if (has_dynamic_obstacle_layer_) {
+    Layer *plugin_dynamic_obstacle_layer = new DynamicObstacleLayer;
+    layered_costmap_->AddPlugin(plugin_dynamic_obstacle_layer);
+    plugin_dynamic_obstacle_layer->Initialize(layered_costmap_, map_name + "/" + "dynamic_obstacle_layer", &tf_);
   }
   Layer *plugin_inflation_layer = new InflationLayer;
   layered_costmap_->AddPlugin(plugin_inflation_layer);
@@ -149,6 +166,7 @@ void CostmapInterface::LoadParameter() {
   is_track_unknown_ = ParaCollectionConfig.para_costmap_interface().is_tracking_unknown();
   has_obstacle_layer_ = ParaCollectionConfig.para_costmap_interface().has_obstacle_layer();
   has_static_layer_ = ParaCollectionConfig.para_costmap_interface().has_static_layer();
+  has_dynamic_obstacle_layer_ = ParaCollectionConfig.para_costmap_interface().has_dynamic_obstacle_layer();
   map_width_ = ParaCollectionConfig.para_costmap_interface().map_width();
   map_height_ = ParaCollectionConfig.para_costmap_interface().map_height();
   map_origin_x_ = ParaCollectionConfig.para_costmap_interface().map_origin_x();

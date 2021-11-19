@@ -65,13 +65,9 @@ ErrorInfo GlobalPlannerNode::Init() {
   // Create tf listener
   tf_ptr_ = std::make_shared<tf::TransformListener>(ros::Duration(10));
 
-  std::string  car_id;
-  ros::param::get("~car_id",car_id);
-  ROS_INFO("!!!gobal planner node for %s",car_id.c_str());
-  int car_num = int(car_id.back());
   // Create global costmap
   std::string map_path = ros::package::getPath("roborts_costmap") + \
-      "/config/costmap_parameter_config_for_global_plan"+ std::to_string(car_num) + ".prototxt";
+      "/config/costmap_parameter_config_for_global_plan.prototxt";
   costmap_ptr_ = std::make_shared<roborts_costmap::CostmapInterface>("global_costmap",
                                                                            *tf_ptr_,
                                                                            map_path.c_str());

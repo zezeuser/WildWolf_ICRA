@@ -1,6 +1,6 @@
 
 
-  </node>
+<launch>
 
   <!-- Run the slam gmapping -->
   <include file="$(find roborts_bringup)/launch/slam_gmapping.xml"/>
