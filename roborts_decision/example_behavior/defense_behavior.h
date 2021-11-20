@@ -68,8 +68,6 @@ class DefenseBehavior {
   ~DefenseBehavior() = default;
 
  private:
-
-
   //! executor
   ChassisExecutor* const chassis_executor_;
 

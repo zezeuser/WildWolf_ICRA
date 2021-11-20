@@ -38,6 +38,7 @@ add_message_files(
 add_message_files(
     DIRECTORY msg
     FILES
+    Aimtargeid.msg
     PunishInfo.msg
     RobotInfo.msg
     TreeStatus.msg

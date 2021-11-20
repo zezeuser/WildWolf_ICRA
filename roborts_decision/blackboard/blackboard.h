@@ -415,64 +415,31 @@ class Blackboard {
                 int id = armors->id[i];
                 int state = armors->state[i];
                 valid_id_set.insert(id); // ?????????????????!!!!!!!!!!!!!!!   is ID 0 should be all dealth points???
-                if (i == 0){
-                    bool cur_state = bool(state == 1);
-                    // printf("ID0\n");
-                    if (cur_state && armors->pose_A.size()>0){
+                bool cur_state = bool(state == 1);
+                // printf("ID0\n");
+                if (cur_state && armors->pose_A.size()>0){
                         double dx,dy;
                         // mm -> m 
-                        dx = armors->pose_A[0]/1000;
-                        dy = armors->pose_A[1]/1000;
+                        dx = armors->pose_A[i]/1000;
+                        dy = armors->pose_B[i]/1000;
                         if (dx<=0 || dx>=8 || dy<=0 || dy>=5)
-                           continue;
-
+                                continue;
                         if (id == 1)   _front_first_enemy = true;
                         else if (id == 2)   _front_second_enemy = true;
                         else if (id!=1 || id!=2){ // do not know which car should be update, then according to history
-                            double dist1 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.first_enemy.pose.position.x, info.first_enemy.pose.position.y);
-                            double dist2 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.second_enemy.pose.position.x, info.second_enemy.pose.position.y);
-                            double dist = std::sqrt(dx * dx + dy * dy);
-                            if ((dist1 - dist ) <= (dist2 - dist )){
+                                double dist1 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.first_enemy.pose.position.x, info.first_enemy.pose.position.y);
+                                double dist2 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.second_enemy.pose.position.x, info.second_enemy.pose.position.y);
+                                double dist = std::sqrt(dx * dx + dy * dy);
+                                if ((dist1 - dist ) <= (dist2 - dist )){
                                 _front_first_enemy = true;
                                 valid_id_set.insert(1);
-                            }
-                            else{
+                                }
+                                else{
                                 _front_second_enemy = true;
                                 valid_id_set.insert(2);
-                            }
+                                }
                         }
                         valid = true;
-                    }
-                }
-                else if (i == 1){
-                    bool cur_state = bool(state == 1);
-                    //  printf("ID1\n");
-                    if (cur_state && armors->pose_B.size()>0){
-                        double dx,dy;
-                        // mm -> m
-                        dx = armors->pose_B[0]/1000;
-                        dy = armors->pose_B[1]/1000;
-                        if (dx<=0 || dx>=8 || dy<=0 || dy>=5)
-                           continue;
-
-                        if (id == 1)    _front_first_enemy = true;
-                        else if (id == 2)   _front_second_enemy = true;
-                        else if (id != 1 || id!=2){
-                            // 根据距离判断是1 还是 2
-                            double dist1 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.first_enemy.pose.position.x, info.first_enemy.pose.position.y);
-                            double dist2 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.second_enemy.pose.position.x, info.second_enemy.pose.position.y);
-                            double dist = std::sqrt(dx * dx + dy * dy);
-                            if ((dist1 - dist ) <= (dist2 - dist )){
-                                _front_first_enemy = true;
-                                valid_id_set.insert(1);
-                            }
-                            else{
-                                _front_second_enemy = true;
-                                valid_id_set.insert(2);
-                            }
-                        }   
-                        valid = true;
-                    }
                 }
             }
             
@@ -489,7 +456,8 @@ class Blackboard {
                     if (id == 1) _front_first_enemy = false;
                     else if (id == 2) _front_second_enemy = false;
                 }
-            }          
+            }
+            valid_id_set.clear();
       }
   }
 
@@ -610,20 +578,16 @@ class Blackboard {
         red_shield_buff_active  = zone->zone[m].active;
       }
     }
-    blue_bullet_buff_ = Point2PoseStamped(blue_bullet_buff_x,blue_bullet_buff_y);
-    red_bullet_buff_ = Point2PoseStamped(red_bullet_buff_x,red_bullet_buff_y);
-    blue_shield_buff_ = Point2PoseStamped(blue_shield_buff_x,blue_shield_buff_y);
-    red_shield_buff_ = Point2PoseStamped(red_shield_buff_x,red_shield_buff_y);
 
     if(info.team_blue){
-    info.my_reload = blue_bullet_buff_;
-    info.my_shield = blue_shield_buff_;
+    info.my_reload = Point2PoseStamped(blue_bullet_buff_x,blue_bullet_buff_y);
+    info.my_shield = Point2PoseStamped(blue_shield_buff_x,blue_shield_buff_y);
     info.bullet_buff_active = blue_bullet_buff_active;
     info.shield_buff_active = blue_shield_buff_active;
     }
     else{
-    info.opp_reload = red_bullet_buff_;
-    info.opp_shield = red_shield_buff_;
+    info.opp_reload = Point2PoseStamped(red_bullet_buff_x,red_bullet_buff_y);
+    info.opp_shield =Point2PoseStamped(red_shield_buff_x,red_shield_buff_y);
     info.bullet_buff_active = red_bullet_buff_active;
     info.shield_buff_active = red_shield_buff_active;
     }
@@ -1442,11 +1406,14 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
   //! tf
   std::shared_ptr<tf::TransformListener> tf_ptr_;
 
-  //! Enenmy detection
+  //! fake Enenmy  sub
   ros::Subscriber enemy_sub_;
+  // Info  sub
   ros::Subscriber armor_sub_, camera_armor_sub_, back_camera_sub_, info_sub_, fusion_target_sub_, cmd_gimbal_sub_;
-  ros::Subscriber robot_status_sub_, robot_shoot_sub_, robot_heat_sub_, game_status_sub_, supply_sub_, buff_sub_, vel_acc_sub_,robot_damage_sub_ ,game_zone_sub_ , emeny_hp_sub_,emeny_bullet_sub_;
-  // publisher
+  // referee sub
+  ros::Subscriber robot_status_sub_, robot_shoot_sub_, robot_heat_sub_, game_status_sub_, supply_sub_, buff_sub_, 
+                                vel_acc_sub_,robot_damage_sub_ ,game_zone_sub_ , emeny_hp_sub_,emeny_bullet_sub_;
+  //info  publisher
   ros::Publisher shoot_pub_, ally_pub_, fusion_pub_, dodge_pub_, supply_pub_, cmd_vel_pub_;
 
   //! Goal info
@@ -1475,13 +1442,6 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
   //remain hp
   int remain_hp;
 
-// bullet buff zone
-  geometry_msgs::PoseStamped blue_bullet_buff_;
-  geometry_msgs::PoseStamped red_bullet_buff_;
-
-  //shield buff zone 
-  geometry_msgs::PoseStamped blue_shield_buff_;
-  geometry_msgs::PoseStamped red_shield_buff_;
   // zmq
   zmq::context_t context_;
   zmq::context_t guardcontext_;

@@ -188,14 +188,17 @@ int main(int argc, char **argv) {
                                 // according bullet to the buff
                                 if (blackboard->info.remain_bullet > 0){
                                         if (!blackboard->info.has_my_enemy  && !blackboard->info.has_ally_enemy){
+                                                // hp > 400 , remain_bullet > 0 , 队友和我视野内都没有敌人
                                                 cur_state = BehaviorStateEnum::SEARCH;
                                         }
                                         else{
                                                 if (blackboard->info.has_my_enemy || blackboard->info.valid_camera_armor ){
+                                                // hp > 400 , remain_bullet > 0 , 自己视野内有敌人则朝向敌人
                                                 cur_state = BehaviorStateEnum::AMBUSH;
                                         
                                                 }
                                                 else if(blackboard->info.has_ally_enemy){
+                                                //  hp > 400 , remain_bullet > 0 , 队友视野内有敌人则执行支援
                                                 cur_state = BehaviorStateEnum::ATTACK;
                                                 }
                                         }
@@ -207,6 +210,7 @@ int main(int argc, char **argv) {
                                         )
                                         &&  !(blackboard->info.is_hitted && blackboard->info.remain_hp<=600))
                                         {
+                                                // hp > 400 , remain_bullet  < 0 , 队友视野内有敌人则执行支援
                                                 cur_state = BehaviorStateEnum::RELOAD;
                                         }
                                         else if ( (blackboard->info.shield_buff_active && blackboard->info.times_to_buff >0 

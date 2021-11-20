@@ -5,12 +5,13 @@ node_state_(roborts_common::IDLE),
 initialized_(false),
 detected_enemy_(false),
 undetected_armor_delay_(0),
+target_id_(1),
 as_(nh_, "armor_detection_node_action", boost::bind(&ArmorDetectionNode::ActionCB, this, _1), false),
 basic_armor_("/home/zeze/catkin_ws/src/armor_detection/configs/armor/basic_armor_config.xml"),
 pnp_("/home/zeze/catkin_ws/src/armor_detection/configs/camera/mv_camera_config_337.xml",
                                          "/home/zeze/catkin_ws/src/armor_detection/configs/angle_solve/basic_pnp_config.xml"),
 serial_("/home/zeze/catkin_ws/src/armor_detection/configs/serial/uart_serial_config.xml"),
-num_(8)
+num_(2)
 {            
     mv_capture_ = new mindvision::VideoCapture(
         mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
@@ -19,6 +20,7 @@ num_(8)
     camera_armor_pub_ = enemy_nh_.advertise<roborts_msgs::ArmorsPos>("front_camera_robot_pos", 10);
     initialized_ = true;
     as_.start();
+    ROS_INFO("armor_detection server success start ! !");
 }
 
 ArmorDetectionNode::~ArmorDetectionNode()
@@ -98,76 +100,75 @@ void ArmorDetectionNode::ActionCB(const roborts_msgs::ArmorDetectionGoal::ConstP
 }
 void ArmorDetectionNode::ExecuteLoop() {
   undetected_count_ = undetected_armor_delay_;
+  cv::Point3f target_pnp = cv::Point3f();
+  std::vector<uchar>::iterator id_iterator;
+  while (running_)
+  {
+          if (node_state_ == NodeState::RUNNING)
+          {
+                  if (mv_capture_->isindustryimgInput()){
+                          img_ = mv_capture_->image();
+                  }
+                  if (!img_.empty()){
+                          serial_.updateReceiveInformation();
+                          if (basic_armor_.runBasicArmor(img_, serial_.returnReceive())){
+                                  for (int i = 0; i < basic_armor_.returnArmorNum(); i++) {
+                                          cv::Mat num_img = basic_armor_.returnArmorNumImg(i, img_);
+                                          int armor_id = num_.detectionNum(num_img, basic_armor_.returnFinalArmorDistinguish(i));
+                                          basic_armor_.setArmorId(armor_id, i);
+                                          pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), basic_armor_.returnFinalArmorDistinguish(i), basic_armor_.returnFinalArmorRotatedRect(i));
+                                          ArrangeMsg(armor_id , pnp_.returnYawAngle(),pnp_.returnDepth());
+                                          basic_armor_.setArmorPnp(cv::Point3f(pnp_.returnYawAngle(),
+                                                                               pnp_.returnPitchAngle(),
+                                                                               pnp_.returnDepth()),
+                                                                                i);
+                                  }
+                                  //   查看目标 id 是否在视野内 ， 不在视野内则选择最优装甲板
+                                  id_iterator = find(front_camera_robot_pos.id.begin(), front_camera_robot_pos.id.end(), target_id_);
+                                  if(id_iterator == front_camera_robot_pos.id.end()){
+                                          target_pnp = basic_armor_.returnArmorPnp(0);
+                                  }
+                                  else{
+                                        //  目标 id 在视野内 , 击打目标 id 
+                                        for (int i = 0; i < basic_armor_.returnArmorNum(); i++){
+                                                int armor_id = basic_armor_.returnArmorId(i);
+                                                if(armor_id == target_id_){
+                                                        target_pnp = basic_armor_.returnArmorPnp(i);
+                                                }
+                                        }
+                                  }
+                                  serial_.updataWriteData(target_pnp.x, target_pnp.y, target_pnp.z, basic_armor_.returnArmorNum(), 0);
+                          }
+                          detected_enemy_ = basic_armor_.returnSuccessArmor();
+                          cv::imshow("SJUT", img_);
+                          if (cv::waitKey(1) == 'q'){
+                                  break;
+                          }
+                  }
+                  else{
+                          detected_enemy_ = false;
+                  }
+                  basic_armor_.freeMemory();
+                  mv_capture_->cameraReleasebuff();
+          }
+          if (detected_enemy_){
+                  camera_armor_pub_.publish(front_camera_robot_pos);
+                  Clear();
+          }
+          else if (!detected_enemy_){
+                  gimbal_angle_.yaw_mode = true;
+                  gimbal_angle_.pitch_mode = false;
+                  gimbal_angle_.yaw_angle = 0;
+                  gimbal_angle_.pitch_angle = 0;
+                  enemy_info_pub_.publish(gimbal_angle_);
+                  camera_armor_pub_.publish(front_camera_robot_pos);
+          }
+          else if (node_state_ == NodeState::PAUSE){
+                  std::unique_lock<std::mutex> lock(mutex_);
+                  condition_var_.wait(lock);
+          }
 
-  while(running_) {
-    if (node_state_ == NodeState::RUNNING) {
-        if (mv_capture_->isindustryimgInput()) {
-            img_ = mv_capture_->image();
         }
-        bool img_empty = img_.empty();
-        if (!img_empty) {
-            serial_.updateReceiveInformation();
-            if (basic_armor_.runBasicArmor(img_, serial_.returnReceive())) {
-                pnp_.solvePnP(serial_.returnReceiveBulletVelocity(), basic_armor_.returnFinalArmorDistinguish(0), basic_armor_.returnFinalArmorRotatedRect(0));
-                serial_.updataWriteData(pnp_.returnYawAngle(), pnp_.returnPitchAngle(), pnp_.returnDepth(), basic_armor_.returnArmorNum(), 0);
-                fornt_camera_robot_pos_.id .push_back(num_.detectionNum(basic_armor_.returnArmorNumImg(0, img_), basic_armor_.returnFinalArmorDistinguish(0)));
-            }
-            detected_enemy_ = basic_armor_.returnSuccessArmor();
-            std::cout << "是否探测到"<<detected_enemy_ << std::endl;
-            // std::lock_guard<std::mutex> guard(mutex_);
-            cv::imshow("SJUT", img_);
-            if(cv::waitKey(1) == 'q') {
-                break;
-            }
-        }
-        else if (img_empty){
-          detected_enemy_ = false;
-        }
-        basic_armor_.freeMemory();
-        mv_capture_->cameraReleasebuff();
-    }
-    if(detected_enemy_) {
-      // 控制云台
-      pitch_ = pnp_.returnPitchAngle();
-      yaw_ =  pnp_.returnYawAngle() ;
-    //目标敌方的相对位置
-      x_ =  pnp_.returnDepth() * cos(yaw_ / 180 * 3.1415926);
-      y_  = pnp_.returnDepth() * sin(yaw_/ 180 * 3.1415926);
-    //TODO
-      // num_armor_ = basic_armor_.returnArmorNum(); 
-      num_armor_ = 1;
-      pose_A_[0]  = x_;
-      pose_A_[1] = y_;
-      fornt_camera_robot_pos_.num_armor = num_armor_ ;  
-      for(int i = 0 ; i< num_armor_ ; ++i)
-      {
-        fornt_camera_robot_pos_.state.push_back(1);
-        if(i == 0){
-          fornt_camera_robot_pos_.pose_A.push_back(pose_A_[0]);
-          fornt_camera_robot_pos_.pose_A.push_back(pose_A_[1]);
-        }
-        if(i == 1){
-            fornt_camera_robot_pos_.pose_B.push_back(pose_B_[0]);
-            fornt_camera_robot_pos_.pose_B.push_back(pose_B_[1]);
-        }
-      }
-      PublishInfoMsgs();
-    }       
-    else if (!detected_enemy_){
-      fornt_camera_robot_pos_.num_armor = 0 ; 
-      gimbal_angle_.yaw_mode = true;
-      gimbal_angle_.pitch_mode = false;
-      gimbal_angle_.yaw_angle = 0;
-      gimbal_angle_.pitch_angle = 0;
-      undetected_count_--;
-      PublishGimbalMsgs();
-      PublishInfoMsgs();
-    }
-    else if (node_state_ == NodeState::PAUSE) {
-    std::unique_lock<std::mutex> lock(mutex_);
-    condition_var_.wait(lock);
-    }
-    }
   }
 
 
@@ -196,21 +197,25 @@ void ArmorDetectionNode::StopThread() {
   }
 }
 
-void ArmorDetectionNode::PublishGimbalMsgs() {
-  enemy_info_pub_.publish(gimbal_angle_);
+void ArmorDetectionNode::ArrangeMsg(int _armor_id , float _yaw_angle , float _depth ) {
+        front_camera_robot_pos.id.push_back(_armor_id);
+        front_camera_robot_pos.state.push_back(1);
+        // x 
+        front_camera_robot_pos.pose_A.push_back(_depth * cos(_yaw_angle / 57.2957805));
+        //y
+        front_camera_robot_pos.pose_B.push_back(_depth* sin(_yaw_angle / 57.2957805));
 }
 
-void ArmorDetectionNode::PublishInfoMsgs() {
-  camera_armor_pub_.publish(fornt_camera_robot_pos_);
-  Clear();
-}
 void ArmorDetectionNode::Clear(){
-  fornt_camera_robot_pos_.num_armor = 0;
-    fornt_camera_robot_pos_.id.clear();
-    fornt_camera_robot_pos_.state.clear();
-    fornt_camera_robot_pos_.pose_A.clear();
-    fornt_camera_robot_pos_.pose_B.clear();
+    front_camera_robot_pos.num_armor = 0;
+    front_camera_robot_pos.id.clear();
+    front_camera_robot_pos.state.clear();
+    front_camera_robot_pos.pose_A.clear();
+    front_camera_robot_pos.pose_B.clear();
+}
 
+void ArmorDetectionNode::TargeIdCallBack(const roborts_msgs::Aimtargeid::ConstPtr& targe_id){
+        target_id_ =  targe_id->id;
 }
 
 void SignalHandler(int signal){

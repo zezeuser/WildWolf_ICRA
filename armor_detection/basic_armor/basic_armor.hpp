@@ -46,6 +46,8 @@ struct Armor_Data {
 
   float light_height_aspect = 0;
   float light_width_aspect  = 0;
+  cv::Point3f armor_pnp = cv::Point3f();
+  int armor_id = 0;
 };
 
 struct Armor_Config {
@@ -116,7 +118,7 @@ struct Image_Config {
 
 class Num {
  private:
-  cv::Mat src_img_[8];
+  cv::Mat src_img_[3];
 
  public:
   int detectionNum(cv::Mat _src_img, int _armor_type);
@@ -186,12 +188,29 @@ class Detector {
    * @return int 返回图像颜色平均强度
    */
   int   averageColor();
+  
   int   motionDirection();
-  /**
+    /**
    * @brief 返回丢失次数
    * 
    * @return int  
    */
+
+    
+  inline void             setArmorId(int _armor_id, int _num)  {
+          armor_[_num].armor_id = _armor_id;
+  }
+    inline void             setArmorPnp(cv::Point3f _armor_pnp, int _num)  {
+          armor_[_num].armor_pnp = _armor_pnp;
+  }
+    inline int             returnArmorId(int _num)  {
+        return armor_[_num].armor_id;
+  }
+    inline cv::Point3f             returnArmorPnp( int _num)  {
+        return armor_[_num].armor_pnp;
+  }
+
+
   inline int             returnLostCnt()                                  { return lost_cnt_--; }
   /**
    * @brief 返回装甲板数量
@@ -228,7 +247,7 @@ class Detector {
    */
   inline cv::RotatedRect returnFinalArmorRotatedRect(const int _num)      { return armor_[_num].armor_rect; }
 
-  cv::Mat returnArmorNumImg(const int _num, cv::Mat _src_img) {
+    cv::Mat returnArmorNumImg(const int _num, cv::Mat _src_img) {
     cv::Point2f target2d[4];
 
     static cv::Point2f vertex[4];

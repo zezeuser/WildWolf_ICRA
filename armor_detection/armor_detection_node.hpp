@@ -13,6 +13,7 @@
 #include "roborts_msgs/ArmorDetectionAction.h"
 #include "roborts_msgs/GimbalAngle.h"
 #include "roborts_msgs/GimbalRate.h"
+#include "roborts_msgs/Aimtargeid.h"
 #include "roborts_msgs/ArmorsPos.h"
 #include "state/node_state.h"
 #include "state/error_code.h"
@@ -28,12 +29,13 @@ public:
     void PauseThread();
     void StopThread();
     void ExecuteLoop();
-    void PublishGimbalMsgs();
-    void PublishInfoMsgs();
+    void ArrangeMsg(int _armor_id , float _yaw_angle , float _depth ) ;
     void Clear();
     void ActionCB(const roborts_msgs::ArmorDetectionGoal::ConstPtr &data);
+    void TargeIdCallBack(const roborts_msgs::Aimtargeid::ConstPtr& id);
     ~ArmorDetectionNode();
-private:
+
+    private:
     NodeState node_state_;
     ErrorInfo error_info_;
     bool initialized_;
@@ -59,11 +61,14 @@ private:
     ros::Publisher enemy_info_pub_;
     actionlib::SimpleActionServer<roborts_msgs::ArmorDetectionAction> as_;
     roborts_msgs::GimbalAngle gimbal_angle_;
-    roborts_msgs::ArmorsPos fornt_camera_robot_pos_;
+    roborts_msgs::ArmorsPos front_camera_robot_pos;
 
     //控制云台
     double pitch_;
     double yaw_;
+    
+    // 击打目标 id
+    int target_id_;
 
     // 击打目标敌人坐标
     double x_;
@@ -77,15 +82,7 @@ private:
 
     //检测到的装甲板数量    0 ， 1， 2
     int num_armor_;
-    //检测到的装甲板 id          1号机器人 , 2号机器人  
-    // id_无顺序但要对应于 state_ 中的顺序
-    std::vector< int > armor_id_;
-
-    //检测到的第一个机器人的相对坐标
-    double pose_A_[2];
-    //检测到的第二个机器人的相对坐标
-    double pose_B_[2];
-
+    
 
 
 };
