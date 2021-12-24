@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(armor_detection)
-
+add_subdirectory(3rdparty/fmt)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf
@@ -10,9 +10,10 @@ find_package(catkin REQUIRED COMPONENTS
   roborts_common
 )
 find_package(OpenCV 4 REQUIRED)
-find_package(fmt REQUIRED)
+find_package(Eigen3 REQUIRED)
 catkin_package()
-
+list(APPEND EXTRA_INCLUDES 3rdparty/fmt/include)
+include_directories(${EIGEN3_INCLUDE_DIR})
 aux_source_directory(${PROJECT_SOURCE_DIR}/basic_pnp  DIR_SRCS_PNP)
 aux_source_directory(${PROJECT_SOURCE_DIR}/basic_armor  DIR_SRCS_ARMOR)
 aux_source_directory(${PROJECT_SOURCE_DIR}/uart_serial  DIR_SRCS_SERIAL)
@@ -27,7 +28,7 @@ add_executable(${PROJECT_NAME}_node
         ${DIR_SRCS_SERIAL}
         ${DIR_SRCS_CAPTURE}
  )
- target_include_directories(armor_detection_node
+target_include_directories(armor_detection_node
         PRIVATE
         ${PROJECT_SOURCE_DIR}/basic_armor 
         ${PROJECT_SOURCE_DIR}/basic_pnp 
@@ -40,6 +41,7 @@ target_link_libraries(armor_detection_node
         PUBLIC
         ${catkin_LIBRARIES}
         ${OpenCV_LIBS}
+	${EXTRA_LIBS}
         /lib/libMVSDK.so
         fmt::fmt
 )

@@ -172,7 +172,7 @@ bool Detector::runBasicArmor(const cv::Mat&           _src_img,
                              const uart::Receive_Data _receive_data) {
   // 预处理
   // std::cout << "1111111111111111" << std::endl;
-  runImage(_src_img, /* _receive_data.my_color */1);
+  runImage(_src_img, _receive_data.my_color);
   draw_img_ = _src_img.clone();
   if (findLight()) {
     if (fittingArmor()) {
@@ -401,7 +401,7 @@ bool Detector::fittingArmor() {
         // 拟合装甲板条件判断
         if (lightJudge(light_left, light_right)) {
           // 装甲板内颜色平均强度
-          if (averageColor() < 30) {
+          if (averageColor() < 255) {
             // 储存装甲板
             armor_.push_back(armor_data_);
             if (armor_config_.armor_draw == 1 ||
@@ -819,6 +819,8 @@ Num::Num(int num) {
     cv::cvtColor(src_img, gray_img, cv::COLOR_BGR2GRAY);
     cv::threshold(gray_img, thre_img, 80, 255, cv::THRESH_BINARY);
     src_img_[i] = thre_img.clone();
+    // cv::imshow("num", final_img);
+    // cv::waitKey(0);
   }
 }
 
@@ -837,7 +839,7 @@ int Num::detectionNum(cv::Mat _src_img, int _armor_type) {
   cv::threshold(gray_img, thre_img, 80, 255, cv::THRESH_BINARY);
   int min = src_img_[1].cols * src_img_[1].rows;
   int num = 0;
-  for (int i = 1; i < 2; ++i) {
+  for (int i = 1; i < 2; i++) {
     cv::Mat final_img;
     cv::absdiff(src_img_[i], thre_img, final_img);
     std::vector<std::vector<cv::Point>> contours;

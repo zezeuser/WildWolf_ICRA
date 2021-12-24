@@ -39,11 +39,15 @@ int main(int argc, char **argv) {
     std::cout << "1: start the action" << std::endl
               << "2: pause the action" << std::endl
               << "3: stop  the action" << std::endl
-              << "4: exit the program" << std::endl;
+              << "4: exit the program client " << std::endl
+              << "5: start fricwhl but Shoot None "    << std::endl
+              << "6: shutdown fricwhl "     << std::endl
+              << "7: shoot continuous" << std::endl
+              << "8: shoot ones times"       << std::endl;
     std::cout << "**************************************************************************************" << std::endl;
     std::cout << "> ";
     std::cin >> command;
-    if (command != '1' && command != '2' && command != '3' && command != '4') {
+    if (command != '1' && command != '2' && command != '3' && command != '4' && command != '5' && command != '6' && command != '7' && command != '8') {
       std::cout << "please inpugain!" << std::endl;
       std::cout << "> ";
       std::cin >> command;
@@ -66,6 +70,26 @@ int main(int argc, char **argv) {
         goal.command = 3;
         ROS_INFO("I am cancelling the request");
         ac.cancelGoal();
+        break;
+      case '5':
+        goal.command = 5;
+        ROS_INFO("I am cancelling the request");
+        ac.sendGoal(goal);
+        break;
+      case '6':
+        goal.command = 6;
+        ROS_INFO("I am cancelling the request");
+        ac.sendGoal(goal);
+        break;
+      case '7':
+        goal.command = 7;
+        ROS_INFO("I am cancelling the request");
+        ac.sendGoal(goal);
+        break;
+      case '8':
+        goal.command = 8;
+        ROS_INFO("I am cancelling the request");
+        ac.sendGoal(goal);
         break;
       default:
         break;

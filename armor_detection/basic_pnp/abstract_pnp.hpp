@@ -281,8 +281,8 @@ class PnP {
     for (size_t i = 0; i != 20; ++i) {
       a = static_cast<float>(atan2(y_temp, _dist));
       // 子弹飞行时间
-      float t =  (float((exp( 0.1 * _dist)-1) / ( 0.1 * _dist * _ballet_speed * cos(a))));
-      // float t = _dist / _ballet_speed * cos(a);
+    //   float t =  (float((exp( 0.001 * _dist)-1) / ( 0.001 * _dist * 0.001 * _ballet_speed * cos(a))));
+      float t = _dist / _ballet_speed * cos(a);
 
       y_actual  = _ballet_speed * sin(a) * t - gravity * t * t / 2;
       dy        = _tvec_y - y_actual;
@@ -363,7 +363,9 @@ class PnP {
     angle.x  = static_cast<float>(angle.x) * 180 / CV_PI;
     // Pitch
     angle.y  = static_cast<float>(angle.y) * 180 / CV_PI;
-    angle.y -= getPitch(xyz[2], xyz[1], _bullet_speed * 1000, _company);
+    // if (xyz[2] > 1000) {
+        angle.y -= getPitch(xyz[2], xyz[1], _bullet_speed * 1000, _company);
+    // }
 
     return angle;
   }

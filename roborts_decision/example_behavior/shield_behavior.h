@@ -76,7 +76,6 @@ class ShieldBehavior {
     if (count >= count_limit || blackboard_->info.has_buff){
         std::cout<<"Shield is finised!" << std::endl;
         blackboard_->info.has_buff = true;
-        blackboard_->info.times_to_buff = 0;
         blackboard_->info.is_shielding = false;
         starting_buff = false;
         new_thread->join();

@@ -77,7 +77,6 @@ if (!blackboard->info.is_begin  && blackboard->info.use_refree){
         else{
         printf("Still Not Start when Remaining Time:%d and is begin:%d--------------------\n", blackboard->info.remaining_time, blackboard->info.is_begin);
         }
-        printf("Times to supply:%d, to buff:%d\n", blackboard->info.times_to_supply, blackboard->info.times_to_buff);
         printf("\n");
         printf("Ally hp:%d, bullet:%d,  pose:(%f, %f)\n", blackboard->info.ally_remain_hp, blackboard->info.ally_remain_bullet, blackboard->info.ally.pose.position.x, blackboard->info.ally.pose.position.y);
         printf("has_ally_enemy:%d, has_ally_first_enemy:%d, has_ally_second_endmy:%d\n", blackboard->info.has_ally_enemy, blackboard->info.has_ally_first_enemy, blackboard->info.has_ally_second_enemy);
@@ -98,10 +97,8 @@ else{
 // if (blackboard->info.remaining_time % 60 >2 )  click = true;
 // if (blackboard->info.remaining_time % 60 <= 2 && click) {blackboard->info.times_to_supply = 2; blackboard->info.times_to_buff=1; click=false;}
 
-if (blackboard->info.remaining_time % 60 <= 1) {blackboard->info.times_to_supply = 2; blackboard->info.times_to_buff=1;}
 printf("It's begin----------------------------------------------------------\n");
 printf("Remaining Time:%d and is begin:%d\n", blackboard->info.remaining_time, blackboard->info.is_begin);
-printf("Times to supply:%d, to buff:%d\n", blackboard->info.times_to_supply, blackboard->info.times_to_buff);
 printf("\n");
 printf("Ally hp:%d, bullet:%d,  pose:(%f, %f)\n", blackboard->info.ally_remain_hp, blackboard->info.ally_remain_bullet, blackboard->info.ally.pose.position.x, blackboard->info.ally.pose.position.y);
 printf("has_ally_enemy:%d, has_ally_first_enemy:%d, has_ally_second_endmy:%d\n", blackboard->info.has_ally_enemy, blackboard->info.has_ally_first_enemy, blackboard->info.has_ally_second_enemy);
@@ -129,7 +126,7 @@ if (blackboard->info.strategy == "go_buff"){
         if (blackboard->info.remain_hp >= 400){
                 // according bullet to the buff
                 if (blackboard->info.remain_bullet > 0){
-                if ( (!blackboard->info.has_buff && blackboard->info.times_to_buff >0 
+                if ( (!blackboard->info.has_buff && blackboard->info.shield_buff_active
                         && blackboard->GetDistance(blackboard->info.ally, blackboard->info.my_shield)>= blackboard->threshold.near_dist)
                         || blackboard->info.is_shielding)
                         {
@@ -150,12 +147,12 @@ if (blackboard->info.strategy == "go_buff"){
                 }
                 // not enough bullet
                 else{
-                if (last_state == BehaviorStateEnum::SHIELD  && !blackboard->info.has_buff && blackboard->info.times_to_buff>0
+                if (last_state == BehaviorStateEnum::SHIELD  && !blackboard->info.has_buff && blackboard->info.shield_buff_active
                 && blackboard->GetDistance(mypose, blackboard->info.my_shield)<=blackboard->threshold.near_dist
                 || blackboard->info.is_shielding){
                         cur_state = BehaviorStateEnum::SHIELD;
                 }
-                else if ( ((blackboard->info.times_to_supply >0 
+                else if ( ((blackboard->info.bullet_buff_active
                 && (blackboard->GetDistance(blackboard->info.ally, blackboard->info.my_reload)>= blackboard->threshold.near_dist)) || blackboard->info.is_supplying
                 )
                 &&  !(blackboard->info.is_hitted && blackboard->info.remain_hp<=600)
@@ -186,7 +183,7 @@ if (blackboard->info.strategy == "go_buff"){
                 }
                 
                 }
-                else if (blackboard->info.ally_remain_hp < blackboard->info.remain_hp && blackboard->info.times_to_supply >0  || blackboard->info.is_supplying){
+                else if (blackboard->info.ally_remain_hp < blackboard->info.remain_hp && blackboard->info.bullet_buff_active  || blackboard->info.is_supplying){
                 cur_state = BehaviorStateEnum::RELOAD;
                 }
                 else{
@@ -217,14 +214,14 @@ else if (blackboard->info.strategy == "no_go_buff"){
                 }
                 // not enough bullet
                 else{
-                if ( ((blackboard->info.times_to_supply >0 
+                if ( ((blackboard->info.bullet_buff_active
                 && (blackboard->GetDistance(blackboard->info.ally, blackboard->info.my_reload)>= blackboard->threshold.near_dist)) || blackboard->info.is_supplying
                 )
                 &&  !(blackboard->info.is_hitted && blackboard->info.remain_hp<=600))
                 {
                         cur_state = BehaviorStateEnum::RELOAD;
                 }
-                else if ( (!blackboard->info.has_buff && blackboard->info.times_to_buff >0 
+                else if ( (!blackboard->info.has_buff && blackboard->info.shield_buff_active
                         && blackboard->GetDistance(blackboard->info.ally, blackboard->info.my_shield)>= blackboard->threshold.near_dist)
                         || blackboard->info.is_shielding){
                         cur_state = BehaviorStateEnum::SHIELD;
@@ -253,7 +250,7 @@ else if (blackboard->info.strategy == "no_go_buff"){
                 }
                 
                 }
-                else if (blackboard->info.ally_remain_hp <= blackboard->info.remain_hp && blackboard->info.times_to_supply >0  || blackboard->info.is_supplying){
+                else if (blackboard->info.ally_remain_hp <= blackboard->info.remain_hp && blackboard->info.bullet_buff_active  || blackboard->info.is_supplying){
                 cur_state = BehaviorStateEnum::RELOAD;
                 }
                 else{
@@ -270,28 +267,28 @@ else if (blackboard->info.strategy == "together"){
         if (blackboard->info.remain_hp >= 400){
                 // according bullet to the buff
                 if (blackboard->info.remain_bullet > 0){
-                if ( (!blackboard->info.has_buff && blackboard->info.times_to_buff >0 
+                if ( (!blackboard->info.has_buff && blackboard->info.shield_buff_active
                         && blackboard->GetDistance(blackboard->info.ally, blackboard->info.my_shield)>= blackboard->threshold.near_dist)
                         || blackboard->info.is_shielding)
                         {
                         cur_state = BehaviorStateEnum::SHIELD;
                 }
-                else if (!blackboard->info.has_my_enemy  && !blackboard->info.has_ally_enemy && (blackboard->info.ally_remain_bullet>0 || blackboard->info.times_to_supply <=0)){
+                else if (!blackboard->info.has_my_enemy  && !blackboard->info.has_ally_enemy && (blackboard->info.ally_remain_bullet>0 || blackboard->info.bullet_buff_active)){
                         cur_state = BehaviorStateEnum::SEARCH;
                 }
                 // got enemy
                 else{
                         // fight together with ally has bullet.
-                        if ((blackboard->info.has_my_enemy || blackboard->info.valid_camera_armor) && (blackboard->info.ally_remain_bullet>0 || blackboard->info.times_to_supply<=0)){
+                        if ((blackboard->info.has_my_enemy || blackboard->info.valid_camera_armor) && (blackboard->info.ally_remain_bullet>0 || blackboard->info.bullet_buff_active)){
                         cur_state = BehaviorStateEnum::AMBUSH;
                 
                         }
-                        else if(blackboard->info.has_ally_enemy && (blackboard->info.ally_remain_bullet>0 || blackboard->info.times_to_supply<=0)){
+                        else if(blackboard->info.has_ally_enemy && (blackboard->info.ally_remain_bullet>0 || blackboard->info.bullet_buff_active)){
                         cur_state = BehaviorStateEnum::ATTACK;
                         }
                         // fight with ally has not bullet, and I have bullet. and have times to bullet
                         else{
-                        if ( ((blackboard->info.times_to_supply >0 
+                        if ( ((blackboard->info.bullet_buff_active
                                 && (blackboard->GetDistance(blackboard->info.ally, blackboard->info.my_reload)>= blackboard->threshold.near_dist)) || blackboard->info.is_supplying
                                 )
                                 &&  !(blackboard->info.is_hitted && blackboard->info.remain_hp<=600)){
@@ -308,12 +305,12 @@ else if (blackboard->info.strategy == "together"){
                 }
                 // not enough bullet
                 else{
-                if (last_state == BehaviorStateEnum::SHIELD  && !blackboard->info.has_buff && blackboard->info.times_to_buff>0
+                if (last_state == BehaviorStateEnum::SHIELD  && !blackboard->info.has_buff && blackboard->info.shield_buff_active
                 && blackboard->GetDistance(mypose, blackboard->info.my_shield)<=blackboard->threshold.near_dist
                 || blackboard->info.is_shielding){
                         cur_state = BehaviorStateEnum::SHIELD;
                 }
-                else if ((blackboard->info.times_to_supply >0 
+                else if ((blackboard->info.bullet_buff_active
                 && (blackboard->GetDistance(blackboard->info.ally, blackboard->info.my_reload)>= blackboard->threshold.near_dist))
                 || blackboard->info.is_supplying){
                         cur_state = BehaviorStateEnum::RELOAD;
@@ -342,7 +339,7 @@ else if (blackboard->info.strategy == "together"){
                 }
                 
                 }
-                else if (blackboard->info.ally_remain_hp <= blackboard->info.remain_hp && blackboard->info.times_to_supply >0  || blackboard->info.is_supplying){
+                else if (blackboard->info.ally_remain_hp <= blackboard->info.remain_hp && blackboard->info.bullet_buff_active  || blackboard->info.is_supplying){
                 cur_state = BehaviorStateEnum::RELOAD;
                 }
                 else{
@@ -377,7 +374,7 @@ else if (blackboard->info.strategy == "attack"){
                         //   cur_state = BehaviorStateEnum::ATTACK;
                 }
                 }
-                else if (blackboard->info.times_to_supply >0){
+                else if (blackboard->info.bullet_buff_active){
                 cur_state = BehaviorStateEnum::RELOAD;  
                 }
                 else{
@@ -425,7 +422,7 @@ else if (blackboard->info.strategy == "defense"){
                         //   cur_state = BehaviorStateEnum::ATTACK;
                 }
                 }
-                else if (blackboard->info.times_to_supply >0){
+                else if (blackboard->info.bullet_buff_active){
                 cur_state = BehaviorStateEnum::RELOAD;  
                 }
                 else{
@@ -442,7 +439,7 @@ else if (blackboard->info.strategy == "defense"){
                 }
                 
                 }
-                else if (blackboard->info.ally_remain_hp <400 && blackboard->info.times_to_supply >0){
+                else if (blackboard->info.ally_remain_hp <400 && blackboard->info.bullet_buff_active){
                 cur_state = BehaviorStateEnum::RELOAD;
                 }
                 else{
@@ -477,7 +474,7 @@ else if (blackboard->info.strategy == "nn"){
                         //   cur_state = BehaviorStateEnum::ATTACK;
                 }
                 }
-                else if (blackboard->info.times_to_supply >0){
+                else if (blackboard->info.bullet_buff_active){
                 cur_state = BehaviorStateEnum::RELOAD;  
                 }
                 else{

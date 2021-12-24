@@ -168,6 +168,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named single_robot_node
+
+# Build rule for target.
+single_robot_node: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 single_robot_node
+.PHONY : single_robot_node
+
+# fast build rule for target.
+single_robot_node/fast:
+	$(MAKE) -f CMakeFiles/single_robot_node.dir/build.make CMakeFiles/single_robot_node.dir/build
+.PHONY : single_robot_node/fast
+
+#=============================================================================
 # Target rules for targets named blue_master
 
 # Build rule for target.
@@ -1177,6 +1190,7 @@ executor/chassis_executor.o: executor/chassis_executor.cpp.o
 
 # target to build an object file
 executor/chassis_executor.cpp.o:
+	$(MAKE) -f CMakeFiles/single_robot_node.dir/build.make CMakeFiles/single_robot_node.dir/executor/chassis_executor.cpp.o
 	$(MAKE) -f CMakeFiles/blue_master.dir/build.make CMakeFiles/blue_master.dir/executor/chassis_executor.cpp.o
 	$(MAKE) -f CMakeFiles/blue_wing.dir/build.make CMakeFiles/blue_wing.dir/executor/chassis_executor.cpp.o
 	$(MAKE) -f CMakeFiles/test_behavior_node.dir/build.make CMakeFiles/test_behavior_node.dir/executor/chassis_executor.cpp.o
@@ -1192,6 +1206,7 @@ executor/chassis_executor.i: executor/chassis_executor.cpp.i
 
 # target to preprocess a source file
 executor/chassis_executor.cpp.i:
+	$(MAKE) -f CMakeFiles/single_robot_node.dir/build.make CMakeFiles/single_robot_node.dir/executor/chassis_executor.cpp.i
 	$(MAKE) -f CMakeFiles/blue_master.dir/build.make CMakeFiles/blue_master.dir/executor/chassis_executor.cpp.i
 	$(MAKE) -f CMakeFiles/blue_wing.dir/build.make CMakeFiles/blue_wing.dir/executor/chassis_executor.cpp.i
 	$(MAKE) -f CMakeFiles/test_behavior_node.dir/build.make CMakeFiles/test_behavior_node.dir/executor/chassis_executor.cpp.i
@@ -1207,6 +1222,7 @@ executor/chassis_executor.s: executor/chassis_executor.cpp.s
 
 # target to generate assembly for a file
 executor/chassis_executor.cpp.s:
+	$(MAKE) -f CMakeFiles/single_robot_node.dir/build.make CMakeFiles/single_robot_node.dir/executor/chassis_executor.cpp.s
 	$(MAKE) -f CMakeFiles/blue_master.dir/build.make CMakeFiles/blue_master.dir/executor/chassis_executor.cpp.s
 	$(MAKE) -f CMakeFiles/blue_wing.dir/build.make CMakeFiles/blue_wing.dir/executor/chassis_executor.cpp.s
 	$(MAKE) -f CMakeFiles/test_behavior_node.dir/build.make CMakeFiles/test_behavior_node.dir/executor/chassis_executor.cpp.s
@@ -1222,6 +1238,7 @@ proto/decision.pb.o: proto/decision.pb.cc.o
 
 # target to build an object file
 proto/decision.pb.cc.o:
+	$(MAKE) -f CMakeFiles/single_robot_node.dir/build.make CMakeFiles/single_robot_node.dir/proto/decision.pb.cc.o
 	$(MAKE) -f CMakeFiles/blue_master.dir/build.make CMakeFiles/blue_master.dir/proto/decision.pb.cc.o
 	$(MAKE) -f CMakeFiles/blue_wing.dir/build.make CMakeFiles/blue_wing.dir/proto/decision.pb.cc.o
 	$(MAKE) -f CMakeFiles/test_behavior_node.dir/build.make CMakeFiles/test_behavior_node.dir/proto/decision.pb.cc.o
@@ -1237,6 +1254,7 @@ proto/decision.pb.i: proto/decision.pb.cc.i
 
 # target to preprocess a source file
 proto/decision.pb.cc.i:
+	$(MAKE) -f CMakeFiles/single_robot_node.dir/build.make CMakeFiles/single_robot_node.dir/proto/decision.pb.cc.i
 	$(MAKE) -f CMakeFiles/blue_master.dir/build.make CMakeFiles/blue_master.dir/proto/decision.pb.cc.i
 	$(MAKE) -f CMakeFiles/blue_wing.dir/build.make CMakeFiles/blue_wing.dir/proto/decision.pb.cc.i
 	$(MAKE) -f CMakeFiles/test_behavior_node.dir/build.make CMakeFiles/test_behavior_node.dir/proto/decision.pb.cc.i
@@ -1252,6 +1270,7 @@ proto/decision.pb.s: proto/decision.pb.cc.s
 
 # target to generate assembly for a file
 proto/decision.pb.cc.s:
+	$(MAKE) -f CMakeFiles/single_robot_node.dir/build.make CMakeFiles/single_robot_node.dir/proto/decision.pb.cc.s
 	$(MAKE) -f CMakeFiles/blue_master.dir/build.make CMakeFiles/blue_master.dir/proto/decision.pb.cc.s
 	$(MAKE) -f CMakeFiles/blue_wing.dir/build.make CMakeFiles/blue_wing.dir/proto/decision.pb.cc.s
 	$(MAKE) -f CMakeFiles/test_behavior_node.dir/build.make CMakeFiles/test_behavior_node.dir/proto/decision.pb.cc.s
@@ -1342,6 +1361,33 @@ sel_behavior_node.cpp.s:
 	$(MAKE) -f CMakeFiles/sel_behavior_node.dir/build.make CMakeFiles/sel_behavior_node.dir/sel_behavior_node.cpp.s
 .PHONY : sel_behavior_node.cpp.s
 
+single_robot.o: single_robot.cpp.o
+
+.PHONY : single_robot.o
+
+# target to build an object file
+single_robot.cpp.o:
+	$(MAKE) -f CMakeFiles/single_robot_node.dir/build.make CMakeFiles/single_robot_node.dir/single_robot.cpp.o
+.PHONY : single_robot.cpp.o
+
+single_robot.i: single_robot.cpp.i
+
+.PHONY : single_robot.i
+
+# target to preprocess a source file
+single_robot.cpp.i:
+	$(MAKE) -f CMakeFiles/single_robot_node.dir/build.make CMakeFiles/single_robot_node.dir/single_robot.cpp.i
+.PHONY : single_robot.cpp.i
+
+single_robot.s: single_robot.cpp.s
+
+.PHONY : single_robot.s
+
+# target to generate assembly for a file
+single_robot.cpp.s:
+	$(MAKE) -f CMakeFiles/single_robot_node.dir/build.make CMakeFiles/single_robot_node.dir/single_robot.cpp.s
+.PHONY : single_robot.cpp.s
+
 test_behavior.o: test_behavior.cpp.o
 
 .PHONY : test_behavior.o
@@ -1376,6 +1422,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... list_install_components"
+	@echo "... single_robot_node"
 	@echo "... blue_master"
 	@echo "... roborts_msgs_generate_messages_lisp"
 	@echo "... roborts_msgs_generate_messages_cpp"
@@ -1477,6 +1524,9 @@ help:
 	@echo "... sel_behavior_node.o"
 	@echo "... sel_behavior_node.i"
 	@echo "... sel_behavior_node.s"
+	@echo "... single_robot.o"
+	@echo "... single_robot.i"
+	@echo "... single_robot.s"
 	@echo "... test_behavior.o"
 	@echo "... test_behavior.i"
 	@echo "... test_behavior.s"

@@ -1,9 +1,13 @@
 <launch>
+  <master auto="start"/>
   <rosparam command="load" file="$(find roborts_base)/config/base.yaml" />
 
   <!-- Run the Base Node -->
   <node pkg="roborts_base" type="roborts_base_node" name="roborts_base_node" output="screen" respawn="true" />
-
-
+  
+   <!--include file="$(find ydlidar)/launch/lidar.launch" /-->
+   <!-- <include file="$(find ydlidar_ros_driver)/launch/X4.launch" /> -->
+   <!-- <include file="$(find ira_laser_tools)/launch/laserscan_multi_merger.launch" /> -->
 </launch>
 
+ 

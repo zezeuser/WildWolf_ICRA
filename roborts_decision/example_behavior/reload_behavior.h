@@ -107,8 +107,6 @@ namespace roborts_decision
                         if (count >= count_limit || (start_supplying && !blackboard_->info.is_supplying))
                         {
                                 std::cout << "Reload is finised!" << std::endl;
-                                // 未知为什么要减1
-                                blackboard_->info.times_to_supply -= 1;
                                 new_thread->join();
                                 start_supplying = false;
                                 blackboard_->info.is_supplying = false;

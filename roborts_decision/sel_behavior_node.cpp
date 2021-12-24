@@ -60,7 +60,6 @@ if (command !='a'){
 
 printf("-----------------------------------------\n");
 printf("Remaining Time:%d and is begin:%d\n", blackboard->info.remaining_time, blackboard->info.is_begin);
-printf("Times to supply:%d\n", blackboard->info.times_to_supply);
 // printf("Is Stuck:%d, Can Dodge:%d\n", blackboard->IsInStuckArea(), blackboard->CanDodge());
 printf("Ally: \n");
 printf("hp:%d, bullet:%d,  pose:(%f, %f)\n", blackboard->info.ally_remain_hp, blackboard->info.ally_remain_bullet, blackboard->info.ally.pose.position.x, blackboard->info.ally.pose.position.y);

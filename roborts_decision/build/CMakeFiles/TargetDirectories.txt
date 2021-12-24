@@ -1,4 +1,5 @@
 /home/zeze/catkin_ws/src/roborts_decision/build/CMakeFiles/list_install_components.dir
+/home/zeze/catkin_ws/src/roborts_decision/build/CMakeFiles/single_robot_node.dir
 /home/zeze/catkin_ws/src/roborts_decision/build/CMakeFiles/blue_master.dir
 /home/zeze/catkin_ws/src/roborts_decision/build/CMakeFiles/roborts_msgs_generate_messages_lisp.dir
 /home/zeze/catkin_ws/src/roborts_decision/build/CMakeFiles/roborts_msgs_generate_messages_cpp.dir

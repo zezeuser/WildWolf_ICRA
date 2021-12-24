@@ -8,7 +8,7 @@ transform_tolerance: 0.3
 # "scan" for one car, and "base_scan" for multiple cars
 # it's  can automaticly turn "scan" to "base_scan"  
 topic_string: "scan"  
-sensor_frame: "laser_link0"
+sensor_frame: "laser_link"
 inf_is_valid: false
 clearing: true
 footprint_clearing_enabled: true

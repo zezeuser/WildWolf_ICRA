@@ -333,6 +333,22 @@ class Detector {
   inline void fixFinalArmorCenter(const int _num, const cv::Point2f _tl) {
     armor_[_num].armor_rect.center += _tl;
   }
+    /**
+   * @brief 返回最优装甲板的旋转矩形
+   *
+   * @param _num             返回第 _num 个装甲板的旋转矩形
+   * @return cv::RotatedRect 返回装甲板的旋转矩形
+   */
+  inline std::vector<cv::Point2f> returnFinalArmor4Point(const int _num) {
+    std::vector<cv::Point2f> target_2d_;
+    cv::Point2f              P[4];
+    armor_[_num].armor_rect.points(P);
+    target_2d_.push_back(P[0]);
+    target_2d_.push_back(P[1]);
+    target_2d_.push_back(P[2]);
+    target_2d_.push_back(P[3]);
+    return target_2d_;
+  }
   /**
    * @brief 初始化哨兵模式参数 (请在使用完哨兵模式的时候对其清空)
    *

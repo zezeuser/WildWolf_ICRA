@@ -21,6 +21,7 @@
 #include "ros_dep.h"
 #include "module.h"
 #include "utils/factory.h"
+#include "roborts_msgs/GimbalInfo.h"
 
 namespace roborts_base {
 /**
@@ -95,12 +96,16 @@ class Gimbal: public Module {
   ros::NodeHandle    ros_nh_;
   //! ros subscriber for gimbal angle control
   ros::Subscriber    ros_sub_cmd_gimbal_angle_;
+  //! gimbal info publisher 
+  ros::Publisher     ros_gimbal_pub_;
   //! ros service server for friction wheel control
   ros::ServiceServer ros_ctrl_fric_wheel_srv_;
   //! ros service server for gimbal shoot control
   ros::ServiceServer ros_ctrl_shoot_srv_;
   //! ros gimbal tf
   geometry_msgs::TransformStamped gimbal_tf_;
+  //! gimbal info msg
+  roborts_msgs::GimbalInfo gimbal_info_;
   //! ros gimbal tf broadcaster
   tf::TransformBroadcaster        tf_broadcaster_;
 

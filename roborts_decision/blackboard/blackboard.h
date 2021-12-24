@@ -35,7 +35,6 @@
 #include "roborts_msgs/RobotHeat.h"
 #include "roborts_msgs/GameStatus.h"
 #include "roborts_msgs/RobotShoot.h"
-#include "roborts_msgs/ProjectileSupply.h"
 #include "roborts_msgs/SupplierStatus.h"
 #include "roborts_msgs/BonusStatus.h"
 #include "roborts_msgs/GameZoneArray.h"
@@ -45,10 +44,10 @@
 #include "roborts_msgs/GameRobotBullet.h"
 
 // #include "roborts_msgs/AllyPose.h"
-#include "roborts_msgs/FusionTarget.h"
 #include "roborts_msgs/Target.h"
 #include "roborts_msgs/DodgeMode.h"
 #include "roborts_msgs/GimbalAngle.h"
+#include "roborts_msgs/Aimtargeid.h"
 
 #include "io/io.h"
 #include "../proto/decision.pb.h"
@@ -78,8 +77,6 @@ struct Threshold{
 
 struct DecisionInfoPool{
         int remaining_time;
-        int times_to_supply;
-        int times_to_buff;
         int game_status;
         int shoot_hz;
         bool is_begin;
@@ -195,10 +192,9 @@ class Blackboard {
     // pub
     shoot_pub_ = nh.advertise<roborts_msgs::ShooterCmd>("shoot_cmd", 10, this);
     ally_pub_ = nh.advertise<geometry_msgs::PoseStamped>("friend_pose", 10, this);
-    fusion_pub_ = nh.advertise<roborts_msgs::FusionTarget>("communication_robots",10, this);
     dodge_pub_ = nh.advertise<roborts_msgs::DodgeMode>("dodge_mode", 10, this);
     cmd_vel_pub_ = nh.advertise<geometry_msgs::Twist>("cmd_vel", 10, this);
-
+    target_id_pub_ = nh.advertise<roborts_msgs::Aimtargeid>("emeny_target_id",30,this);
 
 
     // all frame ID update
@@ -229,8 +225,6 @@ class Blackboard {
 
     // initialize setting----------------------------------------------------------
     info.remaining_time = 299;
-    info.times_to_supply = 2;
-    info.times_to_buff = 1;
     info.shoot_hz = decision_config.shoot_hz();
     info.use_refree = decision_config.use_refree();
     info.is_begin = false;
@@ -273,6 +267,11 @@ class Blackboard {
     info.my_goal = InitMapPose();
     info.ally_goal = InitMapPose();
     
+    //buff init
+    info.my_shield = InitMapPose();
+    info.my_reload = InitMapPose();
+    info.opp_reload = InitMapPose();
+    info.opp_shield = InitMapPose();
 
     // PostStamped information update
     info.ally = InitMapPose();
@@ -355,28 +354,12 @@ class Blackboard {
   }
 
 
-  void CShoot(){
-      if (info.can_shoot){
-         roborts_msgs::ShooterCmd cmd;
-         cmd.is_shoot = true;
-         cmd.shoot_cmd = 0;
-         cmd.c_shoot_cmd = 1;
-         cmd.shoot_freq = 2500;
-         shoot_pub_.publish(cmd);
-      }
-      
-  }
-
   void StopShoot(){
       if (is_in_shoot_state){
         is_in_shoot_state = false;
-        roborts_msgs::ShooterCmd cmd;
-        cmd.is_shoot = false;
-        cmd.shoot_cmd = 0;
-        cmd.c_shoot_cmd = 0;
-        cmd.shoot_freq = 2500;
-        shoot_pub_.publish(cmd);
         shoot_thread.join();
+        armor_detection_goal_.command = 5 ;
+        armor_detection_actionlib_client_.sendGoal(armor_detection_goal_);
       }  
   }
 
@@ -425,7 +408,7 @@ class Blackboard {
                         if (dx<=0 || dx>=8 || dy<=0 || dy>=5)
                                 continue;
                         if (id == 1)   _front_first_enemy = true;
-                        else if (id == 2)   _front_second_enemy = true;
+                        else if (id == 2)    _front_second_enemy = true;
                         else if (id!=1 || id!=2){ // do not know which car should be update, then according to history
                                 double dist1 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.first_enemy.pose.position.x, info.first_enemy.pose.position.y);
                                 double dist2 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.second_enemy.pose.position.x, info.second_enemy.pose.position.y);
@@ -446,10 +429,6 @@ class Blackboard {
             // all 0.
             if (!valid) {  info.valid_front_camera_armor = false;  }
             else   { info.valid_front_camera_armor = true; }
-            info.valid_camera_armor = info.valid_front_camera_armor;
-            info.has_first_enemy = _front_first_enemy;
-            info.has_second_enemy = _front_second_enemy;
-            info.has_my_enemy = info.has_first_enemy || info.has_second_enemy;
             // Clear invalid set
             for (int id=1; id<3; id++){
                 if (valid_id_set.find(id) == valid_id_set.end()){
@@ -458,6 +437,10 @@ class Blackboard {
                 }
             }
             valid_id_set.clear();
+            info.valid_camera_armor = info.valid_front_camera_armor;
+            info.has_first_enemy = _front_first_enemy;
+            info.has_second_enemy = _front_second_enemy;
+            info.has_my_enemy = info.has_first_enemy || info.has_second_enemy;
       }
   }
 
@@ -680,26 +663,41 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
     geometry_msgs::PoseStamped enemyPose;
     unsigned int shoot_1_cnt = my_shoot_1_cnt + ally_shoot_1_cnt;
     unsigned int shoot_2_cnt = my_shoot_2_cnt + ally_shoot_2_cnt;
-
+    info.first_enemy_dist = GetDistance(cur_pose,info.first_enemy);
+    info.second_enemy_dist = GetDistance(cur_pose,info.second_enemy);
     // 2. fixed  1 enemy and attack
     // The different mark
     if (info.has_first_enemy && info.has_second_enemy){
-        if (shoot_1_cnt >= shoot_2_cnt){
-            enemyPose = info.first_enemy;
-            info.last_enemy = enemyPose;
-            if (CanShoot()) my_shoot_1_cnt++;
+        if(info.first_enemy_dist > threshold.detect_dist || info.second_enemy_dist > threshold.detect_dist)
+        {
+            enemyPose = info.first_enemy_dist <= info.second_enemy_dist ? info.first_enemy : info.second_enemy;
         }
         else{
-            enemyPose = info.second_enemy;
-            info.last_enemy = enemyPose;
-            if (CanShoot()) my_shoot_2_cnt++;
+            if(info.emeny_first_hp < 400 || info.emeny_second_hp < 400  ){
+                enemyPose = info.emeny_first_hp <= info.emeny_second_hp ? info.first_enemy : info.second_enemy;
+            }
+            else{
+                if(info.emeny_first_bullet < 0 || info.emeny_second_bullet < 0){
+                    enemyPose = info.emeny_first_bullet <= info.emeny_first_bullet ? info.first_enemy : info.second_enemy;
+                }
+                else{
+                    enemyPose = info.emeny_first_hp <= info.emeny_second_hp ? info.first_enemy : info.second_enemy;
+                }
+            }      
+        }
+        info.last_enemy = enemyPose;
+        if(CanShoot()){
+            if(enemyPose == info.first_enemy) my_shoot_1_cnt++; 
+            else my_shoot_2_cnt++;
         }
     }
+
+
     else if (info.has_first_enemy && info.has_ally_second_enemy){
         if (shoot_1_cnt >= shoot_2_cnt){
             enemyPose = info.first_enemy;
             info.last_enemy = enemyPose;
-            if (CanShoot()) my_shoot_1_cnt++;
+            if (CanShoot()) my_shoot_1_cnt++; 
         }
         else{
             enemyPose = info.ally_second_enemy;
@@ -707,7 +705,7 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
             if (CanShoot()) my_shoot_2_cnt++;
         }
     }
-    else if (info.has_ally_first_enemy && info.has_second_enemy ){
+    else if (info.has_second_enemy  && info.has_ally_first_enemy ){
         if (shoot_1_cnt >= shoot_2_cnt){
             enemyPose = info.ally_first_enemy;
             info.last_enemy = enemyPose;
@@ -755,98 +753,17 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
     else {
         enemyPose = info.last_enemy;
     } 
-
-    // 1. Select near first enemy
-    // // my detect enemy
-    // if (info.has_my_enemy){
-    //      if (info.has_first_enemy && info.has_second_enemy){
-    //           if (shoot_1_cnt >= shoot_2_cnt){
-    //               enemyPose = info.first_enemy;
-    //               info.last_enemy = enemyPose;
-    //               if (CanShoot()){
-    //                   my_shoot_1_cnt++;
-    //               }
-                  
-    //           }
-    //           else{
-    //               enemyPose = info.second_enemy;
-    //               info.last_enemy = enemyPose;
-    //               if (CanShoot()){
-    //                  my_shoot_2_cnt++;
-    //               }
-                  
-    //           }
-    //     //     double dist1 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.first_enemy.pose.position.x, info.first_enemy.pose.position.y);
-    //     //     double dist2 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.second_enemy.pose.position.x, info.second_enemy.pose.position.y);
-    //     //   if (dist1<=dist2){
-    //     //       enemyPose = info.first_enemy;
-    //     //       info.last_enemy = enemyPose;
-    //     //   }
-    //     //   else{
-    //     //       enemyPose = info.second_enemy;
-    //     //       info.last_enemy = enemyPose;
-              
-    //     //   }
-            
-    //     }
-    //     else if (info.has_first_enemy){
-    //         enemyPose = info.first_enemy;
-    //         info.last_enemy = enemyPose;
-    //         if (CanShoot()){
-    //            my_shoot_1_cnt++;
-    //         }
-            
-    //     }
-    //     else if (info.has_second_enemy){
-    //         enemyPose = info.second_enemy;
-    //         info.last_enemy = enemyPose;
-    //         if (CanShoot()){
-    //             my_shoot_2_cnt++;
-    //         }
-            
-    //     }
-            
-    // }
-
-    // // ally detect enemy
-    // else if (info.has_ally_enemy){Point
-    //               enemyPose = info.ally_first_enemy;
-    //               info.last_enemy = enemyPose;
-    //           }
-    //           else{
-    //               enemyPose = info.ally_second_enemy;
-    //               info.last_enemy = enemyPose;
-    //           }
-
-    //     //     double dist1 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.ally_first_enemy.pose.position.x, info.ally_first_enemy.pose.position.y);
-    //     //     double dist2 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.ally_second_enemy.pose.position.x, info.ally_second_enemy.pose.position.y);
-    //     //   if (dist1<=dist2){
-    //     //       enemyPose = info.ally_first_enemy;
-    //     //       info.last_enemy = enemyPose;
-    //     //   }
-    //     //   else{
-    //     //       enemyPose = info.ally_second_enemy;
-    //     //       info.last_enemy = enemyPose;
-    //     //   }
-            
-    //     }
-    //     else if (info.has_ally_first_enemy){
-    //         enemyPose = info.ally_first_enemy;
-    //         info.last_enemy = enemyPose;
-    //     }
-    //     else if (info.has_ally_second_enemy){
-    //         enemyPose = info.ally_second_enemy;
-    //         info.last_enemy = enemyPose;
-    //     }
-           
-    // }
-    // else {
-    //     enemyPose = info.last_enemy;
-    // }
     enemyPose.pose.orientation = GetRelativeQuaternion(enemyPose, cur_pose);
     info.last_enemy = enemyPose;
     info.got_last_enemy = true;
-    
+    if(enemyPose == info.first_enemy){
+        target_id_.id = 1;
+        target_id_pub_.publish(target_id_);
+    }
+    else if(enemyPose == info.second_enemy){
+        target_id_.id = 2;
+        target_id_pub_.publish(target_id_);
+    }
     return enemyPose;
 
   }
@@ -856,7 +773,10 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
            && info.heat <threshold.heat_upper_bound   // heater bound
            && ( (my_vel_x==0 && my_vel_y ==0) || in_dodge )  // velocity or dodge
            && info.valid_front_camera_armor)   // valid front camera
-          return true;
+           { 
+
+                return true;
+           }
        else{
            StopShoot();
            return false;
@@ -872,7 +792,7 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
       if (!_gimbal_can 
          || !info.is_hitted
          || (GetDistance(info.my_reload, myPose) <=0.65 && !_dodge_in_reload)
-         || (info.remain_bullet <0 && info.times_to_supply>0)
+         || (info.remain_bullet <0 && info.bullet_buff_active)
       )
       {
           StopDodge();
@@ -880,7 +800,7 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
       }
 
       geometry_msgs::PoseStamped enemyPose = GetEnemy();
-	
+      
       // absolute distance
       double distance = GetDistance(myPose, enemyPose);
       if (distance >2.0 && distance<0.5 && info.remain_bullet >= 1000){
@@ -1003,7 +923,6 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
           GetCostMap2D()->World2Map(x[i], y[i], mx, my);
           if (GetCostMap2D()->GetCost(mx, my) <253)
             return false;
-
       }
 
       // In stuck area
@@ -1155,8 +1074,6 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
  private:
   ComInfo setComInfo(){
       ComInfo ci;
-      ci.times_to_supply = info.times_to_supply;
-      ci.times_to_buff = info.times_to_buff;
       ci.hp = info.remain_hp;
       ci.shoot_1 = my_shoot_1_cnt;
       ci.shoot_2 = my_shoot_2_cnt;
@@ -1188,17 +1105,7 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
       return ci;
   }
 
-  void getComInfo(ComInfo ci){
- 
-      if (info.remaining_time % 60 <= 1){
-          info.times_to_buff = 1;
-          info.times_to_supply = 2;
-      }
-      else{
-          info.times_to_supply = std::min(info.times_to_supply, ci.times_to_supply);
-          info.times_to_buff = std::min(info.times_to_buff, ci.times_to_buff);
-      }
-      
+  void getComInfo(ComInfo ci){  
       info.ally_remain_hp = ci.hp;
       info.ally_remain_bullet = ci.bullet;
       info.ally.header.stamp = ros::Time::now();
@@ -1228,14 +1135,13 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
       bound = 4 < ally_num_no_id_target? 4 :ally_num_no_id_target;
       for (int i=0; i<bound; i++)  ally_no_id_targets[i] = ci.fusion.no_id_targets[i];
 
-      
     // prepare to publish fusion data
-      FS.id_targets.clear();
-      FS.no_id_targets.clear();
-      FS.num_id_target = ally_num_id_target;
-      FS.num_no_id_target = ally_num_no_id_target;
-      for (int i=0; i< ally_num_id_target; i++) FS.id_targets.push_back(ally_id_targets[i]);
-      for (int i=0; i< ally_num_no_id_target; i++) FS.no_id_targets.push_back(ally_no_id_targets[i]);
+    //   FS.id_targets.clear();
+    //   FS.no_id_targets.clear();
+    //   FS.num_id_target = ally_num_id_target;
+    //   FS.num_no_id_target = ally_num_no_id_target;
+    //   for (int i=0; i< ally_num_id_target; i++) FS.id_targets.push_back(ally_id_targets[i]);
+    //   for (int i=0; i< ally_num_no_id_target; i++) FS.no_id_targets.push_back(ally_no_id_targets[i]);
 
       // ally shoot cnt
       ally_shoot_1_cnt = ci.shoot_1;
@@ -1245,24 +1151,24 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
 
   void getGuardInfo( CarPositionSend gi){
         // cm -> m
-        if(info.team_blue){
+        if(!info.team_blue){
           if (gi.blue1.x > 0 && gi.blue1.y > 0){
-          info.first_enemy.pose.position.x = gi.blue1.x/100;
-          info.first_enemy.pose.position.y = gi.blue1.y/100;
+          info.first_enemy.pose.position.x = gi.blue1.y/100;
+          info.first_enemy.pose.position.y = gi.blue1.x/100;
           }
           if (gi.blue2.x > 0 && gi.blue2.y  > 0){
-          info.second_enemy.pose.position.x = gi.blue2.x/100;
-          info.second_enemy.pose.position.y = gi.blue2.y/100;
+          info.second_enemy.pose.position.x = gi.blue2.y/100;
+          info.second_enemy.pose.position.y = gi.blue2.x/100;
           }
         }
-          else{
+        else{
             if (gi.red1.x > 0 && gi.red1.y > 0){
-            info.first_enemy.pose.position.x = gi.red1.x/100;
-            info.first_enemy.pose.position.y = gi.red1.y/100;
+            info.first_enemy.pose.position.x = gi.red1.y/100;
+            info.first_enemy.pose.position.y = gi.red1.x/100;
             }
             if (gi.red2.x > 0 && gi.red2.y  > 0){
-            info.second_enemy.pose.position.x = gi.red2.x/100;
-            info.second_enemy.pose.position.y= gi.red2.y/100;
+            info.second_enemy.pose.position.x = gi.red2.y/100;
+            info.second_enemy.pose.position.y= gi.red2.x/100;
             }
         }
   }
@@ -1271,16 +1177,12 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
   void _ShootThread(int hz){
       ros::Rate loop(hz);
       while (ros::ok()){
-          roborts_msgs::ShooterCmd cmd;
-          cmd.is_shoot = true;
-          cmd.shoot_cmd = 1;
-          cmd.c_shoot_cmd = 0;
-          cmd.shoot_freq = 2500;
-          shoot_pub_.publish(cmd);
-          info.remain_bullet = info.remain_bullet - 1;
-          if (! is_in_shoot_state)
+        // shoot once command
+        armor_detection_goal_.command = 8;
+        armor_detection_actionlib_client_.sendGoal(armor_detection_goal_);
+        if (! is_in_shoot_state)
              break;
-          loop.sleep();   
+        loop.sleep();   
       }
       
   }
@@ -1303,7 +1205,7 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
         masterSocket_.send(send_message);
 
         ally_pub_.publish(info.ally);
-        fusion_pub_.publish(FS);
+        // fusion_pub_.publish(FS);
         info.has_ally = true;
        
         loop.sleep();
@@ -1332,7 +1234,7 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
         geometry_msgs::PoseStamped ap;
        
         ally_pub_.publish(info.ally);
-        fusion_pub_.publish(FS);
+        // fusion_pub_.publish(FS);
         info.has_ally = true;
        
         loop.sleep();       
@@ -1414,7 +1316,7 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
   ros::Subscriber robot_status_sub_, robot_shoot_sub_, robot_heat_sub_, game_status_sub_, supply_sub_, buff_sub_, 
                                 vel_acc_sub_,robot_damage_sub_ ,game_zone_sub_ , emeny_hp_sub_,emeny_bullet_sub_;
   //info  publisher
-  ros::Publisher shoot_pub_, ally_pub_, fusion_pub_, dodge_pub_, supply_pub_, cmd_vel_pub_;
+  ros::Publisher shoot_pub_, ally_pub_, fusion_pub_, dodge_pub_, supply_pub_, cmd_vel_pub_ , target_id_pub_;
 
   //! Goal info
   geometry_msgs::PoseStamped goal_;
@@ -1436,6 +1338,8 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
   //! robot gimbal pose
   geometry_msgs::PoseStamped gimbal_pose_;
 
+  //target id
+  roborts_msgs::Aimtargeid target_id_;
   // point
   geometry_msgs::Point camera_enemy_;
 
@@ -1450,9 +1354,8 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
   std::thread masterThread, clientThread;
   std::thread guardThread;
   std::thread shoot_thread;
+
   bool is_in_shoot_state;
- 
-  
   // frame id
   std::string pose_frameID, gimbal_frameID;
   bool use_camera;
@@ -1463,8 +1366,7 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
   unsigned int my_shoot_1_cnt, my_shoot_2_cnt, ally_shoot_1_cnt, ally_shoot_2_cnt;
   roborts_msgs::Target id_targets[2], ally_id_targets[2];
   roborts_msgs::Target no_id_targets[4], ally_no_id_targets[4];
-  roborts_msgs::FusionTarget FS;
-  double my_vel_x, my_vel_y;
+  double my_vel_x{0}, my_vel_y{0};
 
   bool _gimbal_can, in_dodge;
   

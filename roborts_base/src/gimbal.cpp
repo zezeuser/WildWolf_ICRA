@@ -80,6 +80,7 @@ void Gimbal::ROS_Init(){
   //ros service
   ros_ctrl_fric_wheel_srv_ = ros_nh_.advertiseService("cmd_fric_wheel", &Gimbal::CtrlFricWheelService, this);
   ros_ctrl_shoot_srv_ = ros_nh_.advertiseService("cmd_shoot", &Gimbal::CtrlShootService, this);
+  ros_gimbal_pub_ = ros_nh_.advertise<roborts_msgs::GimbalInfo>("gimbal_info",100);
   //ros_message_init
   gimbal_tf_.header.frame_id = "base_link";
   gimbal_tf_.child_frame_id = "gimbal";
@@ -98,6 +99,13 @@ void Gimbal::GimbalInfoCallback(const std::shared_ptr<roborts_sdk::cmd_gimbal_in
   gimbal_tf_.transform.translation.y = 0;
   gimbal_tf_.transform.translation.z = 0.15;
   tf_broadcaster_.sendTransform(gimbal_tf_);
+  gimbal_info_.ecd_yaw = gimbal_info->yaw_ecd_angle;
+  gimbal_info_.ecd_pitch = gimbal_info->pitch_ecd_angle;
+  gimbal_info_.gyro_pitch = gimbal_info->pitch_gyro_angle;
+  gimbal_info_.gyro_yaw = gimbal_info->yaw_gyro_angle;
+  gimbal_info_.pitch_rate = gimbal_info->pitch_rate;
+  gimbal_info_.yaw_rate = gimbal_info->yaw_rate;
+  ros_gimbal_pub_.publish(gimbal_info_);
 
 }
 
@@ -117,8 +125,8 @@ bool Gimbal::CtrlFricWheelService(roborts_msgs::FricWhl::Request &req,
                                   roborts_msgs::FricWhl::Response &res){
   roborts_sdk::cmd_fric_wheel_speed fric_speed;
   if(req.open){
-    fric_speed.left = 1240;
-    fric_speed.right = 1240;
+    fric_speed.left = 1275;
+    fric_speed.right = 1275;
   } else{
     fric_speed.left = 1000;
     fric_speed.right = 1000;
@@ -127,6 +135,7 @@ bool Gimbal::CtrlFricWheelService(roborts_msgs::FricWhl::Request &req,
   res.received = true;
   return true;
 }
+
 bool Gimbal::CtrlShootService(roborts_msgs::ShootCmd::Request &req,
                               roborts_msgs::ShootCmd::Response &res){
   roborts_sdk::cmd_shoot_info gimbal_shoot;

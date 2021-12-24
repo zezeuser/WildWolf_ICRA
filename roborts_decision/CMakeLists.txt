@@ -209,7 +209,6 @@ ${catkin_LIBRARIES}
 )
 
 
-# red_wing
 add_executable(test_behavior_node
 test_behavior.cpp
 ${DecisionProtoHds}
@@ -234,7 +233,37 @@ ${catkin_LIBRARIES}
 -lzmq
 )
 
+add_executable(single_robot_node
+single_robot.cpp
+${DecisionProtoHds}
+${DecisionProtoSrc}
+${TORCH_INCLUDE_DIRS}
+example_behavior/escape_behavior.h
+example_behavior/back_boot_area_behavior.h
+example_behavior/chase_behavior.h
+example_behavior/patrol_behavior.h
+example_behavior/search_behavior.h
+example_behavior/nn_behavior.h
+example_behavior/defense_behavior.h
+executor/chassis_executor.cpp
+)
 
+target_link_libraries(single_robot_node 
+PRIVATE
+${TORCH_LIBRARIES}
+roborts_costmap
+${catkin_LIBRARIES}
+#${PROTOBUF_LIBRARIES}
+-lzmq
+)
 
+add_executable(referee_system_node
+referee_system_node.cpp
+)
+
+target_link_libraries(referee_system_node 
+PRIVATE
+${catkin_LIBRARIES}
+)
 
 
