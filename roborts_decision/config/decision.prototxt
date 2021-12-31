@@ -1,24 +1,22 @@
-use_camera: false
+use_camera: true
 master: true
-isblue: false
-usewifi: true
+isblue: true
+usewifi: false
 master_ip: "tcp://127.0.0.1:1111"
 guard_ip: "tcp://192.168.1.128:5556"
-remain_bullet: 999999999
-strategy:  "no_go_buff"   # "go_buff", "no_go_buff", "together"
+remain_bullet: 100
+strategy:  "attack"   # "go_buff", "no_go_buff", "together","attack"
 can_shoot: false
-can_dodge: true
+can_dodge: false
 dodge_in_reload: true
-shoot_hz: 7
-use_refree: false
-
-
+shoot_hz: 10
+use_refree: true
 
 blue {
 	master_bot {
 	  start_position {
-		x: 7.65  
-		y: 4.66  
+		x: 7.58 
+		y: 0.5
 		z: 0
 
 		roll:  0
@@ -29,8 +27,8 @@ blue {
 
 	wing_bot {
 	  start_position {
-		x: 0.65  
-		y: 4.66  
+		x: 7.58  
+		y: 3.88  
 		z: 0
 
 		roll:  0
@@ -39,150 +37,127 @@ blue {
 	  }
 	}
 	
-	reload_point{
-		x: 4.0
-		y: 0.72
-		z: 0.0
-		
-		roll:  0
-		pitch: 0
-		yaw:   1.57
-	}
-	
-	shield_point{
-		x: 1.69
-		y: 3.28
-		z: 0.0
-		
-		roll:  0
-		pitch: 0
-		yaw:   -0.75
-	}
-        
-        # blue left opp reload
-        patrol{
-	  x: 3.03
-	  y: 4.52
-	  z: 0
+    # blue left opp reload
+    patrol{
+        x: 3.03
+        y: 4.52
+        z: 0
 	  
-	  roll: 0
-	  pitch: 0
-	  yaw: -1.57
-        }
+        roll: 0
+        pitch: 0
+        yaw: -1.57
+    }
         
-        # blue right opp reload
-        patrol{
-           x: 5.65
-	   y: 4.45
-	   z: 0
-	  
-	   roll: 0
-	   pitch: 0
-	   yaw: -1.57
-               
-        }
+    # blue right opp reload
+    patrol{
+        x: 5.65
+        y: 4.45
+        z: 0
+        
+        roll: 0
+        pitch: 0
+        yaw: -1.57  
+    }
 
 	# blue left center opp reload
-        patrol{
-          x: 2.69
-	  y: 3.21
-	  z: 0
-	  
-	  roll: 0
-	  pitch: 0
-	  yaw: -1.57
-        }
+    patrol{
+        x: 2.69
+        y: 3.21
+        z: 0
+        
+        roll: 0
+        pitch: 0
+        yaw: -1.57
+    }
 
-        # blue center up opp reload
-        patrol{
-          x: 4.1
-	  y: 3.28
-	  z: 0
-	  
-	  roll: 0
-	  pitch: 0
-	  yaw: 3.14
-        }
+    # blue center up opp reload
+    patrol{
+        x: 4.1
+        y: 3.28
+        z: 0
+        
+        roll: 0
+        pitch: 0
+        yaw: 3.14
+    }
 
 	
 
         # blue right center opp reload
-        patrol{
-          x: 5.62
-	  y: 3.38
-	  z: 0
+    patrol{
+        x: 5.62
+        y: 3.38
+        z: 0
 	  
-	  roll: 0
-	  pitch: 0
-	  yaw: -1.57    
-        }
+        roll: 0
+        pitch: 0
+        yaw: -1.57    
+    }
 	
         # blue left center my reload
-        patrol{
-          x: 2.65
-	  y: 1.66
-	  z: 0
+    patrol{
+        x: 2.65
+        y: 1.66
+        z: 0
 
-	  roll:  0
-	  pitch: 0
-	  yaw:   1.57
-        }
+        roll:  0
+        pitch: 0
+        yaw:   1.57
+    }
 
-        # blue center up my reload
-        patrol{
-          x: 4.24
-	  y: 1.79
-	  z: 0
+    # blue center up my reload
+    patrol{
+        x: 4.24
+        y: 1.79
+        z: 0
 
-	  roll:  0
-	  pitch: 0
-	  yaw:   0
-        }
+        roll:  0
+        pitch: 0
+        yaw:   0
+    }
 
-        # blue right up my reload
-        patrol{
-          x: 5.48
-	  y: 1.79
-	  z: 0
+    # blue right up my reload
+    patrol{
+        x: 5.48
+        y: 1.79
+        z: 0
 	  
-	  roll: 0
-	  pitch: 0
-	  yaw: 1.57
-          
-        }
+        roll: 0
+        pitch: 0
+        yaw: 1.57
+    }
 
-        # blue left my reload
-        patrol{
-           x: 2.65
-  	   y: 0.62
-  	   z: 0
+    # blue left my reload
+    patrol{
+        x: 2.65
+        y: 0.62
+        z: 0
 
-  	   roll:  0
-  	   pitch: 0
-  	   yaw:   1.57
-        }
+        roll:  0
+        pitch: 0
+        yaw:   1.57
+    }
 
 
-        # blue right my reload
-        patrol{
-          x: 5.34
-  	  y: 0.48
-	  z: 0
+    # blue right my reload
+    patrol{
+        x: 5.34
+        y: 0.48
+        z: 0
 
-	  roll:  0
-	  pitch: 0
-	  yaw:   1.57
+        roll:  0
+        pitch: 0
+        yaw:   1.57
         }
 	
 }
 
-
-
+############# red ##############
 red {
 	master_bot {
 	  start_position {
-		x: 0.72  
-		y: 0.78  
+		x: 0.5  
+		y: 3.88 
 		z: 0
 
 		roll:  0
@@ -193,8 +168,8 @@ red {
 
 	wing_bot {
 	  start_position {
-		x: 7.72  
-		y: 0.42  
+		x: 0.5 
+		y: 0.5
 		z: 0
 
 		roll:  0
@@ -202,153 +177,119 @@ red {
 		yaw:   1.57 
 	  }
 	}
-	
-	reload_point{
-		x: 4.0
-		y: 4.28
-		z: 0.0
-		
-		roll:  0
-		pitch: 0
-		yaw:   -1.57
-	}
-	
-	shield_point{
-		x: 6.31
-		y: 1.72
-		z: 0.0
-		
-		roll:  0
-		pitch: 0
-		yaw:   2.39
-	}
 
-
-
-        # red left opp reload
-        patrol{
-           x: 2.65
-  	   y: 0.62
-  	   z: 0
+    # red left opp reload
+    patrol{
+        x: 2.65
+        y: 0.62
+        z: 0
 
   	   roll:  0
   	   pitch: 0
   	   yaw:   1.57
-        }
+    }
         
-        # red right opp reload
-        patrol{
-          x: 5.34
-  	  y: 0.48
-	  z: 0
+    # red right opp reload
+    patrol{
+        x: 5.34
+        y: 0.48
+        z: 0
 
-	  roll:  0
-	  pitch: 0
-	  yaw:   1.57
-
+        roll:  0
+        pitch: 0
+        yaw:   1.57
         }
 
 	# red left center opp reload
-        patrol{
-          x: 2.65
-	  y: 1.66
-	  z: 0
+    patrol{
+        x: 2.65
+        y: 1.66
+        z: 0
 
-	  roll:  0
-	  pitch: 0
-	  yaw:   1.57
+        roll:  0
+        pitch: 0
+        yaw:   1.57
+    }
 
-        }
+    # red center up opp reload
+    patrol{
+        x: 4.24
+        y: 1.79
+        z: 0
 
-        # red center up opp reload
-        patrol{
-          x: 4.24
-	  y: 1.79
-	  z: 0
-
-	  roll:  0
-	  pitch: 0
-	  yaw:   0
-        }
+        roll:  0
+        pitch: 0
+        yaw:   0
+    }
 
 
-        # red right center opp reload
-        patrol{
-          x: 5.48
-	  y: 1.79
-	  z: 0
+    # red right center opp reload
+    patrol{
+        x: 5.48
+        y: 1.79
+        z: 0
 	  
-	  roll: 0
-	  pitch: 0
-	  yaw: 1.57
-
+        roll: 0
+        pitch: 0
+        yaw: 1.57
         }
 	
-        # red left center my reload
-        patrol{
-          x: 2.69
-	  y: 3.21
-	  z: 0
+    # red left center my reload
+    patrol{
+        x: 2.69
+        y: 3.21
+        z: 0
 	  
-	  roll: 0
-	  pitch: 0
-	  yaw: -1.57
-
+        roll: 0
+        pitch: 0
+        yaw: -1.57
         }
 
-        # red center up my reload
-        patrol{
-          x: 4.1
-	  y: 3.28
-	  z: 0
+    # red center up my reload
+    patrol{
+        x: 4.1
+        y: 3.28
+        z: 0
 	  
-	  roll: 0
-	  pitch: 0
-	  yaw: 3.14
-
+        roll: 0
+        pitch: 0
+        yaw: 3.14
         }
 
-        # red right up my reload
-        patrol{
-          x: 5.62
-	  y: 3.38
-	  z: 0
+    # red right up my reload
+    patrol{
+        x: 5.62
+        y: 3.38
+        z: 0
 	  
-	  roll: 0
-	  pitch: 0
-	  yaw: -1.57
-
+        roll: 0
+        pitch: 0
+        yaw: -1.57
         }
 
-        # red left my reload
-        patrol{
-          x: 3.03
-	  y: 4.52
-	  z: 0
+    # red left my reload
+    patrol{
+        x: 3.03
+        y: 4.52
+        z: 0
 	  
-	  roll: 0
-	  pitch: 0
-	  yaw: -1.57
+        roll: 0
+        pitch: 0
+        yaw: -1.57
+    }
 
-        }
 
-
-        # red right my reload
-        patrol{
-          x: 5.65
-	  y: 4.45
-	  z: 0
+    # red right my reload
+    patrol{
+        x: 5.65
+        y: 4.45
+        z: 0
 	  
-	  roll: 0
-	  pitch: 0
-	  yaw: -1.57
-
-        }
-	
-	
+        roll: 0
+        pitch: 0
+        yaw: -1.57
+    }
 }
-
-
 
 
 escape {

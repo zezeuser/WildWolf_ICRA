@@ -58,7 +58,6 @@ void StaticLayer::OnInitialize() {
   ros::NodeHandle nh;
   is_current_ = true;
   ParaStaticLayer para_static_layer;
-
   std::string static_map = ros::package::getPath("roborts_costmap") + \
       "/config/static_layer_config.prototxt";
   roborts_common::ReadProtoFromTextFile(static_map.c_str(), &para_static_layer);
@@ -75,6 +74,7 @@ void StaticLayer::OnInitialize() {
   bool is_debug_ = para_static_layer.is_debug();
   map_topic_ = para_static_layer.topic_name();
   map_sub_ = nh.subscribe(map_topic_.c_str(), 1, &StaticLayer::InComingMap, this);
+  buff_sub_ = nh.subscribe("game_zone_array_status", 1 ,&StaticLayer::UpdateBuffCallBack,this);
   ros::Rate temp_rate(10);
   while(!map_received_) {
     ros::spinOnce();
@@ -85,6 +85,51 @@ void StaticLayer::OnInitialize() {
   height_ = size_y_;
   is_enabled_ = true;
   has_updated_data_ = true;
+}
+
+void StaticLayer::UpdateBuffCallBack(const roborts_msgs::GameZoneArrayConstPtr& zone){
+    // buff update point 
+    auto nomovement = roborts_msgs::GameZone::DISABLE_MOVEMENT;
+    auto noshootment = roborts_msgs::GameZone::DISABLE_SHOOTING;
+    unsigned int nomove_mappoint[2];
+    unsigned int noshoot_mappoint[2];
+    for (int m = 0; m < 6; m++) {
+        if (zone->zone[m].type == nomovement) {
+            nomove_active_  = zone->zone[m].active;
+            Costmap2D::World2Map(buff_point_[0 + m*2], buff_point_[1 + m*2], nomove_mappoint[0] ,nomove_mappoint[1]);
+        }
+        if (zone->zone[m].type == noshootment) {
+            noshoot_active_  = zone->zone[m].active;
+            Costmap2D::World2Map(buff_point_[0 + m*2], buff_point_[1 + m*2], noshoot_mappoint[0] ,noshoot_mappoint[1]);
+        }
+    }
+    if((last_sactive_ != noshoot_active_) || (last_mactive_ != nomove_active_)){
+        if(nomove_active_ ){
+            int  index = GetIndex(nomove_mappoint[0],nomove_mappoint[1]) ;
+            for(int i = index - 5 ; i < index + 5 ; ++i){
+                costmap_[i] = LETHAL_OBSTACLE;
+            }
+        }else{
+            int  index = GetIndex(nomove_mappoint[0],nomove_mappoint[1]) ;
+            for(int i = index - 5 ; i < index + 5 ; ++i){
+                costmap_[i] = FREE_SPACE;
+            }
+        }
+        if(noshoot_active_){
+            int  index = GetIndex(noshoot_mappoint[0],noshoot_mappoint[1]) ;
+            for(int i = index - 5 ; i < index + 5 ; ++i){
+                costmap_[i] = LETHAL_OBSTACLE;
+            }
+        }else{
+            int  index = GetIndex(noshoot_mappoint[0],noshoot_mappoint[1]) ;
+            for(int i = index - 5 ; i < index + 5 ; ++i){
+                costmap_[i] = FREE_SPACE;
+            }
+        }
+        has_updated_data_ = true;
+    }
+    last_mactive_ = nomove_active_;
+    last_sactive_ = noshoot_active_;
 }
 
 void StaticLayer::MatchSize() {

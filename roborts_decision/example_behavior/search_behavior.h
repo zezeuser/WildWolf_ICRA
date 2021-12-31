@@ -56,10 +56,10 @@ class SearchBehavior {
       if (blackboard_->info.got_last_enemy){
           geometry_msgs::PoseStamped last_enemy = blackboard_->GetEnemy();
           blackboard_->info.got_last_enemy = false;
-          if (!blackboard_->IsBombAllyGoal(last_enemy)){
+        //   if (!blackboard_->IsBombAllyGoal(last_enemy)){
                 chassis_executor_->Execute(last_enemy);
                 blackboard_->SetMyGoal(last_enemy);
-          }
+        //   }
       }
       else if (SearchBegin){
           SearchBegin = false;
@@ -88,10 +88,8 @@ class SearchBehavior {
           if (!blackboard_->IsBombAllyGoal(goal)){
               chassis_executor_->Execute(goal);
               blackboard_->SetMyGoal(goal);
-             
           }
            search_index_ = (search_index_ + 1) % search_region_1_.size();
-          
       }
 
 

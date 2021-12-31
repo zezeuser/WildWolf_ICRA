@@ -30,25 +30,17 @@ class ShieldBehavior {
     shield_position_.pose.position.z = 0;
 
     starting_buff = false;
-    UpdateReloadZoon();
-
   }
 
   void Run() {
     
     auto executor_state = Update();
-    UpdateReloadZoon();
+    UpdateShieldZoon();
     auto robot_map_pose = blackboard_->GetRobotMapPose();
     auto dx = shield_position_.pose.position.x - robot_map_pose.pose.position.x;
     auto dy = shield_position_.pose.position.y - robot_map_pose.pose.position.y;
-
-    auto boot_yaw = tf::getYaw(shield_position_.pose.orientation);
-    auto robot_yaw = tf::getYaw(robot_map_pose.pose.orientation);
-
-    tf::Quaternion rot1, rot2;
-    tf::quaternionMsgToTF(shield_position_.pose.orientation, rot1);
-    tf::quaternionMsgToTF(robot_map_pose.pose.orientation, rot2);
-    auto d_yaw =  rot1.angleShortestPath(rot2);
+    geometry_msgs::PoseStamped enemy_position = blackboard_->GetEnemy();
+    shield_position_.pose.orientation = blackboard_->GetRelativeQuaternion(shield_position_,enemy_position);
 
     if (executor_state != BehaviorState::RUNNING) {
       if (std::sqrt(std::pow(dx, 2) + std::pow(dy, 2)) > 0.2
@@ -95,7 +87,7 @@ class ShieldBehavior {
     return chassis_executor_->Update();
   }
 
-  void UpdateReloadZoon(){
+  void UpdateShieldZoon(){
     shield_position_ = blackboard_ -> info.my_shield;
   }
 

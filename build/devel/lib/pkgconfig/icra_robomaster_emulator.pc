@@ -1,0 +1,8 @@
+prefix=/home/zeze/catkin_ws/src/build/devel
+
+Name: icra_robomaster_emulator
+Description: Description of icra_robomaster_emulator
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs roborts_msgs roscpp std_msgs

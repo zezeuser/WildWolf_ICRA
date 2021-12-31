@@ -27,15 +27,11 @@ class AttackBehavior {
   void Run() {
 
     auto executor_state = Update();
-
-
     // directly to enemy
     if (executor_state != BehaviorState::RUNNING){
         geometry_msgs::PoseStamped enemy_pose = blackboard_->GetEnemy();
         chassis_executor_->Execute(enemy_pose);
         blackboard_->SetMyGoal(enemy_pose);
-       
-
     }
 
     

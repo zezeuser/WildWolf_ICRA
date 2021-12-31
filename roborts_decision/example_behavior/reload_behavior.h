@@ -20,7 +20,7 @@ namespace roborts_decision
                                const std::string &proto_file_path) : chassis_executor_(chassis_executor),
                                                                      blackboard_(blackboard),
                                                                      count(0),
-                                                                     count_limit(60)
+                                                                     count_limit(20)
                 {
 
                         start_supplying = false;
@@ -34,7 +34,6 @@ namespace roborts_decision
                         reload_position_.pose.position.y = 0;
                         reload_position_.pose.position.z = 0;
                         supply_bullet = 0;
-                        UpdateReloadZoon();
                 }
 
                 void Run()
@@ -46,71 +45,19 @@ namespace roborts_decision
                         auto robot_map_pose = blackboard_->GetRobotMapPose();
                         auto dx = reload_position_.pose.position.x - robot_map_pose.pose.position.x;
                         auto dy = reload_position_.pose.position.y - robot_map_pose.pose.position.y;
-
-                        auto d_yaw = blackboard_->GetAngle(reload_position_, robot_map_pose);
-                        geometry_msgs::PoseStamped enemy;
-
+                        geometry_msgs::PoseStamped enemy_position = blackboard_->GetEnemy();
+                        reload_position_.pose.orientation = blackboard_->GetRelativeQuaternion(reload_position_,enemy_position);
+                        // auto d_yaw = blackboard_->GetAngle(reload_position_, robot_map_pose);
                         if (executor_state != BehaviorState::RUNNING)
                         {
-                                if ((std::sqrt(std::pow(dx, 2) + std::pow(dy, 2)) > 0.2) && !blackboard_->IsBombAllyGoal(reload_position_) && !start_supplying)
-                                {
+                                if ((std::sqrt(std::pow(dx, 2) + std::pow(dy, 2)) > 0.2) 
+                                    && !blackboard_->IsBombAllyGoal(reload_position_) 
+                                    && !start_supplying)
+                                {       
+                                        ROS_INFO("reload_position x %f , y %f " ,reload_position_.pose.position.x,reload_position_.pose.position.y );
                                         chassis_executor_->Execute(reload_position_);
                                         blackboard_->SetMyGoal(reload_position_);
                                 }
-                        }
-
-                        // add ambush when I have bullet
-                        if ((blackboard_->info.remain_bullet > 0) ||
-                            (!blackboard_->hasOtherUnitsInThisArea(ambush_pose) && blackboard_->GetDistance(blackboard_->info.ally, reload_position_) <= blackboard_->threshold.near_dist))
-                        {
-                                if (blackboard_->GetDistance(robot_map_pose, ambush_pose) >= blackboard_->threshold.near_dist)
-                                {
-                                        if (blackboard_->info.has_my_enemy)
-                                        {
-                                                // 有敌人则朝向敌人
-                                                enemy = blackboard_->GetEnemy();
-                                                ambush_pose.pose.orientation = blackboard_->GetRelativeQuaternion(enemy, ambush_pose);
-                                        }
-                                        else
-                                        {
-                                                //没有敌人则朝向敌人的装载区
-                                                ambush_pose.pose.orientation = blackboard_->GetRelativeQuaternion(blackboard_->info.opp_reload, blackboard_->info.my_reload);
-                                        }
-                                        chassis_executor_->Execute(ambush_pose);
-                                        blackboard_->SetMyGoal(ambush_pose);
-                                }
-                                else
-                                {
-                                        if (blackboard_->info.has_my_enemy)
-                                        {
-                                                enemy = blackboard_->GetEnemy();
-                                                robot_map_pose.pose.orientation = blackboard_->GetRelativeQuaternion(enemy, robot_map_pose);
-                                        }
-                                        else
-                                        {
-                                                robot_map_pose.pose.orientation = blackboard_->GetRelativeQuaternion(blackboard_->info.opp_reload, blackboard_->info.my_reload);
-                                        }
-                                        chassis_executor_->Execute(robot_map_pose);
-                                        blackboard_->SetMyGoal(robot_map_pose);
-                                }
-                        }
-
-                        // start reload
-                        if (std::sqrt(std::pow(dx, 2) + std::pow(dy, 2)) <= 0.15 && count == 0)
-                        {
-                                blackboard_->info.is_supplying = true;
-                                start_supplying = true;
-                                new_thread = new std::thread(boost::bind(&ReloadBehavior::CountLoop, this));
-                        }
-
-                        // finish reload
-                        if (count >= count_limit || (start_supplying && !blackboard_->info.is_supplying))
-                        {
-                                std::cout << "Reload is finised!" << std::endl;
-                                new_thread->join();
-                                start_supplying = false;
-                                blackboard_->info.is_supplying = false;
-                                count = 0;
                         }
                 }
 
@@ -129,16 +76,6 @@ namespace roborts_decision
                 void UpdateReloadZoon()
                 {
                         reload_position_ = blackboard_->info.my_reload;
-                }
-
-                void CountLoop()
-                {
-                        ros::Rate loop(10);
-                        while (count < count_limit)
-                        {
-                                count++;
-                                loop.sleep();
-                        }
                 }
 
                 ~ReloadBehavior() = default;

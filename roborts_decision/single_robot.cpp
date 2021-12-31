@@ -13,6 +13,7 @@
 #include "example_behavior/ambush_behavior.h"
 #include "example_behavior/attack_behavior.h"
 #include "example_behavior/nn_behavior.h"
+#include "example_behavior/defense_behavior.h"
 
 enum BehaviorStateEnum{
         INIT = -1,
@@ -54,6 +55,7 @@ int main(int argc, char **argv) {
     roborts_decision::AmbushBehavior    ambush_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::AttackBehavior    attack_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::NNBehavior        nn_behavior(chassis_executor, blackboard, full_path);
+    roborts_decision::DefenseBehavior   defense_behavior(chassis_executor, blackboard, full_path);
     ros::Rate rate(10);
 
     // for filter noise command
@@ -78,10 +80,8 @@ int main(int argc, char **argv) {
                 
                         if (blackboard->CanDodge()) {
                         blackboard->StartDodge(); 
-                        // printf("In Dodge!\n");
+                        // defense_behavior.Run();
                         }
-                        // else 
-                        //   printf("Not In Dodge!\n");
                 }
                 if (blackboard->CanShoot()) blackboard->Shoot(blackboard->info.shoot_hz);
                 // my pose
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
                                                 && blackboard->GetDistance(blackboard->info.ally, blackboard->info.my_shield)>= blackboard->threshold.near_dist)
                                                 || blackboard->info.is_shielding)             
                                                 {
-                                                // hp > 400 , remain_bullet > 0 , shield buff刷新且未获取，自己距离 shield buff 比较远执行获取 shield buff 行为
+                                                // hp > 400 , remain_bullet > 0 , shield buff刷新且未获取，执行获取 shield buff 行为
                                                 cur_state = BehaviorStateEnum::SHIELD;
                                         }
                                         else if (!blackboard->info.has_my_enemy){

@@ -96,7 +96,7 @@ int main( int argc, char** argv ) {
   std::string full_path = ros::package::getPath("roborts_planning") + \
       "/local_planner/timed_elastic_band/config/timed_elastic_band.prototxt";
   roborts_common::ReadProtoFromTextFile(full_path.c_str(), &param_config_);
-  ros::Timer cycle_timer = nh.createTimer(ros::Duration(0.025), CB_mainCycle);
+  ros::Timer cycle_timer = nh.createTimer(ros::Duration(0.025), CB_mainCycle);  //0.025
   ros::Timer publish_timer = nh.createTimer(ros::Duration(0.1), CB_publishCycle);
 
   interactive_markers::InteractiveMarkerServer marker_server("marker_obstacles");

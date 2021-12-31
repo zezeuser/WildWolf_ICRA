@@ -3,7 +3,7 @@
 #include "roborts_msgs/Target.h"
 
 
-
+// 小车
 struct Detections{
     int num_id_target;
     int num_no_id_target;
@@ -28,6 +28,7 @@ struct ComInfo{
     
 };
 
+// 哨岗
 typedef  struct Position_xy
 {
     float x;

@@ -109,13 +109,6 @@ class Point : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
     return *this;
   }
   #endif
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields();
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields();
-  }
-
   static const ::google::protobuf::Descriptor* descriptor();
   static const Point& default_instance();
 
@@ -177,43 +170,37 @@ class Point : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 
   // accessors -------------------------------------------------------
 
-  // optional float x = 1;
-  bool has_x() const;
+  // float x = 1;
   void clear_x();
   static const int kXFieldNumber = 1;
   float x() const;
   void set_x(float value);
 
-  // optional float y = 2;
-  bool has_y() const;
+  // float y = 2;
   void clear_y();
   static const int kYFieldNumber = 2;
   float y() const;
   void set_y(float value);
 
-  // optional float z = 3;
-  bool has_z() const;
+  // float z = 3;
   void clear_z();
   static const int kZFieldNumber = 3;
   float z() const;
   void set_z(float value);
 
-  // optional float roll = 4;
-  bool has_roll() const;
+  // float roll = 4;
   void clear_roll();
   static const int kRollFieldNumber = 4;
   float roll() const;
   void set_roll(float value);
 
-  // optional float pitch = 5;
-  bool has_pitch() const;
+  // float pitch = 5;
   void clear_pitch();
   static const int kPitchFieldNumber = 5;
   float pitch() const;
   void set_pitch(float value);
 
-  // optional float yaw = 6;
-  bool has_yaw() const;
+  // float yaw = 6;
   void clear_yaw();
   static const int kYawFieldNumber = 6;
   float yaw() const;
@@ -221,28 +208,15 @@ class Point : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 
   // @@protoc_insertion_point(class_scope:roborts_decision.Point)
  private:
-  void set_has_x();
-  void clear_has_x();
-  void set_has_y();
-  void clear_has_y();
-  void set_has_z();
-  void clear_has_z();
-  void set_has_roll();
-  void clear_has_roll();
-  void set_has_pitch();
-  void clear_has_pitch();
-  void set_has_yaw();
-  void clear_has_yaw();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::HasBits<1> _has_bits_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   float x_;
   float y_;
   float z_;
   float roll_;
   float pitch_;
   float yaw_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_decision_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
@@ -273,13 +247,6 @@ class EscapeConstraint : public ::google::protobuf::Message /* @@protoc_insertio
     return *this;
   }
   #endif
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields();
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields();
-  }
-
   static const ::google::protobuf::Descriptor* descriptor();
   static const EscapeConstraint& default_instance();
 
@@ -341,50 +308,43 @@ class EscapeConstraint : public ::google::protobuf::Message /* @@protoc_insertio
 
   // accessors -------------------------------------------------------
 
-  // optional float left_x_limit = 1;
-  bool has_left_x_limit() const;
+  // float left_x_limit = 1;
   void clear_left_x_limit();
   static const int kLeftXLimitFieldNumber = 1;
   float left_x_limit() const;
   void set_left_x_limit(float value);
 
-  // optional float right_x_limit = 2;
-  bool has_right_x_limit() const;
+  // float right_x_limit = 2;
   void clear_right_x_limit();
   static const int kRightXLimitFieldNumber = 2;
   float right_x_limit() const;
   void set_right_x_limit(float value);
 
-  // optional float robot_x_limit = 3;
-  bool has_robot_x_limit() const;
+  // float robot_x_limit = 3;
   void clear_robot_x_limit();
   static const int kRobotXLimitFieldNumber = 3;
   float robot_x_limit() const;
   void set_robot_x_limit(float value);
 
-  // optional float left_random_min_x = 4;
-  bool has_left_random_min_x() const;
+  // float left_random_min_x = 4;
   void clear_left_random_min_x();
   static const int kLeftRandomMinXFieldNumber = 4;
   float left_random_min_x() const;
   void set_left_random_min_x(float value);
 
-  // optional float left_random_max_x = 5;
-  bool has_left_random_max_x() const;
+  // float left_random_max_x = 5;
   void clear_left_random_max_x();
   static const int kLeftRandomMaxXFieldNumber = 5;
   float left_random_max_x() const;
   void set_left_random_max_x(float value);
 
-  // optional float right_random_min_x = 6;
-  bool has_right_random_min_x() const;
+  // float right_random_min_x = 6;
   void clear_right_random_min_x();
   static const int kRightRandomMinXFieldNumber = 6;
   float right_random_min_x() const;
   void set_right_random_min_x(float value);
 
-  // optional float right_random_max_x = 7;
-  bool has_right_random_max_x() const;
+  // float right_random_max_x = 7;
   void clear_right_random_max_x();
   static const int kRightRandomMaxXFieldNumber = 7;
   float right_random_max_x() const;
@@ -392,24 +352,8 @@ class EscapeConstraint : public ::google::protobuf::Message /* @@protoc_insertio
 
   // @@protoc_insertion_point(class_scope:roborts_decision.EscapeConstraint)
  private:
-  void set_has_left_x_limit();
-  void clear_has_left_x_limit();
-  void set_has_right_x_limit();
-  void clear_has_right_x_limit();
-  void set_has_robot_x_limit();
-  void clear_has_robot_x_limit();
-  void set_has_left_random_min_x();
-  void clear_has_left_random_min_x();
-  void set_has_left_random_max_x();
-  void clear_has_left_random_max_x();
-  void set_has_right_random_min_x();
-  void clear_has_right_random_min_x();
-  void set_has_right_random_max_x();
-  void clear_has_right_random_max_x();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::HasBits<1> _has_bits_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   float left_x_limit_;
   float right_x_limit_;
   float robot_x_limit_;
@@ -417,6 +361,7 @@ class EscapeConstraint : public ::google::protobuf::Message /* @@protoc_insertio
   float left_random_max_x_;
   float right_random_min_x_;
   float right_random_max_x_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_decision_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
@@ -447,13 +392,6 @@ class SearchConstraint : public ::google::protobuf::Message /* @@protoc_insertio
     return *this;
   }
   #endif
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields();
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields();
-  }
-
   static const ::google::protobuf::Descriptor* descriptor();
   static const SearchConstraint& default_instance();
 
@@ -515,15 +453,13 @@ class SearchConstraint : public ::google::protobuf::Message /* @@protoc_insertio
 
   // accessors -------------------------------------------------------
 
-  // optional float x_limit = 1;
-  bool has_x_limit() const;
+  // float x_limit = 1;
   void clear_x_limit();
   static const int kXLimitFieldNumber = 1;
   float x_limit() const;
   void set_x_limit(float value);
 
-  // optional float y_limit = 2;
-  bool has_y_limit() const;
+  // float y_limit = 2;
   void clear_y_limit();
   static const int kYLimitFieldNumber = 2;
   float y_limit() const;
@@ -531,16 +467,11 @@ class SearchConstraint : public ::google::protobuf::Message /* @@protoc_insertio
 
   // @@protoc_insertion_point(class_scope:roborts_decision.SearchConstraint)
  private:
-  void set_has_x_limit();
-  void clear_has_x_limit();
-  void set_has_y_limit();
-  void clear_has_y_limit();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::HasBits<1> _has_bits_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   float x_limit_;
   float y_limit_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_decision_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
@@ -571,13 +502,6 @@ class WhirlVel : public ::google::protobuf::Message /* @@protoc_insertion_point(
     return *this;
   }
   #endif
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields();
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields();
-  }
-
   static const ::google::protobuf::Descriptor* descriptor();
   static const WhirlVel& default_instance();
 
@@ -639,22 +563,19 @@ class WhirlVel : public ::google::protobuf::Message /* @@protoc_insertion_point(
 
   // accessors -------------------------------------------------------
 
-  // optional float angle_x_vel = 1;
-  bool has_angle_x_vel() const;
+  // float angle_x_vel = 1;
   void clear_angle_x_vel();
   static const int kAngleXVelFieldNumber = 1;
   float angle_x_vel() const;
   void set_angle_x_vel(float value);
 
-  // optional float angle_y_vel = 2;
-  bool has_angle_y_vel() const;
+  // float angle_y_vel = 2;
   void clear_angle_y_vel();
   static const int kAngleYVelFieldNumber = 2;
   float angle_y_vel() const;
   void set_angle_y_vel(float value);
 
-  // optional float angle_z_vel = 3;
-  bool has_angle_z_vel() const;
+  // float angle_z_vel = 3;
   void clear_angle_z_vel();
   static const int kAngleZVelFieldNumber = 3;
   float angle_z_vel() const;
@@ -662,19 +583,12 @@ class WhirlVel : public ::google::protobuf::Message /* @@protoc_insertion_point(
 
   // @@protoc_insertion_point(class_scope:roborts_decision.WhirlVel)
  private:
-  void set_has_angle_x_vel();
-  void clear_has_angle_x_vel();
-  void set_has_angle_y_vel();
-  void clear_has_angle_y_vel();
-  void set_has_angle_z_vel();
-  void clear_has_angle_z_vel();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::HasBits<1> _has_bits_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   float angle_x_vel_;
   float angle_y_vel_;
   float angle_z_vel_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_decision_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
@@ -705,13 +619,6 @@ class MultiRobot : public ::google::protobuf::Message /* @@protoc_insertion_poin
     return *this;
   }
   #endif
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields();
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields();
-  }
-
   static const ::google::protobuf::Descriptor* descriptor();
   static const MultiRobot& default_instance();
 
@@ -773,7 +680,7 @@ class MultiRobot : public ::google::protobuf::Message /* @@protoc_insertion_poin
 
   // accessors -------------------------------------------------------
 
-  // optional .roborts_decision.Point start_position = 7;
+  // .roborts_decision.Point start_position = 7;
   bool has_start_position() const;
   void clear_start_position();
   static const int kStartPositionFieldNumber = 7;
@@ -787,13 +694,10 @@ class MultiRobot : public ::google::protobuf::Message /* @@protoc_insertion_poin
 
   // @@protoc_insertion_point(class_scope:roborts_decision.MultiRobot)
  private:
-  void set_has_start_position();
-  void clear_has_start_position();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::HasBits<1> _has_bits_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::roborts_decision::Point* start_position_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_decision_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
@@ -824,13 +728,6 @@ class BlueOrRedGroup : public ::google::protobuf::Message /* @@protoc_insertion_
     return *this;
   }
   #endif
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields();
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields();
-  }
-
   static const ::google::protobuf::Descriptor* descriptor();
   static const BlueOrRedGroup& default_instance();
 
@@ -904,7 +801,7 @@ class BlueOrRedGroup : public ::google::protobuf::Message /* @@protoc_insertion_
   const ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point >&
       patrol() const;
 
-  // optional .roborts_decision.MultiRobot master_bot = 1;
+  // .roborts_decision.MultiRobot master_bot = 1;
   bool has_master_bot() const;
   void clear_master_bot();
   static const int kMasterBotFieldNumber = 1;
@@ -916,7 +813,7 @@ class BlueOrRedGroup : public ::google::protobuf::Message /* @@protoc_insertion_
   ::roborts_decision::MultiRobot* mutable_master_bot();
   void set_allocated_master_bot(::roborts_decision::MultiRobot* master_bot);
 
-  // optional .roborts_decision.MultiRobot wing_bot = 2;
+  // .roborts_decision.MultiRobot wing_bot = 2;
   bool has_wing_bot() const;
   void clear_wing_bot();
   static const int kWingBotFieldNumber = 2;
@@ -928,7 +825,7 @@ class BlueOrRedGroup : public ::google::protobuf::Message /* @@protoc_insertion_
   ::roborts_decision::MultiRobot* mutable_wing_bot();
   void set_allocated_wing_bot(::roborts_decision::MultiRobot* wing_bot);
 
-  // optional .roborts_decision.Point reload_point = 3;
+  // .roborts_decision.Point reload_point = 3;
   bool has_reload_point() const;
   void clear_reload_point();
   static const int kReloadPointFieldNumber = 3;
@@ -940,7 +837,7 @@ class BlueOrRedGroup : public ::google::protobuf::Message /* @@protoc_insertion_
   ::roborts_decision::Point* mutable_reload_point();
   void set_allocated_reload_point(::roborts_decision::Point* reload_point);
 
-  // optional .roborts_decision.Point shield_point = 4;
+  // .roborts_decision.Point shield_point = 4;
   bool has_shield_point() const;
   void clear_shield_point();
   static const int kShieldPointFieldNumber = 4;
@@ -954,23 +851,14 @@ class BlueOrRedGroup : public ::google::protobuf::Message /* @@protoc_insertion_
 
   // @@protoc_insertion_point(class_scope:roborts_decision.BlueOrRedGroup)
  private:
-  void set_has_master_bot();
-  void clear_has_master_bot();
-  void set_has_wing_bot();
-  void clear_has_wing_bot();
-  void set_has_reload_point();
-  void clear_has_reload_point();
-  void set_has_shield_point();
-  void clear_has_shield_point();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::HasBits<1> _has_bits_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point > patrol_;
   ::roborts_decision::MultiRobot* master_bot_;
   ::roborts_decision::MultiRobot* wing_bot_;
   ::roborts_decision::Point* reload_point_;
   ::roborts_decision::Point* shield_point_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_decision_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
@@ -1001,13 +889,6 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
     return *this;
   }
   #endif
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields();
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields();
-  }
-
   static const ::google::protobuf::Descriptor* descriptor();
   static const DecisionConfig& default_instance();
 
@@ -1117,8 +998,7 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   const ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point >&
       search_region_4() const;
 
-  // optional string strategy = 1;
-  bool has_strategy() const;
+  // string strategy = 1;
   void clear_strategy();
   static const int kStrategyFieldNumber = 1;
   const ::std::string& strategy() const;
@@ -1132,8 +1012,7 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   ::std::string* release_strategy();
   void set_allocated_strategy(::std::string* strategy);
 
-  // optional string master_ip = 6;
-  bool has_master_ip() const;
+  // string master_ip = 6;
   void clear_master_ip();
   static const int kMasterIpFieldNumber = 6;
   const ::std::string& master_ip() const;
@@ -1147,8 +1026,7 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   ::std::string* release_master_ip();
   void set_allocated_master_ip(::std::string* master_ip);
 
-  // optional string guard_ip = 7;
-  bool has_guard_ip() const;
+  // string guard_ip = 7;
   void clear_guard_ip();
   static const int kGuardIpFieldNumber = 7;
   const ::std::string& guard_ip() const;
@@ -1162,7 +1040,7 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   ::std::string* release_guard_ip();
   void set_allocated_guard_ip(::std::string* guard_ip);
 
-  // optional .roborts_decision.EscapeConstraint escape = 9;
+  // .roborts_decision.EscapeConstraint escape = 9;
   bool has_escape() const;
   void clear_escape();
   static const int kEscapeFieldNumber = 9;
@@ -1174,7 +1052,7 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   ::roborts_decision::EscapeConstraint* mutable_escape();
   void set_allocated_escape(::roborts_decision::EscapeConstraint* escape);
 
-  // optional .roborts_decision.BlueOrRedGroup blue = 10;
+  // .roborts_decision.BlueOrRedGroup blue = 10;
   bool has_blue() const;
   void clear_blue();
   static const int kBlueFieldNumber = 10;
@@ -1186,7 +1064,7 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   ::roborts_decision::BlueOrRedGroup* mutable_blue();
   void set_allocated_blue(::roborts_decision::BlueOrRedGroup* blue);
 
-  // optional .roborts_decision.BlueOrRedGroup red = 11;
+  // .roborts_decision.BlueOrRedGroup red = 11;
   bool has_red() const;
   void clear_red();
   static const int kRedFieldNumber = 11;
@@ -1198,7 +1076,7 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   ::roborts_decision::BlueOrRedGroup* mutable_red();
   void set_allocated_red(::roborts_decision::BlueOrRedGroup* red);
 
-  // optional .roborts_decision.SearchConstraint search_limit = 12;
+  // .roborts_decision.SearchConstraint search_limit = 12;
   bool has_search_limit() const;
   void clear_search_limit();
   static const int kSearchLimitFieldNumber = 12;
@@ -1210,7 +1088,7 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   ::roborts_decision::SearchConstraint* mutable_search_limit();
   void set_allocated_search_limit(::roborts_decision::SearchConstraint* search_limit);
 
-  // optional .roborts_decision.WhirlVel whirl_vel = 13;
+  // .roborts_decision.WhirlVel whirl_vel = 13;
   bool has_whirl_vel() const;
   void clear_whirl_vel();
   static const int kWhirlVelFieldNumber = 13;
@@ -1222,118 +1100,70 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   ::roborts_decision::WhirlVel* mutable_whirl_vel();
   void set_allocated_whirl_vel(::roborts_decision::WhirlVel* whirl_vel);
 
-  // optional bool use_camera = 2;
-  bool has_use_camera() const;
+  // bool use_camera = 2;
   void clear_use_camera();
   static const int kUseCameraFieldNumber = 2;
   bool use_camera() const;
   void set_use_camera(bool value);
 
-  // optional bool master = 3 [default = false];
-  bool has_master() const;
+  // bool master = 3;
   void clear_master();
   static const int kMasterFieldNumber = 3;
   bool master() const;
   void set_master(bool value);
 
-  // optional bool usewifi = 5;
-  bool has_usewifi() const;
-  void clear_usewifi();
-  static const int kUsewifiFieldNumber = 5;
-  bool usewifi() const;
-  void set_usewifi(bool value);
-
-  // optional bool can_shoot = 18;
-  bool has_can_shoot() const;
-  void clear_can_shoot();
-  static const int kCanShootFieldNumber = 18;
-  bool can_shoot() const;
-  void set_can_shoot(bool value);
-
-  // optional int32 remain_bullet = 8;
-  bool has_remain_bullet() const;
-  void clear_remain_bullet();
-  static const int kRemainBulletFieldNumber = 8;
-  ::google::protobuf::int32 remain_bullet() const;
-  void set_remain_bullet(::google::protobuf::int32 value);
-
-  // optional bool can_dodge = 19;
-  bool has_can_dodge() const;
-  void clear_can_dodge();
-  static const int kCanDodgeFieldNumber = 19;
-  bool can_dodge() const;
-  void set_can_dodge(bool value);
-
-  // optional bool dodge_in_reload = 20;
-  bool has_dodge_in_reload() const;
-  void clear_dodge_in_reload();
-  static const int kDodgeInReloadFieldNumber = 20;
-  bool dodge_in_reload() const;
-  void set_dodge_in_reload(bool value);
-
-  // optional bool use_refree = 22;
-  bool has_use_refree() const;
-  void clear_use_refree();
-  static const int kUseRefreeFieldNumber = 22;
-  bool use_refree() const;
-  void set_use_refree(bool value);
-
-  // optional int32 shoot_hz = 21;
-  bool has_shoot_hz() const;
-  void clear_shoot_hz();
-  static const int kShootHzFieldNumber = 21;
-  ::google::protobuf::int32 shoot_hz() const;
-  void set_shoot_hz(::google::protobuf::int32 value);
-
-  // optional bool isblue = 4 [default = true];
-  bool has_isblue() const;
+  // bool isblue = 4;
   void clear_isblue();
   static const int kIsblueFieldNumber = 4;
   bool isblue() const;
   void set_isblue(bool value);
 
+  // bool usewifi = 5;
+  void clear_usewifi();
+  static const int kUsewifiFieldNumber = 5;
+  bool usewifi() const;
+  void set_usewifi(bool value);
+
+  // int32 remain_bullet = 8;
+  void clear_remain_bullet();
+  static const int kRemainBulletFieldNumber = 8;
+  ::google::protobuf::int32 remain_bullet() const;
+  void set_remain_bullet(::google::protobuf::int32 value);
+
+  // bool can_shoot = 18;
+  void clear_can_shoot();
+  static const int kCanShootFieldNumber = 18;
+  bool can_shoot() const;
+  void set_can_shoot(bool value);
+
+  // bool can_dodge = 19;
+  void clear_can_dodge();
+  static const int kCanDodgeFieldNumber = 19;
+  bool can_dodge() const;
+  void set_can_dodge(bool value);
+
+  // bool dodge_in_reload = 20;
+  void clear_dodge_in_reload();
+  static const int kDodgeInReloadFieldNumber = 20;
+  bool dodge_in_reload() const;
+  void set_dodge_in_reload(bool value);
+
+  // bool use_refree = 22;
+  void clear_use_refree();
+  static const int kUseRefreeFieldNumber = 22;
+  bool use_refree() const;
+  void set_use_refree(bool value);
+
+  // int32 shoot_hz = 21;
+  void clear_shoot_hz();
+  static const int kShootHzFieldNumber = 21;
+  ::google::protobuf::int32 shoot_hz() const;
+  void set_shoot_hz(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:roborts_decision.DecisionConfig)
  private:
-  void set_has_strategy();
-  void clear_has_strategy();
-  void set_has_use_camera();
-  void clear_has_use_camera();
-  void set_has_master();
-  void clear_has_master();
-  void set_has_isblue();
-  void clear_has_isblue();
-  void set_has_usewifi();
-  void clear_has_usewifi();
-  void set_has_master_ip();
-  void clear_has_master_ip();
-  void set_has_guard_ip();
-  void clear_has_guard_ip();
-  void set_has_remain_bullet();
-  void clear_has_remain_bullet();
-  void set_has_escape();
-  void clear_has_escape();
-  void set_has_blue();
-  void clear_has_blue();
-  void set_has_red();
-  void clear_has_red();
-  void set_has_search_limit();
-  void clear_has_search_limit();
-  void set_has_whirl_vel();
-  void clear_has_whirl_vel();
-  void set_has_can_shoot();
-  void clear_has_can_shoot();
-  void set_has_can_dodge();
-  void clear_has_can_dodge();
-  void set_has_dodge_in_reload();
-  void clear_has_dodge_in_reload();
-  void set_has_shoot_hz();
-  void clear_has_shoot_hz();
-  void set_has_use_refree();
-  void clear_has_use_refree();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::HasBits<1> _has_bits_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point > search_region_1_;
   ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point > search_region_2_;
   ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point > search_region_3_;
@@ -1348,14 +1178,15 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   ::roborts_decision::WhirlVel* whirl_vel_;
   bool use_camera_;
   bool master_;
+  bool isblue_;
   bool usewifi_;
-  bool can_shoot_;
   ::google::protobuf::int32 remain_bullet_;
+  bool can_shoot_;
   bool can_dodge_;
   bool dodge_in_reload_;
   bool use_refree_;
   ::google::protobuf::int32 shoot_hz_;
-  bool isblue_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_decision_2eproto::TableStruct;
 };
 // ===================================================================
@@ -1369,146 +1200,86 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
 #endif  // __GNUC__
 // Point
 
-// optional float x = 1;
-inline bool Point::has_x() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void Point::set_has_x() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void Point::clear_has_x() {
-  _has_bits_[0] &= ~0x00000001u;
-}
+// float x = 1;
 inline void Point::clear_x() {
   x_ = 0;
-  clear_has_x();
 }
 inline float Point::x() const {
   // @@protoc_insertion_point(field_get:roborts_decision.Point.x)
   return x_;
 }
 inline void Point::set_x(float value) {
-  set_has_x();
+  
   x_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.Point.x)
 }
 
-// optional float y = 2;
-inline bool Point::has_y() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void Point::set_has_y() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void Point::clear_has_y() {
-  _has_bits_[0] &= ~0x00000002u;
-}
+// float y = 2;
 inline void Point::clear_y() {
   y_ = 0;
-  clear_has_y();
 }
 inline float Point::y() const {
   // @@protoc_insertion_point(field_get:roborts_decision.Point.y)
   return y_;
 }
 inline void Point::set_y(float value) {
-  set_has_y();
+  
   y_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.Point.y)
 }
 
-// optional float z = 3;
-inline bool Point::has_z() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void Point::set_has_z() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void Point::clear_has_z() {
-  _has_bits_[0] &= ~0x00000004u;
-}
+// float z = 3;
 inline void Point::clear_z() {
   z_ = 0;
-  clear_has_z();
 }
 inline float Point::z() const {
   // @@protoc_insertion_point(field_get:roborts_decision.Point.z)
   return z_;
 }
 inline void Point::set_z(float value) {
-  set_has_z();
+  
   z_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.Point.z)
 }
 
-// optional float roll = 4;
-inline bool Point::has_roll() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void Point::set_has_roll() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void Point::clear_has_roll() {
-  _has_bits_[0] &= ~0x00000008u;
-}
+// float roll = 4;
 inline void Point::clear_roll() {
   roll_ = 0;
-  clear_has_roll();
 }
 inline float Point::roll() const {
   // @@protoc_insertion_point(field_get:roborts_decision.Point.roll)
   return roll_;
 }
 inline void Point::set_roll(float value) {
-  set_has_roll();
+  
   roll_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.Point.roll)
 }
 
-// optional float pitch = 5;
-inline bool Point::has_pitch() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void Point::set_has_pitch() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void Point::clear_has_pitch() {
-  _has_bits_[0] &= ~0x00000010u;
-}
+// float pitch = 5;
 inline void Point::clear_pitch() {
   pitch_ = 0;
-  clear_has_pitch();
 }
 inline float Point::pitch() const {
   // @@protoc_insertion_point(field_get:roborts_decision.Point.pitch)
   return pitch_;
 }
 inline void Point::set_pitch(float value) {
-  set_has_pitch();
+  
   pitch_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.Point.pitch)
 }
 
-// optional float yaw = 6;
-inline bool Point::has_yaw() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline void Point::set_has_yaw() {
-  _has_bits_[0] |= 0x00000020u;
-}
-inline void Point::clear_has_yaw() {
-  _has_bits_[0] &= ~0x00000020u;
-}
+// float yaw = 6;
 inline void Point::clear_yaw() {
   yaw_ = 0;
-  clear_has_yaw();
 }
 inline float Point::yaw() const {
   // @@protoc_insertion_point(field_get:roborts_decision.Point.yaw)
   return yaw_;
 }
 inline void Point::set_yaw(float value) {
-  set_has_yaw();
+  
   yaw_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.Point.yaw)
 }
@@ -1517,170 +1288,100 @@ inline void Point::set_yaw(float value) {
 
 // EscapeConstraint
 
-// optional float left_x_limit = 1;
-inline bool EscapeConstraint::has_left_x_limit() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void EscapeConstraint::set_has_left_x_limit() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void EscapeConstraint::clear_has_left_x_limit() {
-  _has_bits_[0] &= ~0x00000001u;
-}
+// float left_x_limit = 1;
 inline void EscapeConstraint::clear_left_x_limit() {
   left_x_limit_ = 0;
-  clear_has_left_x_limit();
 }
 inline float EscapeConstraint::left_x_limit() const {
   // @@protoc_insertion_point(field_get:roborts_decision.EscapeConstraint.left_x_limit)
   return left_x_limit_;
 }
 inline void EscapeConstraint::set_left_x_limit(float value) {
-  set_has_left_x_limit();
+  
   left_x_limit_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.EscapeConstraint.left_x_limit)
 }
 
-// optional float right_x_limit = 2;
-inline bool EscapeConstraint::has_right_x_limit() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void EscapeConstraint::set_has_right_x_limit() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void EscapeConstraint::clear_has_right_x_limit() {
-  _has_bits_[0] &= ~0x00000002u;
-}
+// float right_x_limit = 2;
 inline void EscapeConstraint::clear_right_x_limit() {
   right_x_limit_ = 0;
-  clear_has_right_x_limit();
 }
 inline float EscapeConstraint::right_x_limit() const {
   // @@protoc_insertion_point(field_get:roborts_decision.EscapeConstraint.right_x_limit)
   return right_x_limit_;
 }
 inline void EscapeConstraint::set_right_x_limit(float value) {
-  set_has_right_x_limit();
+  
   right_x_limit_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.EscapeConstraint.right_x_limit)
 }
 
-// optional float robot_x_limit = 3;
-inline bool EscapeConstraint::has_robot_x_limit() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void EscapeConstraint::set_has_robot_x_limit() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void EscapeConstraint::clear_has_robot_x_limit() {
-  _has_bits_[0] &= ~0x00000004u;
-}
+// float robot_x_limit = 3;
 inline void EscapeConstraint::clear_robot_x_limit() {
   robot_x_limit_ = 0;
-  clear_has_robot_x_limit();
 }
 inline float EscapeConstraint::robot_x_limit() const {
   // @@protoc_insertion_point(field_get:roborts_decision.EscapeConstraint.robot_x_limit)
   return robot_x_limit_;
 }
 inline void EscapeConstraint::set_robot_x_limit(float value) {
-  set_has_robot_x_limit();
+  
   robot_x_limit_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.EscapeConstraint.robot_x_limit)
 }
 
-// optional float left_random_min_x = 4;
-inline bool EscapeConstraint::has_left_random_min_x() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void EscapeConstraint::set_has_left_random_min_x() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void EscapeConstraint::clear_has_left_random_min_x() {
-  _has_bits_[0] &= ~0x00000008u;
-}
+// float left_random_min_x = 4;
 inline void EscapeConstraint::clear_left_random_min_x() {
   left_random_min_x_ = 0;
-  clear_has_left_random_min_x();
 }
 inline float EscapeConstraint::left_random_min_x() const {
   // @@protoc_insertion_point(field_get:roborts_decision.EscapeConstraint.left_random_min_x)
   return left_random_min_x_;
 }
 inline void EscapeConstraint::set_left_random_min_x(float value) {
-  set_has_left_random_min_x();
+  
   left_random_min_x_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.EscapeConstraint.left_random_min_x)
 }
 
-// optional float left_random_max_x = 5;
-inline bool EscapeConstraint::has_left_random_max_x() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void EscapeConstraint::set_has_left_random_max_x() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void EscapeConstraint::clear_has_left_random_max_x() {
-  _has_bits_[0] &= ~0x00000010u;
-}
+// float left_random_max_x = 5;
 inline void EscapeConstraint::clear_left_random_max_x() {
   left_random_max_x_ = 0;
-  clear_has_left_random_max_x();
 }
 inline float EscapeConstraint::left_random_max_x() const {
   // @@protoc_insertion_point(field_get:roborts_decision.EscapeConstraint.left_random_max_x)
   return left_random_max_x_;
 }
 inline void EscapeConstraint::set_left_random_max_x(float value) {
-  set_has_left_random_max_x();
+  
   left_random_max_x_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.EscapeConstraint.left_random_max_x)
 }
 
-// optional float right_random_min_x = 6;
-inline bool EscapeConstraint::has_right_random_min_x() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline void EscapeConstraint::set_has_right_random_min_x() {
-  _has_bits_[0] |= 0x00000020u;
-}
-inline void EscapeConstraint::clear_has_right_random_min_x() {
-  _has_bits_[0] &= ~0x00000020u;
-}
+// float right_random_min_x = 6;
 inline void EscapeConstraint::clear_right_random_min_x() {
   right_random_min_x_ = 0;
-  clear_has_right_random_min_x();
 }
 inline float EscapeConstraint::right_random_min_x() const {
   // @@protoc_insertion_point(field_get:roborts_decision.EscapeConstraint.right_random_min_x)
   return right_random_min_x_;
 }
 inline void EscapeConstraint::set_right_random_min_x(float value) {
-  set_has_right_random_min_x();
+  
   right_random_min_x_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.EscapeConstraint.right_random_min_x)
 }
 
-// optional float right_random_max_x = 7;
-inline bool EscapeConstraint::has_right_random_max_x() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
-}
-inline void EscapeConstraint::set_has_right_random_max_x() {
-  _has_bits_[0] |= 0x00000040u;
-}
-inline void EscapeConstraint::clear_has_right_random_max_x() {
-  _has_bits_[0] &= ~0x00000040u;
-}
+// float right_random_max_x = 7;
 inline void EscapeConstraint::clear_right_random_max_x() {
   right_random_max_x_ = 0;
-  clear_has_right_random_max_x();
 }
 inline float EscapeConstraint::right_random_max_x() const {
   // @@protoc_insertion_point(field_get:roborts_decision.EscapeConstraint.right_random_max_x)
   return right_random_max_x_;
 }
 inline void EscapeConstraint::set_right_random_max_x(float value) {
-  set_has_right_random_max_x();
+  
   right_random_max_x_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.EscapeConstraint.right_random_max_x)
 }
@@ -1689,50 +1390,30 @@ inline void EscapeConstraint::set_right_random_max_x(float value) {
 
 // SearchConstraint
 
-// optional float x_limit = 1;
-inline bool SearchConstraint::has_x_limit() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void SearchConstraint::set_has_x_limit() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void SearchConstraint::clear_has_x_limit() {
-  _has_bits_[0] &= ~0x00000001u;
-}
+// float x_limit = 1;
 inline void SearchConstraint::clear_x_limit() {
   x_limit_ = 0;
-  clear_has_x_limit();
 }
 inline float SearchConstraint::x_limit() const {
   // @@protoc_insertion_point(field_get:roborts_decision.SearchConstraint.x_limit)
   return x_limit_;
 }
 inline void SearchConstraint::set_x_limit(float value) {
-  set_has_x_limit();
+  
   x_limit_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.SearchConstraint.x_limit)
 }
 
-// optional float y_limit = 2;
-inline bool SearchConstraint::has_y_limit() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void SearchConstraint::set_has_y_limit() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void SearchConstraint::clear_has_y_limit() {
-  _has_bits_[0] &= ~0x00000002u;
-}
+// float y_limit = 2;
 inline void SearchConstraint::clear_y_limit() {
   y_limit_ = 0;
-  clear_has_y_limit();
 }
 inline float SearchConstraint::y_limit() const {
   // @@protoc_insertion_point(field_get:roborts_decision.SearchConstraint.y_limit)
   return y_limit_;
 }
 inline void SearchConstraint::set_y_limit(float value) {
-  set_has_y_limit();
+  
   y_limit_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.SearchConstraint.y_limit)
 }
@@ -1741,74 +1422,44 @@ inline void SearchConstraint::set_y_limit(float value) {
 
 // WhirlVel
 
-// optional float angle_x_vel = 1;
-inline bool WhirlVel::has_angle_x_vel() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void WhirlVel::set_has_angle_x_vel() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void WhirlVel::clear_has_angle_x_vel() {
-  _has_bits_[0] &= ~0x00000001u;
-}
+// float angle_x_vel = 1;
 inline void WhirlVel::clear_angle_x_vel() {
   angle_x_vel_ = 0;
-  clear_has_angle_x_vel();
 }
 inline float WhirlVel::angle_x_vel() const {
   // @@protoc_insertion_point(field_get:roborts_decision.WhirlVel.angle_x_vel)
   return angle_x_vel_;
 }
 inline void WhirlVel::set_angle_x_vel(float value) {
-  set_has_angle_x_vel();
+  
   angle_x_vel_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.WhirlVel.angle_x_vel)
 }
 
-// optional float angle_y_vel = 2;
-inline bool WhirlVel::has_angle_y_vel() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void WhirlVel::set_has_angle_y_vel() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void WhirlVel::clear_has_angle_y_vel() {
-  _has_bits_[0] &= ~0x00000002u;
-}
+// float angle_y_vel = 2;
 inline void WhirlVel::clear_angle_y_vel() {
   angle_y_vel_ = 0;
-  clear_has_angle_y_vel();
 }
 inline float WhirlVel::angle_y_vel() const {
   // @@protoc_insertion_point(field_get:roborts_decision.WhirlVel.angle_y_vel)
   return angle_y_vel_;
 }
 inline void WhirlVel::set_angle_y_vel(float value) {
-  set_has_angle_y_vel();
+  
   angle_y_vel_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.WhirlVel.angle_y_vel)
 }
 
-// optional float angle_z_vel = 3;
-inline bool WhirlVel::has_angle_z_vel() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void WhirlVel::set_has_angle_z_vel() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void WhirlVel::clear_has_angle_z_vel() {
-  _has_bits_[0] &= ~0x00000004u;
-}
+// float angle_z_vel = 3;
 inline void WhirlVel::clear_angle_z_vel() {
   angle_z_vel_ = 0;
-  clear_has_angle_z_vel();
 }
 inline float WhirlVel::angle_z_vel() const {
   // @@protoc_insertion_point(field_get:roborts_decision.WhirlVel.angle_z_vel)
   return angle_z_vel_;
 }
 inline void WhirlVel::set_angle_z_vel(float value) {
-  set_has_angle_z_vel();
+  
   angle_z_vel_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.WhirlVel.angle_z_vel)
 }
@@ -1817,19 +1468,15 @@ inline void WhirlVel::set_angle_z_vel(float value) {
 
 // MultiRobot
 
-// optional .roborts_decision.Point start_position = 7;
+// .roborts_decision.Point start_position = 7;
 inline bool MultiRobot::has_start_position() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void MultiRobot::set_has_start_position() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void MultiRobot::clear_has_start_position() {
-  _has_bits_[0] &= ~0x00000001u;
+  return this != internal_default_instance() && start_position_ != NULL;
 }
 inline void MultiRobot::clear_start_position() {
-  if (start_position_ != NULL) start_position_->Clear();
-  clear_has_start_position();
+  if (GetArenaNoVirtual() == NULL && start_position_ != NULL) {
+    delete start_position_;
+  }
+  start_position_ = NULL;
 }
 inline const ::roborts_decision::Point& MultiRobot::_internal_start_position() const {
   return *start_position_;
@@ -1842,13 +1489,13 @@ inline const ::roborts_decision::Point& MultiRobot::start_position() const {
 }
 inline ::roborts_decision::Point* MultiRobot::release_start_position() {
   // @@protoc_insertion_point(field_release:roborts_decision.MultiRobot.start_position)
-  clear_has_start_position();
+  
   ::roborts_decision::Point* temp = start_position_;
   start_position_ = NULL;
   return temp;
 }
 inline ::roborts_decision::Point* MultiRobot::mutable_start_position() {
-  set_has_start_position();
+  
   if (start_position_ == NULL) {
     auto* p = CreateMaybeMessage<::roborts_decision::Point>(GetArenaNoVirtual());
     start_position_ = p;
@@ -1867,9 +1514,9 @@ inline void MultiRobot::set_allocated_start_position(::roborts_decision::Point* 
       start_position = ::google::protobuf::internal::GetOwnedMessage(
           message_arena, start_position, submessage_arena);
     }
-    set_has_start_position();
+    
   } else {
-    clear_has_start_position();
+    
   }
   start_position_ = start_position;
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.MultiRobot.start_position)
@@ -1879,19 +1526,15 @@ inline void MultiRobot::set_allocated_start_position(::roborts_decision::Point* 
 
 // BlueOrRedGroup
 
-// optional .roborts_decision.MultiRobot master_bot = 1;
+// .roborts_decision.MultiRobot master_bot = 1;
 inline bool BlueOrRedGroup::has_master_bot() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void BlueOrRedGroup::set_has_master_bot() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void BlueOrRedGroup::clear_has_master_bot() {
-  _has_bits_[0] &= ~0x00000001u;
+  return this != internal_default_instance() && master_bot_ != NULL;
 }
 inline void BlueOrRedGroup::clear_master_bot() {
-  if (master_bot_ != NULL) master_bot_->Clear();
-  clear_has_master_bot();
+  if (GetArenaNoVirtual() == NULL && master_bot_ != NULL) {
+    delete master_bot_;
+  }
+  master_bot_ = NULL;
 }
 inline const ::roborts_decision::MultiRobot& BlueOrRedGroup::_internal_master_bot() const {
   return *master_bot_;
@@ -1904,13 +1547,13 @@ inline const ::roborts_decision::MultiRobot& BlueOrRedGroup::master_bot() const 
 }
 inline ::roborts_decision::MultiRobot* BlueOrRedGroup::release_master_bot() {
   // @@protoc_insertion_point(field_release:roborts_decision.BlueOrRedGroup.master_bot)
-  clear_has_master_bot();
+  
   ::roborts_decision::MultiRobot* temp = master_bot_;
   master_bot_ = NULL;
   return temp;
 }
 inline ::roborts_decision::MultiRobot* BlueOrRedGroup::mutable_master_bot() {
-  set_has_master_bot();
+  
   if (master_bot_ == NULL) {
     auto* p = CreateMaybeMessage<::roborts_decision::MultiRobot>(GetArenaNoVirtual());
     master_bot_ = p;
@@ -1929,27 +1572,23 @@ inline void BlueOrRedGroup::set_allocated_master_bot(::roborts_decision::MultiRo
       master_bot = ::google::protobuf::internal::GetOwnedMessage(
           message_arena, master_bot, submessage_arena);
     }
-    set_has_master_bot();
+    
   } else {
-    clear_has_master_bot();
+    
   }
   master_bot_ = master_bot;
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.BlueOrRedGroup.master_bot)
 }
 
-// optional .roborts_decision.MultiRobot wing_bot = 2;
+// .roborts_decision.MultiRobot wing_bot = 2;
 inline bool BlueOrRedGroup::has_wing_bot() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void BlueOrRedGroup::set_has_wing_bot() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void BlueOrRedGroup::clear_has_wing_bot() {
-  _has_bits_[0] &= ~0x00000002u;
+  return this != internal_default_instance() && wing_bot_ != NULL;
 }
 inline void BlueOrRedGroup::clear_wing_bot() {
-  if (wing_bot_ != NULL) wing_bot_->Clear();
-  clear_has_wing_bot();
+  if (GetArenaNoVirtual() == NULL && wing_bot_ != NULL) {
+    delete wing_bot_;
+  }
+  wing_bot_ = NULL;
 }
 inline const ::roborts_decision::MultiRobot& BlueOrRedGroup::_internal_wing_bot() const {
   return *wing_bot_;
@@ -1962,13 +1601,13 @@ inline const ::roborts_decision::MultiRobot& BlueOrRedGroup::wing_bot() const {
 }
 inline ::roborts_decision::MultiRobot* BlueOrRedGroup::release_wing_bot() {
   // @@protoc_insertion_point(field_release:roborts_decision.BlueOrRedGroup.wing_bot)
-  clear_has_wing_bot();
+  
   ::roborts_decision::MultiRobot* temp = wing_bot_;
   wing_bot_ = NULL;
   return temp;
 }
 inline ::roborts_decision::MultiRobot* BlueOrRedGroup::mutable_wing_bot() {
-  set_has_wing_bot();
+  
   if (wing_bot_ == NULL) {
     auto* p = CreateMaybeMessage<::roborts_decision::MultiRobot>(GetArenaNoVirtual());
     wing_bot_ = p;
@@ -1987,27 +1626,23 @@ inline void BlueOrRedGroup::set_allocated_wing_bot(::roborts_decision::MultiRobo
       wing_bot = ::google::protobuf::internal::GetOwnedMessage(
           message_arena, wing_bot, submessage_arena);
     }
-    set_has_wing_bot();
+    
   } else {
-    clear_has_wing_bot();
+    
   }
   wing_bot_ = wing_bot;
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.BlueOrRedGroup.wing_bot)
 }
 
-// optional .roborts_decision.Point reload_point = 3;
+// .roborts_decision.Point reload_point = 3;
 inline bool BlueOrRedGroup::has_reload_point() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void BlueOrRedGroup::set_has_reload_point() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void BlueOrRedGroup::clear_has_reload_point() {
-  _has_bits_[0] &= ~0x00000004u;
+  return this != internal_default_instance() && reload_point_ != NULL;
 }
 inline void BlueOrRedGroup::clear_reload_point() {
-  if (reload_point_ != NULL) reload_point_->Clear();
-  clear_has_reload_point();
+  if (GetArenaNoVirtual() == NULL && reload_point_ != NULL) {
+    delete reload_point_;
+  }
+  reload_point_ = NULL;
 }
 inline const ::roborts_decision::Point& BlueOrRedGroup::_internal_reload_point() const {
   return *reload_point_;
@@ -2020,13 +1655,13 @@ inline const ::roborts_decision::Point& BlueOrRedGroup::reload_point() const {
 }
 inline ::roborts_decision::Point* BlueOrRedGroup::release_reload_point() {
   // @@protoc_insertion_point(field_release:roborts_decision.BlueOrRedGroup.reload_point)
-  clear_has_reload_point();
+  
   ::roborts_decision::Point* temp = reload_point_;
   reload_point_ = NULL;
   return temp;
 }
 inline ::roborts_decision::Point* BlueOrRedGroup::mutable_reload_point() {
-  set_has_reload_point();
+  
   if (reload_point_ == NULL) {
     auto* p = CreateMaybeMessage<::roborts_decision::Point>(GetArenaNoVirtual());
     reload_point_ = p;
@@ -2045,27 +1680,23 @@ inline void BlueOrRedGroup::set_allocated_reload_point(::roborts_decision::Point
       reload_point = ::google::protobuf::internal::GetOwnedMessage(
           message_arena, reload_point, submessage_arena);
     }
-    set_has_reload_point();
+    
   } else {
-    clear_has_reload_point();
+    
   }
   reload_point_ = reload_point;
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.BlueOrRedGroup.reload_point)
 }
 
-// optional .roborts_decision.Point shield_point = 4;
+// .roborts_decision.Point shield_point = 4;
 inline bool BlueOrRedGroup::has_shield_point() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void BlueOrRedGroup::set_has_shield_point() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void BlueOrRedGroup::clear_has_shield_point() {
-  _has_bits_[0] &= ~0x00000008u;
+  return this != internal_default_instance() && shield_point_ != NULL;
 }
 inline void BlueOrRedGroup::clear_shield_point() {
-  if (shield_point_ != NULL) shield_point_->Clear();
-  clear_has_shield_point();
+  if (GetArenaNoVirtual() == NULL && shield_point_ != NULL) {
+    delete shield_point_;
+  }
+  shield_point_ = NULL;
 }
 inline const ::roborts_decision::Point& BlueOrRedGroup::_internal_shield_point() const {
   return *shield_point_;
@@ -2078,13 +1709,13 @@ inline const ::roborts_decision::Point& BlueOrRedGroup::shield_point() const {
 }
 inline ::roborts_decision::Point* BlueOrRedGroup::release_shield_point() {
   // @@protoc_insertion_point(field_release:roborts_decision.BlueOrRedGroup.shield_point)
-  clear_has_shield_point();
+  
   ::roborts_decision::Point* temp = shield_point_;
   shield_point_ = NULL;
   return temp;
 }
 inline ::roborts_decision::Point* BlueOrRedGroup::mutable_shield_point() {
-  set_has_shield_point();
+  
   if (shield_point_ == NULL) {
     auto* p = CreateMaybeMessage<::roborts_decision::Point>(GetArenaNoVirtual());
     shield_point_ = p;
@@ -2103,9 +1734,9 @@ inline void BlueOrRedGroup::set_allocated_shield_point(::roborts_decision::Point
       shield_point = ::google::protobuf::internal::GetOwnedMessage(
           message_arena, shield_point, submessage_arena);
     }
-    set_has_shield_point();
+    
   } else {
-    clear_has_shield_point();
+    
   }
   shield_point_ = shield_point;
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.BlueOrRedGroup.shield_point)
@@ -2145,32 +1776,22 @@ BlueOrRedGroup::patrol() const {
 
 // DecisionConfig
 
-// optional string strategy = 1;
-inline bool DecisionConfig::has_strategy() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void DecisionConfig::set_has_strategy() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void DecisionConfig::clear_has_strategy() {
-  _has_bits_[0] &= ~0x00000001u;
-}
+// string strategy = 1;
 inline void DecisionConfig::clear_strategy() {
   strategy_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  clear_has_strategy();
 }
 inline const ::std::string& DecisionConfig::strategy() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.strategy)
   return strategy_.GetNoArena();
 }
 inline void DecisionConfig::set_strategy(const ::std::string& value) {
-  set_has_strategy();
+  
   strategy_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.strategy)
 }
 #if LANG_CXX11
 inline void DecisionConfig::set_strategy(::std::string&& value) {
-  set_has_strategy();
+  
   strategy_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
   // @@protoc_insertion_point(field_set_rvalue:roborts_decision.DecisionConfig.strategy)
@@ -2178,161 +1799,108 @@ inline void DecisionConfig::set_strategy(::std::string&& value) {
 #endif
 inline void DecisionConfig::set_strategy(const char* value) {
   GOOGLE_DCHECK(value != NULL);
-  set_has_strategy();
+  
   strategy_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
   // @@protoc_insertion_point(field_set_char:roborts_decision.DecisionConfig.strategy)
 }
 inline void DecisionConfig::set_strategy(const char* value, size_t size) {
-  set_has_strategy();
+  
   strategy_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
   // @@protoc_insertion_point(field_set_pointer:roborts_decision.DecisionConfig.strategy)
 }
 inline ::std::string* DecisionConfig::mutable_strategy() {
-  set_has_strategy();
+  
   // @@protoc_insertion_point(field_mutable:roborts_decision.DecisionConfig.strategy)
   return strategy_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline ::std::string* DecisionConfig::release_strategy() {
   // @@protoc_insertion_point(field_release:roborts_decision.DecisionConfig.strategy)
-  if (!has_strategy()) {
-    return NULL;
-  }
-  clear_has_strategy();
-  return strategy_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  
+  return strategy_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline void DecisionConfig::set_allocated_strategy(::std::string* strategy) {
   if (strategy != NULL) {
-    set_has_strategy();
+    
   } else {
-    clear_has_strategy();
+    
   }
   strategy_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), strategy);
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.DecisionConfig.strategy)
 }
 
-// optional bool use_camera = 2;
-inline bool DecisionConfig::has_use_camera() const {
-  return (_has_bits_[0] & 0x00000100u) != 0;
-}
-inline void DecisionConfig::set_has_use_camera() {
-  _has_bits_[0] |= 0x00000100u;
-}
-inline void DecisionConfig::clear_has_use_camera() {
-  _has_bits_[0] &= ~0x00000100u;
-}
+// bool use_camera = 2;
 inline void DecisionConfig::clear_use_camera() {
   use_camera_ = false;
-  clear_has_use_camera();
 }
 inline bool DecisionConfig::use_camera() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.use_camera)
   return use_camera_;
 }
 inline void DecisionConfig::set_use_camera(bool value) {
-  set_has_use_camera();
+  
   use_camera_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.use_camera)
 }
 
-// optional bool master = 3 [default = false];
-inline bool DecisionConfig::has_master() const {
-  return (_has_bits_[0] & 0x00000200u) != 0;
-}
-inline void DecisionConfig::set_has_master() {
-  _has_bits_[0] |= 0x00000200u;
-}
-inline void DecisionConfig::clear_has_master() {
-  _has_bits_[0] &= ~0x00000200u;
-}
+// bool master = 3;
 inline void DecisionConfig::clear_master() {
   master_ = false;
-  clear_has_master();
 }
 inline bool DecisionConfig::master() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.master)
   return master_;
 }
 inline void DecisionConfig::set_master(bool value) {
-  set_has_master();
+  
   master_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.master)
 }
 
-// optional bool isblue = 4 [default = true];
-inline bool DecisionConfig::has_isblue() const {
-  return (_has_bits_[0] & 0x00020000u) != 0;
-}
-inline void DecisionConfig::set_has_isblue() {
-  _has_bits_[0] |= 0x00020000u;
-}
-inline void DecisionConfig::clear_has_isblue() {
-  _has_bits_[0] &= ~0x00020000u;
-}
+// bool isblue = 4;
 inline void DecisionConfig::clear_isblue() {
-  isblue_ = true;
-  clear_has_isblue();
+  isblue_ = false;
 }
 inline bool DecisionConfig::isblue() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.isblue)
   return isblue_;
 }
 inline void DecisionConfig::set_isblue(bool value) {
-  set_has_isblue();
+  
   isblue_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.isblue)
 }
 
-// optional bool usewifi = 5;
-inline bool DecisionConfig::has_usewifi() const {
-  return (_has_bits_[0] & 0x00000400u) != 0;
-}
-inline void DecisionConfig::set_has_usewifi() {
-  _has_bits_[0] |= 0x00000400u;
-}
-inline void DecisionConfig::clear_has_usewifi() {
-  _has_bits_[0] &= ~0x00000400u;
-}
+// bool usewifi = 5;
 inline void DecisionConfig::clear_usewifi() {
   usewifi_ = false;
-  clear_has_usewifi();
 }
 inline bool DecisionConfig::usewifi() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.usewifi)
   return usewifi_;
 }
 inline void DecisionConfig::set_usewifi(bool value) {
-  set_has_usewifi();
+  
   usewifi_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.usewifi)
 }
 
-// optional string master_ip = 6;
-inline bool DecisionConfig::has_master_ip() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void DecisionConfig::set_has_master_ip() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void DecisionConfig::clear_has_master_ip() {
-  _has_bits_[0] &= ~0x00000002u;
-}
+// string master_ip = 6;
 inline void DecisionConfig::clear_master_ip() {
   master_ip_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  clear_has_master_ip();
 }
 inline const ::std::string& DecisionConfig::master_ip() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.master_ip)
   return master_ip_.GetNoArena();
 }
 inline void DecisionConfig::set_master_ip(const ::std::string& value) {
-  set_has_master_ip();
+  
   master_ip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.master_ip)
 }
 #if LANG_CXX11
 inline void DecisionConfig::set_master_ip(::std::string&& value) {
-  set_has_master_ip();
+  
   master_ip_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
   // @@protoc_insertion_point(field_set_rvalue:roborts_decision.DecisionConfig.master_ip)
@@ -2340,65 +1908,52 @@ inline void DecisionConfig::set_master_ip(::std::string&& value) {
 #endif
 inline void DecisionConfig::set_master_ip(const char* value) {
   GOOGLE_DCHECK(value != NULL);
-  set_has_master_ip();
+  
   master_ip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
   // @@protoc_insertion_point(field_set_char:roborts_decision.DecisionConfig.master_ip)
 }
 inline void DecisionConfig::set_master_ip(const char* value, size_t size) {
-  set_has_master_ip();
+  
   master_ip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
   // @@protoc_insertion_point(field_set_pointer:roborts_decision.DecisionConfig.master_ip)
 }
 inline ::std::string* DecisionConfig::mutable_master_ip() {
-  set_has_master_ip();
+  
   // @@protoc_insertion_point(field_mutable:roborts_decision.DecisionConfig.master_ip)
   return master_ip_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline ::std::string* DecisionConfig::release_master_ip() {
   // @@protoc_insertion_point(field_release:roborts_decision.DecisionConfig.master_ip)
-  if (!has_master_ip()) {
-    return NULL;
-  }
-  clear_has_master_ip();
-  return master_ip_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  
+  return master_ip_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline void DecisionConfig::set_allocated_master_ip(::std::string* master_ip) {
   if (master_ip != NULL) {
-    set_has_master_ip();
+    
   } else {
-    clear_has_master_ip();
+    
   }
   master_ip_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), master_ip);
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.DecisionConfig.master_ip)
 }
 
-// optional string guard_ip = 7;
-inline bool DecisionConfig::has_guard_ip() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void DecisionConfig::set_has_guard_ip() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void DecisionConfig::clear_has_guard_ip() {
-  _has_bits_[0] &= ~0x00000004u;
-}
+// string guard_ip = 7;
 inline void DecisionConfig::clear_guard_ip() {
   guard_ip_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  clear_has_guard_ip();
 }
 inline const ::std::string& DecisionConfig::guard_ip() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.guard_ip)
   return guard_ip_.GetNoArena();
 }
 inline void DecisionConfig::set_guard_ip(const ::std::string& value) {
-  set_has_guard_ip();
+  
   guard_ip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.guard_ip)
 }
 #if LANG_CXX11
 inline void DecisionConfig::set_guard_ip(::std::string&& value) {
-  set_has_guard_ip();
+  
   guard_ip_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
   // @@protoc_insertion_point(field_set_rvalue:roborts_decision.DecisionConfig.guard_ip)
@@ -2406,76 +1961,59 @@ inline void DecisionConfig::set_guard_ip(::std::string&& value) {
 #endif
 inline void DecisionConfig::set_guard_ip(const char* value) {
   GOOGLE_DCHECK(value != NULL);
-  set_has_guard_ip();
+  
   guard_ip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
   // @@protoc_insertion_point(field_set_char:roborts_decision.DecisionConfig.guard_ip)
 }
 inline void DecisionConfig::set_guard_ip(const char* value, size_t size) {
-  set_has_guard_ip();
+  
   guard_ip_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
   // @@protoc_insertion_point(field_set_pointer:roborts_decision.DecisionConfig.guard_ip)
 }
 inline ::std::string* DecisionConfig::mutable_guard_ip() {
-  set_has_guard_ip();
+  
   // @@protoc_insertion_point(field_mutable:roborts_decision.DecisionConfig.guard_ip)
   return guard_ip_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline ::std::string* DecisionConfig::release_guard_ip() {
   // @@protoc_insertion_point(field_release:roborts_decision.DecisionConfig.guard_ip)
-  if (!has_guard_ip()) {
-    return NULL;
-  }
-  clear_has_guard_ip();
-  return guard_ip_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  
+  return guard_ip_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline void DecisionConfig::set_allocated_guard_ip(::std::string* guard_ip) {
   if (guard_ip != NULL) {
-    set_has_guard_ip();
+    
   } else {
-    clear_has_guard_ip();
+    
   }
   guard_ip_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), guard_ip);
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.DecisionConfig.guard_ip)
 }
 
-// optional int32 remain_bullet = 8;
-inline bool DecisionConfig::has_remain_bullet() const {
-  return (_has_bits_[0] & 0x00001000u) != 0;
-}
-inline void DecisionConfig::set_has_remain_bullet() {
-  _has_bits_[0] |= 0x00001000u;
-}
-inline void DecisionConfig::clear_has_remain_bullet() {
-  _has_bits_[0] &= ~0x00001000u;
-}
+// int32 remain_bullet = 8;
 inline void DecisionConfig::clear_remain_bullet() {
   remain_bullet_ = 0;
-  clear_has_remain_bullet();
 }
 inline ::google::protobuf::int32 DecisionConfig::remain_bullet() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.remain_bullet)
   return remain_bullet_;
 }
 inline void DecisionConfig::set_remain_bullet(::google::protobuf::int32 value) {
-  set_has_remain_bullet();
+  
   remain_bullet_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.remain_bullet)
 }
 
-// optional .roborts_decision.EscapeConstraint escape = 9;
+// .roborts_decision.EscapeConstraint escape = 9;
 inline bool DecisionConfig::has_escape() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void DecisionConfig::set_has_escape() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void DecisionConfig::clear_has_escape() {
-  _has_bits_[0] &= ~0x00000008u;
+  return this != internal_default_instance() && escape_ != NULL;
 }
 inline void DecisionConfig::clear_escape() {
-  if (escape_ != NULL) escape_->Clear();
-  clear_has_escape();
+  if (GetArenaNoVirtual() == NULL && escape_ != NULL) {
+    delete escape_;
+  }
+  escape_ = NULL;
 }
 inline const ::roborts_decision::EscapeConstraint& DecisionConfig::_internal_escape() const {
   return *escape_;
@@ -2488,13 +2026,13 @@ inline const ::roborts_decision::EscapeConstraint& DecisionConfig::escape() cons
 }
 inline ::roborts_decision::EscapeConstraint* DecisionConfig::release_escape() {
   // @@protoc_insertion_point(field_release:roborts_decision.DecisionConfig.escape)
-  clear_has_escape();
+  
   ::roborts_decision::EscapeConstraint* temp = escape_;
   escape_ = NULL;
   return temp;
 }
 inline ::roborts_decision::EscapeConstraint* DecisionConfig::mutable_escape() {
-  set_has_escape();
+  
   if (escape_ == NULL) {
     auto* p = CreateMaybeMessage<::roborts_decision::EscapeConstraint>(GetArenaNoVirtual());
     escape_ = p;
@@ -2513,27 +2051,23 @@ inline void DecisionConfig::set_allocated_escape(::roborts_decision::EscapeConst
       escape = ::google::protobuf::internal::GetOwnedMessage(
           message_arena, escape, submessage_arena);
     }
-    set_has_escape();
+    
   } else {
-    clear_has_escape();
+    
   }
   escape_ = escape;
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.DecisionConfig.escape)
 }
 
-// optional .roborts_decision.BlueOrRedGroup blue = 10;
+// .roborts_decision.BlueOrRedGroup blue = 10;
 inline bool DecisionConfig::has_blue() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void DecisionConfig::set_has_blue() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void DecisionConfig::clear_has_blue() {
-  _has_bits_[0] &= ~0x00000010u;
+  return this != internal_default_instance() && blue_ != NULL;
 }
 inline void DecisionConfig::clear_blue() {
-  if (blue_ != NULL) blue_->Clear();
-  clear_has_blue();
+  if (GetArenaNoVirtual() == NULL && blue_ != NULL) {
+    delete blue_;
+  }
+  blue_ = NULL;
 }
 inline const ::roborts_decision::BlueOrRedGroup& DecisionConfig::_internal_blue() const {
   return *blue_;
@@ -2546,13 +2080,13 @@ inline const ::roborts_decision::BlueOrRedGroup& DecisionConfig::blue() const {
 }
 inline ::roborts_decision::BlueOrRedGroup* DecisionConfig::release_blue() {
   // @@protoc_insertion_point(field_release:roborts_decision.DecisionConfig.blue)
-  clear_has_blue();
+  
   ::roborts_decision::BlueOrRedGroup* temp = blue_;
   blue_ = NULL;
   return temp;
 }
 inline ::roborts_decision::BlueOrRedGroup* DecisionConfig::mutable_blue() {
-  set_has_blue();
+  
   if (blue_ == NULL) {
     auto* p = CreateMaybeMessage<::roborts_decision::BlueOrRedGroup>(GetArenaNoVirtual());
     blue_ = p;
@@ -2571,27 +2105,23 @@ inline void DecisionConfig::set_allocated_blue(::roborts_decision::BlueOrRedGrou
       blue = ::google::protobuf::internal::GetOwnedMessage(
           message_arena, blue, submessage_arena);
     }
-    set_has_blue();
+    
   } else {
-    clear_has_blue();
+    
   }
   blue_ = blue;
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.DecisionConfig.blue)
 }
 
-// optional .roborts_decision.BlueOrRedGroup red = 11;
+// .roborts_decision.BlueOrRedGroup red = 11;
 inline bool DecisionConfig::has_red() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline void DecisionConfig::set_has_red() {
-  _has_bits_[0] |= 0x00000020u;
-}
-inline void DecisionConfig::clear_has_red() {
-  _has_bits_[0] &= ~0x00000020u;
+  return this != internal_default_instance() && red_ != NULL;
 }
 inline void DecisionConfig::clear_red() {
-  if (red_ != NULL) red_->Clear();
-  clear_has_red();
+  if (GetArenaNoVirtual() == NULL && red_ != NULL) {
+    delete red_;
+  }
+  red_ = NULL;
 }
 inline const ::roborts_decision::BlueOrRedGroup& DecisionConfig::_internal_red() const {
   return *red_;
@@ -2604,13 +2134,13 @@ inline const ::roborts_decision::BlueOrRedGroup& DecisionConfig::red() const {
 }
 inline ::roborts_decision::BlueOrRedGroup* DecisionConfig::release_red() {
   // @@protoc_insertion_point(field_release:roborts_decision.DecisionConfig.red)
-  clear_has_red();
+  
   ::roborts_decision::BlueOrRedGroup* temp = red_;
   red_ = NULL;
   return temp;
 }
 inline ::roborts_decision::BlueOrRedGroup* DecisionConfig::mutable_red() {
-  set_has_red();
+  
   if (red_ == NULL) {
     auto* p = CreateMaybeMessage<::roborts_decision::BlueOrRedGroup>(GetArenaNoVirtual());
     red_ = p;
@@ -2629,27 +2159,23 @@ inline void DecisionConfig::set_allocated_red(::roborts_decision::BlueOrRedGroup
       red = ::google::protobuf::internal::GetOwnedMessage(
           message_arena, red, submessage_arena);
     }
-    set_has_red();
+    
   } else {
-    clear_has_red();
+    
   }
   red_ = red;
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.DecisionConfig.red)
 }
 
-// optional .roborts_decision.SearchConstraint search_limit = 12;
+// .roborts_decision.SearchConstraint search_limit = 12;
 inline bool DecisionConfig::has_search_limit() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
-}
-inline void DecisionConfig::set_has_search_limit() {
-  _has_bits_[0] |= 0x00000040u;
-}
-inline void DecisionConfig::clear_has_search_limit() {
-  _has_bits_[0] &= ~0x00000040u;
+  return this != internal_default_instance() && search_limit_ != NULL;
 }
 inline void DecisionConfig::clear_search_limit() {
-  if (search_limit_ != NULL) search_limit_->Clear();
-  clear_has_search_limit();
+  if (GetArenaNoVirtual() == NULL && search_limit_ != NULL) {
+    delete search_limit_;
+  }
+  search_limit_ = NULL;
 }
 inline const ::roborts_decision::SearchConstraint& DecisionConfig::_internal_search_limit() const {
   return *search_limit_;
@@ -2662,13 +2188,13 @@ inline const ::roborts_decision::SearchConstraint& DecisionConfig::search_limit(
 }
 inline ::roborts_decision::SearchConstraint* DecisionConfig::release_search_limit() {
   // @@protoc_insertion_point(field_release:roborts_decision.DecisionConfig.search_limit)
-  clear_has_search_limit();
+  
   ::roborts_decision::SearchConstraint* temp = search_limit_;
   search_limit_ = NULL;
   return temp;
 }
 inline ::roborts_decision::SearchConstraint* DecisionConfig::mutable_search_limit() {
-  set_has_search_limit();
+  
   if (search_limit_ == NULL) {
     auto* p = CreateMaybeMessage<::roborts_decision::SearchConstraint>(GetArenaNoVirtual());
     search_limit_ = p;
@@ -2687,27 +2213,23 @@ inline void DecisionConfig::set_allocated_search_limit(::roborts_decision::Searc
       search_limit = ::google::protobuf::internal::GetOwnedMessage(
           message_arena, search_limit, submessage_arena);
     }
-    set_has_search_limit();
+    
   } else {
-    clear_has_search_limit();
+    
   }
   search_limit_ = search_limit;
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.DecisionConfig.search_limit)
 }
 
-// optional .roborts_decision.WhirlVel whirl_vel = 13;
+// .roborts_decision.WhirlVel whirl_vel = 13;
 inline bool DecisionConfig::has_whirl_vel() const {
-  return (_has_bits_[0] & 0x00000080u) != 0;
-}
-inline void DecisionConfig::set_has_whirl_vel() {
-  _has_bits_[0] |= 0x00000080u;
-}
-inline void DecisionConfig::clear_has_whirl_vel() {
-  _has_bits_[0] &= ~0x00000080u;
+  return this != internal_default_instance() && whirl_vel_ != NULL;
 }
 inline void DecisionConfig::clear_whirl_vel() {
-  if (whirl_vel_ != NULL) whirl_vel_->Clear();
-  clear_has_whirl_vel();
+  if (GetArenaNoVirtual() == NULL && whirl_vel_ != NULL) {
+    delete whirl_vel_;
+  }
+  whirl_vel_ = NULL;
 }
 inline const ::roborts_decision::WhirlVel& DecisionConfig::_internal_whirl_vel() const {
   return *whirl_vel_;
@@ -2720,13 +2242,13 @@ inline const ::roborts_decision::WhirlVel& DecisionConfig::whirl_vel() const {
 }
 inline ::roborts_decision::WhirlVel* DecisionConfig::release_whirl_vel() {
   // @@protoc_insertion_point(field_release:roborts_decision.DecisionConfig.whirl_vel)
-  clear_has_whirl_vel();
+  
   ::roborts_decision::WhirlVel* temp = whirl_vel_;
   whirl_vel_ = NULL;
   return temp;
 }
 inline ::roborts_decision::WhirlVel* DecisionConfig::mutable_whirl_vel() {
-  set_has_whirl_vel();
+  
   if (whirl_vel_ == NULL) {
     auto* p = CreateMaybeMessage<::roborts_decision::WhirlVel>(GetArenaNoVirtual());
     whirl_vel_ = p;
@@ -2745,9 +2267,9 @@ inline void DecisionConfig::set_allocated_whirl_vel(::roborts_decision::WhirlVel
       whirl_vel = ::google::protobuf::internal::GetOwnedMessage(
           message_arena, whirl_vel, submessage_arena);
     }
-    set_has_whirl_vel();
+    
   } else {
-    clear_has_whirl_vel();
+    
   }
   whirl_vel_ = whirl_vel;
   // @@protoc_insertion_point(field_set_allocated:roborts_decision.DecisionConfig.whirl_vel)
@@ -2873,122 +2395,72 @@ DecisionConfig::search_region_4() const {
   return search_region_4_;
 }
 
-// optional bool can_shoot = 18;
-inline bool DecisionConfig::has_can_shoot() const {
-  return (_has_bits_[0] & 0x00000800u) != 0;
-}
-inline void DecisionConfig::set_has_can_shoot() {
-  _has_bits_[0] |= 0x00000800u;
-}
-inline void DecisionConfig::clear_has_can_shoot() {
-  _has_bits_[0] &= ~0x00000800u;
-}
+// bool can_shoot = 18;
 inline void DecisionConfig::clear_can_shoot() {
   can_shoot_ = false;
-  clear_has_can_shoot();
 }
 inline bool DecisionConfig::can_shoot() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.can_shoot)
   return can_shoot_;
 }
 inline void DecisionConfig::set_can_shoot(bool value) {
-  set_has_can_shoot();
+  
   can_shoot_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.can_shoot)
 }
 
-// optional bool can_dodge = 19;
-inline bool DecisionConfig::has_can_dodge() const {
-  return (_has_bits_[0] & 0x00002000u) != 0;
-}
-inline void DecisionConfig::set_has_can_dodge() {
-  _has_bits_[0] |= 0x00002000u;
-}
-inline void DecisionConfig::clear_has_can_dodge() {
-  _has_bits_[0] &= ~0x00002000u;
-}
+// bool can_dodge = 19;
 inline void DecisionConfig::clear_can_dodge() {
   can_dodge_ = false;
-  clear_has_can_dodge();
 }
 inline bool DecisionConfig::can_dodge() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.can_dodge)
   return can_dodge_;
 }
 inline void DecisionConfig::set_can_dodge(bool value) {
-  set_has_can_dodge();
+  
   can_dodge_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.can_dodge)
 }
 
-// optional bool dodge_in_reload = 20;
-inline bool DecisionConfig::has_dodge_in_reload() const {
-  return (_has_bits_[0] & 0x00004000u) != 0;
-}
-inline void DecisionConfig::set_has_dodge_in_reload() {
-  _has_bits_[0] |= 0x00004000u;
-}
-inline void DecisionConfig::clear_has_dodge_in_reload() {
-  _has_bits_[0] &= ~0x00004000u;
-}
+// bool dodge_in_reload = 20;
 inline void DecisionConfig::clear_dodge_in_reload() {
   dodge_in_reload_ = false;
-  clear_has_dodge_in_reload();
 }
 inline bool DecisionConfig::dodge_in_reload() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.dodge_in_reload)
   return dodge_in_reload_;
 }
 inline void DecisionConfig::set_dodge_in_reload(bool value) {
-  set_has_dodge_in_reload();
+  
   dodge_in_reload_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.dodge_in_reload)
 }
 
-// optional int32 shoot_hz = 21;
-inline bool DecisionConfig::has_shoot_hz() const {
-  return (_has_bits_[0] & 0x00010000u) != 0;
-}
-inline void DecisionConfig::set_has_shoot_hz() {
-  _has_bits_[0] |= 0x00010000u;
-}
-inline void DecisionConfig::clear_has_shoot_hz() {
-  _has_bits_[0] &= ~0x00010000u;
-}
+// int32 shoot_hz = 21;
 inline void DecisionConfig::clear_shoot_hz() {
   shoot_hz_ = 0;
-  clear_has_shoot_hz();
 }
 inline ::google::protobuf::int32 DecisionConfig::shoot_hz() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.shoot_hz)
   return shoot_hz_;
 }
 inline void DecisionConfig::set_shoot_hz(::google::protobuf::int32 value) {
-  set_has_shoot_hz();
+  
   shoot_hz_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.shoot_hz)
 }
 
-// optional bool use_refree = 22;
-inline bool DecisionConfig::has_use_refree() const {
-  return (_has_bits_[0] & 0x00008000u) != 0;
-}
-inline void DecisionConfig::set_has_use_refree() {
-  _has_bits_[0] |= 0x00008000u;
-}
-inline void DecisionConfig::clear_has_use_refree() {
-  _has_bits_[0] &= ~0x00008000u;
-}
+// bool use_refree = 22;
 inline void DecisionConfig::clear_use_refree() {
   use_refree_ = false;
-  clear_has_use_refree();
 }
 inline bool DecisionConfig::use_refree() const {
   // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.use_refree)
   return use_refree_;
 }
 inline void DecisionConfig::set_use_refree(bool value) {
-  set_has_use_refree();
+  
   use_refree_ = value;
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.use_refree)
 }

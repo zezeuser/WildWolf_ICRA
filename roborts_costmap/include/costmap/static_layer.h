@@ -56,6 +56,7 @@
 #include "io/io.h"
 #include "map_common.h"
 #include "costmap_layer.h"
+#include "roborts_msgs/GameZoneArray.h"
 
 namespace roborts_costmap {
 
@@ -68,6 +69,7 @@ class StaticLayer : public CostmapLayer {
   virtual void Activate();
   virtual void Deactivate();
   virtual void Reset();
+  virtual void UpdateBuffCallBack(const roborts_msgs::GameZoneArrayConstPtr& zone);
   virtual void UpdateCosts(Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j);
   virtual void UpdateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y,
                             double* max_x, double* max_y);
@@ -80,6 +82,12 @@ class StaticLayer : public CostmapLayer {
   std::string global_frame_;
   std::string map_frame_;
   std::string map_topic_;
+  roborts_msgs::GameZoneArray buff_info;
+  bool last_mactive_{false};
+  bool last_sactive_{false};
+  bool nomove_active_{false};
+  bool noshoot_active_{false};
+  float buff_point_[12] = {7.58, 2.16, 6.18, 3.3, 4.45, 0.9, 4.5, 4.48, 2.47, 2.07, 1.08, 3.34};
   bool subscribe_to_updates_;
   bool map_received_;
   bool has_updated_data_;
@@ -90,6 +98,7 @@ class StaticLayer : public CostmapLayer {
   bool first_map_only_;
   bool trinary_costmap_;
   ros::Subscriber map_sub_, map_update_sub_;
+  ros::Subscriber buff_sub_;
 };
 
 

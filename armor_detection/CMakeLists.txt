@@ -52,3 +52,7 @@ add_executable(${PROJECT_NAME}_client    armor_detection_client.cpp)
 target_include_directories(armor_detection_client PRIVATE  ${catkin_INCLUDE_DIRS})
 target_link_libraries(armor_detection_client  PRIVATE   ${catkin_LIBRARIES} )
 
+add_dependencies(armor_detection_node 
+  roborts_msgs_generate_messages)
+add_dependencies(armor_detection_client 
+  roborts_msgs_generate_messages)

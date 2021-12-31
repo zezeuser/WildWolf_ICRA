@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: armor_detection
+Description: Description of armor_detection
+Version: 1.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

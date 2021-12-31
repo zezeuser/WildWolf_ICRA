@@ -20,37 +20,42 @@ class DefenseBehavior {
   }
 
   void Run() {
-    auto executor_state = Update();
-    geometry_msgs::PoseStamped my = blackboard_->GetRobotMapPose();
-    float move_dst = 0.20;               //车身左右移动的距离
+    float move_dist = 0.20;               //车身左右移动的距离
     geometry_msgs::PoseStamped swing_goal;
-    swing_goal.header.frame_id = "map";
     swing_goal = blackboard_->GetRobotMapPose();
+    swing_goal.header.frame_id = "map";
+    double yaw = tf::getYaw(swing_goal.pose.orientation);
     ROS_INFO("Got pose.");
-    tf::Quaternion cur_q;
-    tf::quaternionMsgToTF(swing_goal.pose.orientation, cur_q);
-    double r, p, y;
-    tf::Matrix3x3(cur_q).getRPY(r, p, y); // 从位置信息中获取车身的角度
-    float move_x = asin(y) * move_dst;    // x轴方向上移动距离
-    float move_y = -acos(y) * move_dst;   // y轴方向上移动距离
+    float move_x = sin(yaw) * move_dist;    // x轴方向上移动距离
+    float move_y = -cos(yaw) * move_dist;   // y轴方向上移动距离
+    tf::Quaternion tf_Quaternion;
     swing_goal.pose.position.z = 0;
-    ros::Rate rate(20);
+    ros::Rate rate(10);
     ROS_INFO("Is swing");
     // 更新 x, y 轴坐标
-    while(blackboard_->CanDodge()){
-        if (blackboard_->info.has_my_enemy){
-                swing_goal.pose.position.x += move_x;
-                swing_goal.pose.position.y += move_y;
-                chassis_executor_->Execute(swing_goal);
-                rate.sleep();
-                swing_goal.pose.position.x -= move_x;
-                swing_goal.pose.position.y -= move_y;
-                chassis_executor_->Execute(swing_goal);
-                rate.sleep();
-        }
+    // swing_goal.pose.position.x += move_x;
+    // swing_goal.pose.position.y += move_y;
+    double swing_goal_yaw  = yaw + 0.5;
+    tf_Quaternion = tf::createQuaternionFromYaw(swing_goal_yaw);
+    tf::quaternionTFToMsg(tf_Quaternion , swing_goal.pose.orientation);
+    auto executor_state = Update();
+    chassis_executor_->Execute(swing_goal);
+    int count = 0;
+    while(count > 200){   
+        count ++ ;
     }
-    
+    count = 0;
+    // swing_goal.pose.position.x -= move_x;
+    // swing_goal.pose.position.y -= move_y;
+    swing_goal_yaw  = yaw - 0.5;
+    tf_Quaternion = tf::createQuaternionFromYaw(swing_goal_yaw);
+    tf::quaternionTFToMsg(tf_Quaternion , swing_goal.pose.orientation);
+    chassis_executor_->Execute(swing_goal);
+    while(count > 200){   
+        count ++ ;
+    }
 }
+
   void Cancel() {
     chassis_executor_->Cancel();
   }

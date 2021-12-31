@@ -1,5 +1,5 @@
 first_map_only: false
-subscribe_to_updates: false
+subscribe_to_updates: true
 track_unknown_space: true
 use_maximum: true
 unknown_cost_value: -1

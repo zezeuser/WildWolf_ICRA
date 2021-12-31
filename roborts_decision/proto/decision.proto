@@ -1,74 +1,74 @@
-syntax = "proto2";
+syntax = "proto3";
 package roborts_decision;
 
 message Point {
-    optional float x = 1;
-    optional float y = 2;
-    optional float z = 3;
+    float x = 1;
+    float y = 2;
+    float z = 3;
 
-    optional float roll  = 4;
-    optional float pitch = 5;
-    optional float yaw   = 6;
+     float roll  = 4;
+     float pitch = 5;
+     float yaw   = 6;
 }
 
 message EscapeConstraint {
-    optional float left_x_limit = 1;
-    optional float right_x_limit = 2;
-    optional float robot_x_limit = 3;
-    optional float left_random_min_x = 4;
-    optional float left_random_max_x = 5;
-    optional float right_random_min_x = 6;
-    optional float right_random_max_x = 7;
+   float left_x_limit = 1;
+   float right_x_limit = 2;
+   float robot_x_limit = 3;
+   float left_random_min_x = 4;
+   float left_random_max_x = 5;
+   float right_random_min_x = 6;
+   float right_random_max_x = 7;
 }
 
 message SearchConstraint {
-  optional float x_limit = 1;
-  optional float y_limit = 2;
+  float x_limit = 1;
+  float y_limit = 2;
 }
 
 message WhirlVel {
-  optional float angle_x_vel = 1;
-  optional float angle_y_vel = 2;
-  optional float angle_z_vel = 3;
+  float angle_x_vel = 1;
+  float angle_y_vel = 2;
+  float angle_z_vel = 3;
 }
 
 message MultiRobot {
-  optional Point start_position = 7;
+  Point start_position = 7;
 }
 
 message BlueOrRedGroup{
-  optional MultiRobot master_bot = 1;
-  optional MultiRobot wing_bot = 2;
-  optional Point reload_point = 3;
-  optional Point shield_point = 4;
+  MultiRobot master_bot = 1;
+  MultiRobot wing_bot = 2;
+  Point reload_point = 3;
+  Point shield_point = 4;
   repeated Point patrol = 5;
   
 }
 
 
 message DecisionConfig {
-    optional string strategy = 1;
-    optional bool use_camera = 2;
-    optional bool master = 3 [default = false];
-    optional bool isblue = 4 [default = true]; 
-    optional bool usewifi = 5;
-    optional string master_ip = 6; 
-    optional string guard_ip = 7;
-    optional int32 remain_bullet = 8;
-    optional EscapeConstraint escape = 9;
-    optional BlueOrRedGroup  blue = 10;
-    optional BlueOrRedGroup  red = 11;
-    optional SearchConstraint search_limit = 12;
-    optional WhirlVel whirl_vel = 13;
+    string strategy = 1;
+    bool use_camera = 2;
+    bool master = 3 ;
+    bool isblue = 4 ; 
+    bool usewifi = 5;
+    string master_ip = 6; 
+    string guard_ip = 7;
+    int32 remain_bullet = 8;
+    EscapeConstraint escape = 9;
+    BlueOrRedGroup  blue = 10;
+    BlueOrRedGroup  red = 11;
+    SearchConstraint search_limit = 12;
+    WhirlVel whirl_vel = 13;
 	
     repeated Point search_region_1 = 14;
     repeated Point search_region_2 = 15;
     repeated Point search_region_3 = 16;
     repeated Point search_region_4 = 17;
-    optional bool can_shoot = 18;
-    optional bool can_dodge = 19;
-    optional bool dodge_in_reload = 20;
-    optional int32 shoot_hz = 21;
-    optional bool use_refree = 22;
+    bool can_shoot = 18;
+    bool can_dodge = 19;
+    bool dodge_in_reload = 20;
+    int32 shoot_hz = 21;
+    bool use_refree = 22;
 }
 

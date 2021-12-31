@@ -115,6 +115,7 @@ void DynamicObstacleLayer::OnInitialize() {
 
 void DynamicObstacleLayer::LaserScanCallback(const sensor_msgs::PointCloud2::ConstPtr &message,
                                       const std::shared_ptr<ObservationBuffer> &buffer) {
+  ROS_INFO("recive");
   // Eigen::Vector2d robot_center;
   // tf::StampedTransform transform;
   // try

@@ -23,10 +23,8 @@
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
 
-#include "roborts_msgs/ArmorDetectionAction.h"
-
-
 // roborts_msgs 
+#include "roborts_msgs/ArmorDetectionAction.h"
 #include "roborts_msgs/ArmorPos.h"
 #include "roborts_msgs/ArmorsPos.h"
 
@@ -35,8 +33,6 @@
 #include "roborts_msgs/RobotHeat.h"
 #include "roborts_msgs/GameStatus.h"
 #include "roborts_msgs/RobotShoot.h"
-#include "roborts_msgs/SupplierStatus.h"
-#include "roborts_msgs/BonusStatus.h"
 #include "roborts_msgs/GameZoneArray.h"
 #include "roborts_msgs/GameStatus.h"
 #include "roborts_msgs/RobotDamage.h"
@@ -172,9 +168,9 @@ class Blackboard {
 
     // node handle
     ros::NodeHandle nh;
-
+    // armor_info
     camera_armor_sub_ = nh.subscribe<roborts_msgs::ArmorsPos>("front_camera_robot_pos", 10, &Blackboard::FrontCameraArmorCallback, this);  // Front Camera        
-    
+    //referee_system
     robot_status_sub_ = nh.subscribe<roborts_msgs::RobotStatus>("robot_status", 10, &Blackboard::RobotStatusCallback, this);
     robot_heat_sub_ = nh.subscribe<roborts_msgs::RobotHeat>("robot_heat", 10, &Blackboard::RobotHeatCallback, this);
     robot_shoot_sub_ = nh.subscribe<roborts_msgs::RobotShoot>("robot_shoot", 10, &Blackboard::RobotShootCallback, this);
@@ -183,12 +179,9 @@ class Blackboard {
     game_zone_sub_ = nh.subscribe<roborts_msgs::GameZoneArray>("game_zone_array_status", 10, &Blackboard::GameZoneCallback, this);
     emeny_hp_sub_ = nh.subscribe<roborts_msgs::GameRobotHP>("game_robot_hp", 30, &Blackboard::EnemyHpCallback, this);
     emeny_bullet_sub_ = nh.subscribe<roborts_msgs::GameRobotBullet>("game_robot_bullet", 30, &Blackboard::EnemyBulletCallback, this);
-
-    // supply_sub_ = nh.subscribe<roborts_msgs::SupplierStatus>("field_supplier_status", 10, &Blackboard::FieldSupplyCallback,this);
+    //car_info
     cmd_gimbal_sub_ = nh.subscribe<roborts_msgs::GimbalAngle>("cmd_gimbal_angle", 10, &Blackboard::CmdGimbalCallback, this);
     vel_acc_sub_ = nh.subscribe<roborts_msgs::TwistAccel>("cmd_vel_acc", 10, &Blackboard::VelAccCallback, this);
-    // buff_sub_ = nh.subscribe<roborts_msgs::BonusStatus>("field_bonus_status", 10, &Blackboard::FieldSupplyCallback, this);
-
     // pub
     shoot_pub_ = nh.advertise<roborts_msgs::ShooterCmd>("shoot_cmd", 10, this);
     ally_pub_ = nh.advertise<geometry_msgs::PoseStamped>("friend_pose", 10, this);
@@ -313,6 +306,7 @@ class Blackboard {
 
     // use wifi
     if (decision_config.usewifi()){
+        connect_wifi = true;
         if (info.is_master){
             std::string ip = decision_config.master_ip();
             std::string port = "";
@@ -337,31 +331,36 @@ class Blackboard {
     }
   }
 
-  ~Blackboard() = default;
+    ~Blackboard() = default;
 
 
-  // supply request
-  void SupplyRequest(int number){
-      info.is_supplying = true;
-  }
+    // supply request
+    void SupplyRequest(int number){
+        info.is_supplying = true;
+    }
  
 
-  void Shoot(int hz){
-     if (!is_in_shoot_state && info.can_shoot){
-        is_in_shoot_state = true;
-        shoot_thread = std::thread(&Blackboard::_ShootThread, this, hz);
-     }
-  }
+    void Shoot(int hz){
+        if (!is_in_shoot_state && info.can_shoot){
+            is_in_shoot_state = true;
+            shoot_thread = std::thread(&Blackboard::_ShootThread, this, hz);
+        }
+    }
 
-
-  void StopShoot(){
-      if (is_in_shoot_state){
-        is_in_shoot_state = false;
-        shoot_thread.join();
-        armor_detection_goal_.command = 5 ;
+    void StartFirWhl(){
+        armor_detection_goal_.command = 5;
         armor_detection_actionlib_client_.sendGoal(armor_detection_goal_);
-      }  
-  }
+    }
+
+    void StopShoot(){
+        if (is_in_shoot_state){
+            is_in_shoot_state = false;
+            shoot_thread.join();
+            armor_detection_goal_.command = 5 ;
+            armor_detection_actionlib_client_.sendGoal(armor_detection_goal_);
+        }  
+    }
+
 
   void StartDodge(){
       if (info.can_dodge){
@@ -370,7 +369,6 @@ class Blackboard {
           dodge_pub_.publish(dg);
           in_dodge = true;
       }
-      
   }
 
   void StopDodge(){
@@ -383,13 +381,16 @@ class Blackboard {
   // Front Camera Armor Detection
   void FrontCameraArmorCallback(const roborts_msgs::ArmorsPos::ConstPtr &armors){
     //   printf("Front Camera!\n");
-      
       if (armors->num_armor == 0){
           info.valid_front_camera_armor = false;
           _front_first_enemy = false;
           _front_second_enemy = false;
+          use_camera_pose = false;
       }
       else{
+            geometry_msgs::PoseStamped enemy_pose , global_pose_msg;
+            tf::Stamped<tf::Pose> tf_pose ,global_tf_pose;
+            enemy_pose.header.frame_id = gimbal_frameID;
             geometry_msgs::PoseStamped cur_pose = GetRobotMapPose();
             // Set up valid set
             std::set<int> valid_id_set; 
@@ -398,34 +399,39 @@ class Blackboard {
                 int id = armors->id[i];
                 int state = armors->state[i];
                 valid_id_set.insert(id); // ?????????????????!!!!!!!!!!!!!!!   is ID 0 should be all dealth points???
-                bool cur_state = bool(state == 1);
-                // printf("ID0\n");
-                if (cur_state && armors->pose_A.size()>0){
+                if (armors->pose_A.size()>0){
                         double dx,dy;
                         // mm -> m 
                         dx = armors->pose_A[i]/1000;
                         dy = armors->pose_B[i]/1000;
                         if (dx<=0 || dx>=8 || dy<=0 || dy>=5)
-                                continue;
-                        if (id == 1)   _front_first_enemy = true;
-                        else if (id == 2)    _front_second_enemy = true;
-                        else if (id!=1 || id!=2){ // do not know which car should be update, then according to history
-                                double dist1 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.first_enemy.pose.position.x, info.first_enemy.pose.position.y);
-                                double dist2 = GetEulerDistance(cur_pose.pose.position.x, cur_pose.pose.position.y, info.second_enemy.pose.position.x, info.second_enemy.pose.position.y);
-                                double dist = std::sqrt(dx * dx + dy * dy);
-                                if ((dist1 - dist ) <= (dist2 - dist )){
-                                _front_first_enemy = true;
-                                valid_id_set.insert(1);
+                            continue;
+                        if (id == 1)  _front_first_enemy = true;
+                        else  _front_second_enemy = true;
+                        if(dx < 1.5 || !connect_wifi){      
+                            use_camera_pose = true;
+                            enemy_pose.pose.position.x = dx;
+                            enemy_pose.pose.position.y = dy;
+                            poseStampedMsgToTF(enemy_pose, tf_pose);
+                            tf_pose.stamp_ = ros::Time(0);
+                            try
+                            {
+                                tf_ptr_->transformPose("map", tf_pose, global_tf_pose);
+                                if(_front_first_enemy){
+                                    tf::poseStampedTFToMsg(global_tf_pose,info.first_enemy);
+                                }else{
+                                    tf::poseStampedTFToMsg(global_tf_pose,info.second_enemy);
                                 }
-                                else{
-                                _front_second_enemy = true;
-                                valid_id_set.insert(2);
-                                }
+                            }
+                            catch (tf::TransformException &ex) {
+                                    ROS_ERROR("tf error when transform enemy pose from camera to map");
+                            }
+                        }else {
+                            use_camera_pose = false;
                         }
                         valid = true;
                 }
             }
-            
             // all 0.
             if (!valid) {  info.valid_front_camera_armor = false;  }
             else   { info.valid_front_camera_armor = true; }
@@ -437,140 +443,108 @@ class Blackboard {
                 }
             }
             valid_id_set.clear();
-            info.valid_camera_armor = info.valid_front_camera_armor;
-            info.has_first_enemy = _front_first_enemy;
-            info.has_second_enemy = _front_second_enemy;
-            info.has_my_enemy = info.has_first_enemy || info.has_second_enemy;
       }
+        info.valid_camera_armor = info.valid_front_camera_armor;
+        info.has_first_enemy = _front_first_enemy;
+        info.has_second_enemy = _front_second_enemy;
+        info.has_my_enemy = info.has_first_enemy || info.has_second_enemy;
   }
 
-  // Is here right in recieved bullet???????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // FieldSUpply Callback
-  void FieldSupplyCallback(const roborts_msgs::SupplierStatus::ConstPtr &msg){
-      static unsigned int count = 0;
-      unsigned int status = msg->status;
-      if (status == 1){
-          info.is_supplying = true;
-          count = 0;
-      }
-      else if (info.is_supplying  && status==0){
-              count++;
-      }
-
-      if (count>=3){
-          count = 0;
-          info.is_supplying = false;
-      }
-  }
- 
- // Buff Callback
- void BuffCallback(const roborts_msgs::BonusStatus::ConstPtr &msg){
-    if (info.team_blue)  info.has_buff = bool(msg->blue_bonus ==2);
-    else info.has_buff = bool(msg->red_bonus == 2); 
- }
   
-  // vel call back
-  void VelAccCallback(const roborts_msgs::TwistAccel::ConstPtr &msg){
-      my_vel_x = msg->twist.linear.x;
-      my_vel_y = msg->twist.linear.y;
-  }
+    // vel call back
+    void VelAccCallback(const roborts_msgs::TwistAccel::ConstPtr &msg){
+        my_vel_x = msg->twist.linear.x;
+        my_vel_y = msg->twist.linear.y;
+    }
   
-  // Game Status call back
-  void GameStatusCallback(const roborts_msgs::GameStatus::ConstPtr &msg){
-      info.remaining_time = msg->remaining_time;
-      info.is_begin = bool(msg->game_status == 4);
-      info.game_status = msg->game_status;
-  }
+    // Game Status call back
+    void GameStatusCallback(const roborts_msgs::GameStatus::ConstPtr &msg){
+        info.remaining_time = msg->remaining_time;
+        info.is_begin = bool(msg->game_status == 4);
+        info.game_status = msg->game_status;
+    }
 
     void RobotDamageCallback(const roborts_msgs::RobotDamageConstPtr& damage) {
-        // info.is_hitted = true;
+            // info.is_hitted = true;
+        }
+
+    // Cmd Gimbal call back
+    void CmdGimbalCallback(const roborts_msgs::GimbalAngle::ConstPtr &msg){
+            bool yaw_mode = msg->yaw_mode;
+            bool pitch_mode = msg->pitch_mode;
+            float yaw_angle = msg->yaw_angle;
+            float pitch_angle = msg->pitch_angle;
+            if (yaw_mode && std::abs(yaw_angle) <= 0.2 && info.valid_front_camera_armor){
+                _gimbal_can = true;
+            }
+            else{
+                _gimbal_can = false;
+            }
+            // gimbal pitch
+            // printf("yaw_mode:%d yaw_angle:%f, pitch_mode:%d, pitch_angle:%f\n", yaw_mode, yaw_angle, pitch_mode, pitch_angle);
+        
     }
-  // Cmd Gimbal call back
-  void CmdGimbalCallback(const roborts_msgs::GimbalAngle::ConstPtr &msg){
-        bool yaw_mode = msg->yaw_mode;
-        bool pitch_mode = msg->pitch_mode;
-        float yaw_angle = msg->yaw_angle;
-        float pitch_angle = msg->pitch_angle;
-        if (yaw_mode && std::abs(yaw_angle) <= 0.2 && info.valid_front_camera_armor){
-             _gimbal_can = true;
-        }
-        else{
-            _gimbal_can = false;
-        }
-        // gimbal pitch
-        // printf("yaw_mode:%d yaw_angle:%f, pitch_mode:%d, pitch_angle:%f\n", yaw_mode, yaw_angle, pitch_mode, pitch_angle);
-      
-  }
 
-
-
-  // Robot status call back
-  void RobotStatusCallback(const roborts_msgs::RobotStatus::ConstPtr &rb_status){
-      info.remain_hp = rb_status->remain_hp;
-      remain_hp = info.remain_hp;
-    //   info.team_blue = bool(rb_status->id == 13 || rb_status->id==14);
-  }
+    // Robot status call back
+    void RobotStatusCallback(const roborts_msgs::RobotStatus::ConstPtr &rb_status){
+        info.remain_hp = rb_status->remain_hp;
+        remain_hp = info.remain_hp;
+        //   info.team_blue = bool(rb_status->id == 13 || rb_status->id==14);
+    }
   
-  // Robot Heat call back
-  void RobotHeatCallback(const roborts_msgs::RobotHeat::ConstPtr &rh){
-      info.heat = rh->shooter_heat;
-  }
+    // Robot Heat call back
+    void RobotHeatCallback(const roborts_msgs::RobotHeat::ConstPtr &rh){
+        info.heat = rh->shooter_heat;
+    }
 
-  // Robot Shoot call back
-  void RobotShootCallback(const roborts_msgs::RobotShoot::ConstPtr &msg){
-      info.frequency = msg->frequency;
-      info.speed = msg->speed;
-     
-  }
+    // Robot Shoot call back
+    void RobotShootCallback(const roborts_msgs::RobotShoot::ConstPtr &msg){
+        info.frequency = msg->frequency;
+        info.speed = msg->speed;
+    }
     // buff zone x y call back 
     void GameZoneCallback(const roborts_msgs::GameZoneArrayConstPtr& zone) {
-
-    float resolution_x = 8680 / 8.20;
-    float resolution_y = 5080 / 4.69;
-
-    float blue_bullet_buff_x , blue_bullet_buff_y , red_bullet_buff_x , red_bullet_buff_y;
-    float blue_shield_buff_x , blue_shield_buff_y , red_shield_buff_x , red_shield_buff_y;
-    bool  blue_bullet_buff_active,blue_shield_buff_active,red_bullet_buff_active,red_shield_buff_active;
-    unsigned char blue_bullet = 4;
-    unsigned char red_bullet = 2;
-    unsigned char blue_shield = 3 ;
-    unsigned char red_shield = 1;
-    float buff_point[12] = {(530 + 270) / resolution_x, (2850 + 240) / resolution_y, (1930 + 270) / resolution_x, (1710 + 240) / resolution_y,
-                              (4070 + 270) / resolution_x, (4095 + 240) / resolution_y, (4070 + 270) / resolution_x, (505 + 240) / resolution_y,
-                              (6210 + 270) / resolution_x, (2890 + 240) / resolution_y, (7610 + 270) / resolution_x, (1750 + 240) / resolution_y};
-    
-    for (int m = 0; m < 6; m++) {
-      if (zone->zone[m].type == blue_bullet) {
-        blue_bullet_buff_x = buff_point[0 + m*2];
-        blue_bullet_buff_y = buff_point[1 + m*2];
-        blue_bullet_buff_active  = zone->zone[m].active;
-      }
-      if (zone->zone[m].type == blue_shield) {
-        blue_shield_buff_x = buff_point[0 + m*2];
-        blue_shield_buff_y = buff_point[1 + m*2];
-        blue_shield_buff_active  = zone->zone[m].active;
-      }
-      if (zone->zone[m].type == red_bullet) {
-        red_bullet_buff_x = buff_point[0 + m*2];
-        red_bullet_buff_y = buff_point[1 + m*2];
-        red_bullet_buff_active  = zone->zone[m].active;
-      }
-      if (zone->zone[m].type == red_shield) {
-        red_shield_buff_x = buff_point[0 + m*2];
-        red_shield_buff_y = buff_point[1 + m*2];
-        red_shield_buff_active  = zone->zone[m].active;
-      }
+        geometry_msgs::PoseStamped blue_bullet_point , blue_shield_point, red_bullet_point, red_shield_point;
+        bool blue_bullet_buff_active,blue_shield_buff_active,red_bullet_buff_active,red_shield_buff_active;
+        auto blue_bullet = roborts_msgs::GameZone::BLUE_BULLET_SUPPLY;
+        auto red_bullet = roborts_msgs::GameZone::RED_BULLET_SUPPLY;
+        auto blue_shield = roborts_msgs::GameZone::BLUE_HP_RECOVERY;
+        auto red_shield = roborts_msgs::GameZone::RED_HP_RECOVERY;
+        // F1 ~ F6
+        float buff_point[12] = {7.58, 2.16, 6.18, 3.3, 4.45, 0.9, 4.5, 4.48, 2.47, 2.07, 1.08, 3.34};
+        
+        for (int m = 0; m < 6; m++) {
+        if (zone->zone[m].type == blue_bullet) {
+            blue_bullet_point = Point2PoseStamped(buff_point[0 + m*2],buff_point[1 + m*2]);
+            blue_bullet_buff_active  = zone->zone[m].active;
+        }
+        if (zone->zone[m].type == blue_shield) {
+            blue_shield_point = Point2PoseStamped(buff_point[0 + m*2],buff_point[1 + m*2]);
+            blue_shield_buff_active  = zone->zone[m].active;
+        }
+        if (zone->zone[m].type == red_bullet) {
+            red_bullet_point = Point2PoseStamped(buff_point[0 + m*2],buff_point[1 + m*2]);
+            red_bullet_buff_active  = zone->zone[m].active;
+        }
+        if (zone->zone[m].type == red_shield) {
+            red_shield_point = Point2PoseStamped(buff_point[0 + m*2],buff_point[1 + m*2]);
+            red_shield_buff_active  = zone->zone[m].active;
+        }
     }
-
     if(info.team_blue){
-    info.my_reload = Point2PoseStamped(blue_bullet_buff_x,blue_bullet_buff_y);
-    info.my_shield = Point2PoseStamped(blue_shield_buff_x,blue_shield_buff_y);
+    info.my_reload = blue_bullet_point;
+    info.my_shield = blue_shield_point;
+    info.opp_reload = red_bullet_point;
+    info.opp_shield = red_shield_point;
     info.bullet_buff_active = blue_bullet_buff_active;
     info.shield_buff_active = blue_shield_buff_active;
+
     }
     else{
-    info.opp_reload = Point2PoseStamped(red_bullet_buff_x,red_bullet_buff_y);
-    info.opp_shield =Point2PoseStamped(red_shield_buff_x,red_shield_buff_y);
+    info.my_reload = red_bullet_point;
+    info.my_shield = red_shield_point;
+    info.opp_reload = blue_bullet_point;
+    info.opp_shield = blue_shield_point;
     info.bullet_buff_active = red_bullet_buff_active;
     info.shield_buff_active = red_shield_buff_active;
     }
@@ -608,7 +582,6 @@ class Blackboard {
                 info.remain_bullet = bullet-> red2;
         }
     }
-    
   }
 
   // Enemy  // messages are always zero for enemy.
@@ -617,40 +590,6 @@ class Blackboard {
     if (feedback->detected){
       info.valid_front_camera_armor = true;
       enemy_detected_ = true;
-      // ROS_INFO("Find Enemy!");
-
-      tf::Stamped<tf::Pose> tf_pose, global_tf_pose;
-      geometry_msgs::PoseStamped camera_pose_msg, global_pose_msg;
-      camera_pose_msg = feedback->enemy_pos;
-
-      double distance = std::sqrt(camera_pose_msg.pose.position.x * camera_pose_msg.pose.position.x +
-          camera_pose_msg.pose.position.y * camera_pose_msg.pose.position.y);
-      double yaw = atan(camera_pose_msg.pose.position.y / camera_pose_msg.pose.position.x);
-
-      //camera_pose_msg.pose.position.z=camera_pose_msg.pose.position.z;
-      tf::Quaternion quaternion = tf::createQuaternionFromRPY(0,
-                                                              0,
-                                                              yaw);
-      camera_pose_msg.pose.orientation.w = quaternion.w();
-      camera_pose_msg.pose.orientation.x = quaternion.x();
-      camera_pose_msg.pose.orientation.y = quaternion.y();
-      camera_pose_msg.pose.orientation.z = quaternion.z();
-      poseStampedMsgToTF(camera_pose_msg, tf_pose);
-     
-      tf_pose.stamp_ = ros::Time(0);
-      try
-      {
-        tf_ptr_->transformPose("map", tf_pose, global_tf_pose);
-        tf::poseStampedTFToMsg(global_tf_pose, global_pose_msg);
-
-        if(GetDistance(global_pose_msg, enemy_pose_)>0.2 || GetAngle(global_pose_msg, enemy_pose_) > 0.2){
-          enemy_pose_ = global_pose_msg;
-
-        }
-      }
-      catch (tf::TransformException &ex) {
-        ROS_ERROR("tf error when transform enemy pose from camera to map");
-      }
     } else{
       info.valid_front_camera_armor = false;
       enemy_detected_ = false;
@@ -669,18 +608,22 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
     // The different mark
     if (info.has_first_enemy && info.has_second_enemy){
         if(info.first_enemy_dist > threshold.detect_dist || info.second_enemy_dist > threshold.detect_dist)
-        {
+        {   
+            //有一个超范围则选择最近距离
             enemyPose = info.first_enemy_dist <= info.second_enemy_dist ? info.first_enemy : info.second_enemy;
         }
         else{
             if(info.emeny_first_hp < 400 || info.emeny_second_hp < 400  ){
+                // 都不超范围则选择若有一个低血量则选择最低血量
                 enemyPose = info.emeny_first_hp <= info.emeny_second_hp ? info.first_enemy : info.second_enemy;
             }
             else{
                 if(info.emeny_first_bullet < 0 || info.emeny_second_bullet < 0){
+                // 都不超范围则选择且无低血量若有无子弹的车则选择该车
                     enemyPose = info.emeny_first_bullet <= info.emeny_first_bullet ? info.first_enemy : info.second_enemy;
                 }
                 else{
+                    // 都不超范围且无血量最低的车且都有子弹则选择较低血量的车
                     enemyPose = info.emeny_first_hp <= info.emeny_second_hp ? info.first_enemy : info.second_enemy;
                 }
             }      
@@ -691,8 +634,6 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
             else my_shoot_2_cnt++;
         }
     }
-
-
     else if (info.has_first_enemy && info.has_ally_second_enemy){
         if (shoot_1_cnt >= shoot_2_cnt){
             enemyPose = info.first_enemy;
@@ -765,16 +706,14 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
         target_id_pub_.publish(target_id_);
     }
     return enemyPose;
-
   }
 
   bool CanShoot(){
        if (_gimbal_can                    // gimbal yaw can
            && info.heat <threshold.heat_upper_bound   // heater bound
-           && ( (my_vel_x==0 && my_vel_y ==0) || in_dodge )  // velocity or dodge
+        //    && ( (my_vel_x==0 && my_vel_y ==0) || in_dodge )  // velocity or dodge
            && info.valid_front_camera_armor)   // valid front camera
            { 
-
                 return true;
            }
        else{
@@ -782,7 +721,6 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
            return false;
        }
   }
-
 
   bool CanDodge(){
       // whether dodge in my reload!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -945,9 +883,7 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
                 cur_angle = cur_angle >0? cur_angle : cur_angle + 2 * 3.1415926;
                 acc_angle += cur_angle;
                 count++;
-            }
-                      
-          
+            }   
       }
       acc_angle = acc_angle / count;
       acc_angle = acc_angle - 3.1415926;
@@ -974,269 +910,265 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
       tw.linear.z = 0;
       // has sent cmd_vel
       cmd_vel_pub_.publish(tw);
-      
-     
-
       return true;
   }
 
 
-  /******************** tool *******************/
-  geometry_msgs::Quaternion GetRelativeQuaternion(const geometry_msgs::PoseStamped to,const geometry_msgs::PoseStamped from){
-      double dy, dx;
-      dy = to.pose.position.y - from.pose.position.y;
-      dx = to.pose.position.x - from.pose.position.x;
-      double yaw = std::atan2(dy, dx);    
-      return tf::createQuaternionMsgFromYaw(yaw);
-  }
+    /******************** tool *******************/
+    geometry_msgs::Quaternion GetRelativeQuaternion(const geometry_msgs::PoseStamped to,const geometry_msgs::PoseStamped from){
+        double dy, dx;
+        dy = to.pose.position.y - from.pose.position.y;
+        dx = to.pose.position.x - from.pose.position.x;
+        double yaw = std::atan2(dy, dx);    
+        return tf::createQuaternionMsgFromYaw(yaw);
+    }
 
-  geometry_msgs::Quaternion GetRelativeQuaternion(const double to_x, const double to_y, const geometry_msgs::PoseStamped from){
-      double dx, dy;
-      dy = to_y - from.pose.position.y;
-      dx = to_x - from.pose.position.x;
-      double yaw = std::atan2(dy, dx);
-      return tf::createQuaternionMsgFromYaw(yaw);
-  }
+    geometry_msgs::Quaternion GetRelativeQuaternion(const double to_x, const double to_y, const geometry_msgs::PoseStamped from){
+        double dx, dy;
+        dy = to_y - from.pose.position.y;
+        dx = to_x - from.pose.position.x;
+        double yaw = std::atan2(dy, dx);
+        return tf::createQuaternionMsgFromYaw(yaw);
+    }
 
-double GetDistance(const geometry_msgs::PoseStamped &pose1,
-    const geometry_msgs::PoseStamped &pose2) {
-    const geometry_msgs::Point point1 = pose1.pose.position;
-    const geometry_msgs::Point point2 = pose2.pose.position;
-    const double dx = point1.x - point2.x;
-    const double dy = point1.y - point2.y;
-    return std::sqrt(dx * dx + dy * dy);
-  }
+    double GetDistance(const geometry_msgs::PoseStamped &pose1,
+        const geometry_msgs::PoseStamped &pose2) {
+        const geometry_msgs::Point point1 = pose1.pose.position;
+        const geometry_msgs::Point point2 = pose2.pose.position;
+        const double dx = point1.x - point2.x;
+        const double dy = point1.y - point2.y;
+        return std::sqrt(dx * dx + dy * dy);
+    }
 
-  double GetEulerDistance(const float x1, const float y1, const float x2, const float y2){
-     return std::sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
-  }
+    double GetEulerDistance(const float x1, const float y1, const float x2, const float y2){
+        return std::sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));
+    }
 
-  double GetAngle(const geometry_msgs::PoseStamped &pose1,
-                  const geometry_msgs::PoseStamped &pose2) {
-    const geometry_msgs::Quaternion quaternion1 = pose1.pose.orientation;
-    const geometry_msgs::Quaternion quaternion2 = pose2.pose.orientation;
-    tf::Quaternion rot1, rot2;
-    tf::quaternionMsgToTF(quaternion1, rot1);
-    tf::quaternionMsgToTF(quaternion2, rot2);
-    return rot1.angleShortestPath(rot2);
-  }
+    double GetAngle(const geometry_msgs::PoseStamped &pose1,
+                    const geometry_msgs::PoseStamped &pose2) {
+        const geometry_msgs::Quaternion quaternion1 = pose1.pose.orientation;
+        const geometry_msgs::Quaternion quaternion2 = pose2.pose.orientation;
+        tf::Quaternion rot1, rot2;
+        tf::quaternionMsgToTF(quaternion1, rot1);
+        tf::quaternionMsgToTF(quaternion2, rot2);
+        return rot1.angleShortestPath(rot2);
+    }
 
-  geometry_msgs::PoseStamped Point2PoseStamped(Point point){
-      geometry_msgs::PoseStamped ps;
-      ps.header.frame_id = "map";
-      ps.pose.position.x = point.x();
-      ps.pose.position.y = point.y();
-      ps.pose.position.z = point.z();
-      tf::Quaternion q = tf::createQuaternionFromRPY(point.roll(),
-                                                   point.pitch(),
-                                                   point.yaw());
-      ps.pose.orientation.x = q.x();
-      ps.pose.orientation.y = q.y();
-      ps.pose.orientation.z = q.z();
-      ps.pose.orientation.w = q.w();
-      return ps;
-  }
+    geometry_msgs::PoseStamped Point2PoseStamped(Point point){
+        geometry_msgs::PoseStamped ps;
+        ps.header.frame_id = "map";
+        ps.pose.position.x = point.x();
+        ps.pose.position.y = point.y();
+        ps.pose.position.z = point.z();
+        tf::Quaternion q = tf::createQuaternionFromRPY(point.roll(),
+                                                    point.pitch(),
+                                                    point.yaw());
+        ps.pose.orientation.x = q.x();
+        ps.pose.orientation.y = q.y();
+        ps.pose.orientation.z = q.z();
+        ps.pose.orientation.w = q.w();
+        return ps;
+    }
 
     geometry_msgs::PoseStamped Point2PoseStamped(float x , float y){
-      geometry_msgs::PoseStamped ps;
-      ps.header.frame_id = "map";
-      ps.pose.position.x = x;
-      ps.pose.position.y = y;
-      return ps;
-  }
+        geometry_msgs::PoseStamped ps;
+        ps.header.frame_id = "map";
+        ps.header.stamp = ros::Time::now();
+        ps.pose.position.x = x;
+        ps.pose.position.y = y;
+        return ps;
+    }
 
-  const geometry_msgs::PoseStamped GetRobotMapPose() {
-    UpdateRobotPose();
-    return self_pose_;
-  }
+    const geometry_msgs::PoseStamped GetRobotMapPose() {
+        UpdateRobotPose();
+        return self_pose_;
+    }
 
-  const geometry_msgs::PoseStamped GetRobotGimbalMapPose(){
-    UpdateRobotGimbalPose();
-    return gimbal_pose_;
-  }
+    const geometry_msgs::PoseStamped GetRobotGimbalMapPose(){
+        return UpdateRobotGimbalPose("map");
+    }
 
-  const std::shared_ptr<CostMap> GetCostMap(){
-    return costmap_ptr_;
-  }
+    const geometry_msgs::PoseStamped GetRobotGimbalBasePose(){
+        return UpdateRobotGimbalPose(pose_frameID);
+    }
 
-  const CostMap2D* GetCostMap2D() {
-    return costmap_2d_;
-  }
+    const std::shared_ptr<CostMap> GetCostMap(){
+        return costmap_ptr_;
+    }
 
-  const unsigned char* GetCharMap() {
-    return charmap_;
-  }
+    const CostMap2D* GetCostMap2D() {
+        return costmap_2d_;
+    }
+
+    const unsigned char* GetCharMap() {
+        return charmap_;
+    }
 
 
-  DecisionInfoPool info;
-  Threshold threshold;
+    DecisionInfoPool info;
+    Threshold threshold;
 
  private:
-  ComInfo setComInfo(){
-      ComInfo ci;
-      ci.hp = info.remain_hp;
-      ci.shoot_1 = my_shoot_1_cnt;
-      ci.shoot_2 = my_shoot_2_cnt;
-      ci.has_enemy = info.has_my_enemy;
-      ci.bullet = info.remain_bullet;
-      ci.pose_x = self_pose_.pose.position.x;
-      ci.pose_y = self_pose_.pose.position.y;
-      ci.yaw = tf::getYaw(self_pose_.pose.orientation);
+    ComInfo setComInfo(){
+        ComInfo ci;
+        ci.hp = info.remain_hp;
+        ci.shoot_1 = my_shoot_1_cnt;
+        ci.shoot_2 = my_shoot_2_cnt;
+        ci.has_enemy = info.has_my_enemy;
+        ci.bullet = info.remain_bullet;
+        ci.pose_x = self_pose_.pose.position.x;
+        ci.pose_y = self_pose_.pose.position.y;
+        ci.yaw = tf::getYaw(self_pose_.pose.orientation);
 
-      //是否看见第一个敌人
-      ci.first_valid = info.has_first_enemy;
-      ci.first_enemy_x = info.first_enemy.pose.position.x;
-      ci.first_enemy_y = info.first_enemy.pose.position.y;
-      //是否看见第二个敌人
-      ci.second_valid = info.has_second_enemy;
-      ci.second_enemy_x = info.second_enemy.pose.position.x;
-      ci.second_enemy_y = info.second_enemy.pose.position.y;
-      
-      ci.goal_x = info.my_goal.pose.position.x;
-      ci.goal_y = info.my_goal.pose.position.y;
+        //是否看见第一个敌人
+        ci.first_valid = info.has_first_enemy;
+        ci.first_enemy_x = info.first_enemy.pose.position.x;
+        ci.first_enemy_y = info.first_enemy.pose.position.y;
+        //是否看见第二个敌人
+        ci.second_valid = info.has_second_enemy;
+        ci.second_enemy_x = info.second_enemy.pose.position.x;
+        ci.second_enemy_y = info.second_enemy.pose.position.y;
+        
+        ci.goal_x = info.my_goal.pose.position.x;
+        ci.goal_y = info.my_goal.pose.position.y;
 
-      // fusion info
-      ci.fusion.num_id_target = num_id_target;
-      ci.fusion.num_no_id_target = num_no_id_target;
-      unsigned int bound = 2 <num_id_target?2:num_id_target;
-      for (int i=0; i<bound; i++) ci.fusion.id_targets[i] = id_targets[i];
-      bound = 4 < num_no_id_target? 4:num_no_id_target;
-      for (int i=0; i<bound; i++) ci.fusion.no_id_targets[i] = no_id_targets[i];
-      return ci;
-  }
+        // fusion info
+        ci.fusion.num_id_target = num_id_target;
+        ci.fusion.num_no_id_target = num_no_id_target;
+        unsigned int bound = 2 <num_id_target?2:num_id_target;
+        for (int i=0; i<bound; i++) ci.fusion.id_targets[i] = id_targets[i];
+        bound = 4 < num_no_id_target? 4:num_no_id_target;
+        for (int i=0; i<bound; i++) ci.fusion.no_id_targets[i] = no_id_targets[i];
+        return ci;
+    }
 
-  void getComInfo(ComInfo ci){  
-      info.ally_remain_hp = ci.hp;
-      info.ally_remain_bullet = ci.bullet;
-      info.ally.header.stamp = ros::Time::now();
-      info.ally.pose.position.x = ci.pose_x;
-      info.ally.pose.position.y = ci.pose_y;
-      info.ally.pose.position.z = 0;
-      info.ally.pose.orientation = tf::createQuaternionMsgFromYaw(ci.yaw);
-      info.has_ally_first_enemy = ci.first_valid;
-      if (ci.first_valid){ 
-          info.ally_first_enemy.pose.position.x = ci.first_enemy_x;
-          info.ally_first_enemy.pose.position.y = ci.first_enemy_y;
-      }
-      info.has_ally_second_enemy = ci.second_valid;
-      if (ci.second_valid) {
-          info.ally_second_enemy.pose.position.x = ci.second_enemy_x;
-          info.ally_second_enemy.pose.position.y = ci.second_enemy_y;
-      }
-      info.ally_goal.pose.position.x = ci.goal_x;
-      info.ally_goal.pose.position.y = ci.goal_y;
-      info.has_ally_enemy = ci.has_enemy;
+    void getComInfo(ComInfo ci){  
+        info.ally_remain_hp = ci.hp;
+        info.ally_remain_bullet = ci.bullet;
+        info.ally.header.stamp = ros::Time::now();
+        info.ally.pose.position.x = ci.pose_x;
+        info.ally.pose.position.y = ci.pose_y;
+        info.ally.pose.position.z = 0;
+        info.ally.pose.orientation = tf::createQuaternionMsgFromYaw(ci.yaw);
+        info.has_ally_first_enemy = ci.first_valid;
+        if (ci.first_valid){ 
+            info.ally_first_enemy.pose.position.x = ci.first_enemy_x;
+            info.ally_first_enemy.pose.position.y = ci.first_enemy_y;
+        }
+        info.has_ally_second_enemy = ci.second_valid;
+        if (ci.second_valid) {
+            info.ally_second_enemy.pose.position.x = ci.second_enemy_x;
+            info.ally_second_enemy.pose.position.y = ci.second_enemy_y;
+        }
+        info.ally_goal.pose.position.x = ci.goal_x;
+        info.ally_goal.pose.position.y = ci.goal_y;
+        info.has_ally_enemy = ci.has_enemy;
 
-    // fusion info
-      ally_num_id_target = ci.fusion.num_id_target;
-      ally_num_no_id_target = ci.fusion.num_no_id_target;
-      unsigned int bound = 2 <ally_num_id_target? 2:ally_num_id_target;
-      for (int i=0; i<bound; i++)  ally_id_targets[i] = ci.fusion.id_targets[i];
-      bound = 4 < ally_num_no_id_target? 4 :ally_num_no_id_target;
-      for (int i=0; i<bound; i++)  ally_no_id_targets[i] = ci.fusion.no_id_targets[i];
+        // fusion info
+        ally_num_id_target = ci.fusion.num_id_target;
+        ally_num_no_id_target = ci.fusion.num_no_id_target;
+        unsigned int bound = 2 <ally_num_id_target? 2:ally_num_id_target;
+        for (int i=0; i<bound; i++)  ally_id_targets[i] = ci.fusion.id_targets[i];
+        bound = 4 < ally_num_no_id_target? 4 :ally_num_no_id_target;
+        for (int i=0; i<bound; i++)  ally_no_id_targets[i] = ci.fusion.no_id_targets[i];
 
-    // prepare to publish fusion data
-    //   FS.id_targets.clear();
-    //   FS.no_id_targets.clear();
-    //   FS.num_id_target = ally_num_id_target;
-    //   FS.num_no_id_target = ally_num_no_id_target;
-    //   for (int i=0; i< ally_num_id_target; i++) FS.id_targets.push_back(ally_id_targets[i]);
-    //   for (int i=0; i< ally_num_no_id_target; i++) FS.no_id_targets.push_back(ally_no_id_targets[i]);
+        // prepare to publish fusion data
+        //   FS.id_targets.clear();
+        //   FS.no_id_targets.clear();
+        //   FS.num_id_target = ally_num_id_target;
+        //   FS.num_no_id_target = ally_num_no_id_target;
+        //   for (int i=0; i< ally_num_id_target; i++) FS.id_targets.push_back(ally_id_targets[i]);
+        //   for (int i=0; i< ally_num_no_id_target; i++) FS.no_id_targets.push_back(ally_no_id_targets[i]);
 
-      // ally shoot cnt
-      ally_shoot_1_cnt = ci.shoot_1;
-      ally_shoot_2_cnt = ci.shoot_2;
+        // ally shoot cnt
+        ally_shoot_1_cnt = ci.shoot_1;
+        ally_shoot_2_cnt = ci.shoot_2;
 
-  }
+    }
 
-  void getGuardInfo( CarPositionSend gi){
+    void getGuardInfo( CarPositionSend gi){
         // cm -> m
-        if(!info.team_blue){
-          if (gi.blue1.x > 0 && gi.blue1.y > 0){
-          info.first_enemy.pose.position.x = gi.blue1.y/100;
-          info.first_enemy.pose.position.y = gi.blue1.x/100;
-          }
-          if (gi.blue2.x > 0 && gi.blue2.y  > 0){
-          info.second_enemy.pose.position.x = gi.blue2.y/100;
-          info.second_enemy.pose.position.y = gi.blue2.x/100;
-          }
-        }
-        else{
-            if (gi.red1.x > 0 && gi.red1.y > 0){
-            info.first_enemy.pose.position.x = gi.red1.y/100;
-            info.first_enemy.pose.position.y = gi.red1.x/100;
+        if (!use_camera_pose){
+            if(!info.team_blue){
+                if (gi.blue1.x > 0 && gi.blue1.y > 0){
+                info.first_enemy.pose.position.x = gi.blue1.y/100;
+                info.first_enemy.pose.position.y = gi.blue1.x/100;
+                }
+                if (gi.blue2.x > 0 && gi.blue2.y  > 0){
+                info.second_enemy.pose.position.x = gi.blue2.y/100;
+                info.second_enemy.pose.position.y = gi.blue2.x/100;
+                }
             }
-            if (gi.red2.x > 0 && gi.red2.y  > 0){
-            info.second_enemy.pose.position.x = gi.red2.y/100;
-            info.second_enemy.pose.position.y= gi.red2.x/100;
+            else{
+                if (gi.red1.x > 0 && gi.red1.y > 0){
+                info.first_enemy.pose.position.x = gi.red1.y/100;
+                info.first_enemy.pose.position.y = gi.red1.x/100;
+                }
+                if (gi.red2.x > 0 && gi.red2.y  > 0){
+                info.second_enemy.pose.position.x = gi.red2.y/100;
+                info.second_enemy.pose.position.y= gi.red2.x/100;
+                }
             }
         }
+        
   }
 
   // timeit shoot bullet control
-  void _ShootThread(int hz){
-      ros::Rate loop(hz);
-      while (ros::ok()){
-        // shoot once command
-        armor_detection_goal_.command = 8;
-        armor_detection_actionlib_client_.sendGoal(armor_detection_goal_);
-        if (! is_in_shoot_state)
-             break;
-        loop.sleep();   
-      }
-      
+    void _ShootThread(int hz){
+        ros::Rate loop(hz);
+        while (ros::ok()){
+            // shoot once command
+            armor_detection_goal_.command = 8;
+            armor_detection_actionlib_client_.sendGoal(armor_detection_goal_);
+            if (! is_in_shoot_state)
+                break;
+            loop.sleep();   
+        }
   }
+
 
 
   // master and client communication function
-  void CommunicateMaster(){
-    ComInfo ci;
-    ros::Rate loop(50);
-    while (ros::ok()){
-        zmq::message_t rec_message;
-        masterSocket_.recv(&rec_message);
-        memcpy(&ci, rec_message.data(), sizeof(ci));
-        getComInfo(ci);   
-        //---------------------------------------------------------------------------------------------------------------------------------------
-        ci = setComInfo();
-        zmq::message_t send_message(sizeof(ci));
-        memcpy(send_message.data(), &ci, sizeof(ci));
-        
-        masterSocket_.send(send_message);
+    void CommunicateMaster(){
+        ComInfo ci;
+        ros::Rate loop(50);
+        while (ros::ok()){
+            zmq::message_t rec_message;
+            masterSocket_.recv(&rec_message);
+            memcpy(&ci, rec_message.data(), sizeof(ci));
+            getComInfo(ci);   
+            //---------------------------------------------------------------------------------------------------------------------------------------
+            ci = setComInfo();
+            zmq::message_t send_message(sizeof(ci));
+            memcpy(send_message.data(), &ci, sizeof(ci));
+            
+            masterSocket_.send(send_message);
 
-        ally_pub_.publish(info.ally);
-        // fusion_pub_.publish(FS);
-        info.has_ally = true;
-       
-        loop.sleep();
+            ally_pub_.publish(info.ally);
+            // fusion_pub_.publish(FS);
+            info.has_ally = true;
+        
+            loop.sleep();
+        }
     }
-  }
 
   void CommunicateClient(){
-    
     ComInfo ci;
     ros::Rate loop(50);
-
     while (ros::ok()){
-
         ci = setComInfo();
         zmq::message_t send_message(sizeof(ci));
-        memcpy(send_message.data(), &ci, sizeof(ci));
-        
+        memcpy(send_message.data(), &ci, sizeof(ci));    
         clientSocket_.send(send_message);
         //----------------------------------------------------------------------------------------------------------------------------------------
-        
         zmq::message_t rec_message;
         clientSocket_.recv(&rec_message);
         memcpy(&ci, rec_message.data(), sizeof(ci));
-        getComInfo(ci);
-        
+        getComInfo(ci);    
         geometry_msgs::PoseStamped ap;
-       
         ally_pub_.publish(info.ally);
         // fusion_pub_.publish(FS);
         info.has_ally = true;
-       
         loop.sleep();       
     }
   }
@@ -1261,7 +1193,7 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
     robot_tf_pose.setIdentity();
      
     robot_tf_pose.frame_id_ = pose_frameID;
-    robot_tf_pose.stamp_ = ros::Time();
+    robot_tf_pose.stamp_ = ros::Time(0);
     try {
       geometry_msgs::PoseStamped robot_pose;
       tf::poseStampedTFToMsg(robot_tf_pose, robot_pose);
@@ -1273,37 +1205,31 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
   }
 
 
-  void UpdateRobotGimbalPose(){
-    if (use_camera){
+  geometry_msgs::PoseStamped UpdateRobotGimbalPose(std::string frame){
         tf::Stamped<tf::Pose> gimbal_tf_pose;
         gimbal_tf_pose.setIdentity();
-
         gimbal_tf_pose.frame_id_ = gimbal_frameID;
-        gimbal_tf_pose.stamp_ = ros::Time();
+        gimbal_tf_pose.stamp_ = ros::Time(0);
+        geometry_msgs::PoseStamped gimbal_pose;
+        geometry_msgs::PoseStamped target_pose;
         try{
-            geometry_msgs::PoseStamped gimbal_pose;
             tf::poseStampedTFToMsg(gimbal_tf_pose, gimbal_pose);
-            tf_ptr_->transformPose("map", gimbal_pose, gimbal_pose_);
-
+            tf_ptr_->transformPose(frame, gimbal_pose, target_pose);
         }
         catch (tf::LookupException &ex){
             ROS_ERROR("Transform Error looking up gimbal pose: %s", ex.what());
         }
-    }
+        return target_pose;
   }
 
   geometry_msgs::PoseStamped InitMapPose(){
       geometry_msgs::PoseStamped p;
       p.header.frame_id = "map";
+      p.header.stamp = ros::Time::now();
       p.pose.position.x = -99;
       p.pose.position.y = -99;
       return p;
   }
-
-
-  //! list<death points>
-  std::list<geometry_msgs::Point> death_Points;
-
 
   //! tf
   std::shared_ptr<tf::TransformListener> tf_ptr_;
@@ -1325,7 +1251,6 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
   //! Enemy info
   actionlib::SimpleActionClient<roborts_msgs::ArmorDetectionAction> armor_detection_actionlib_client_;
   roborts_msgs::ArmorDetectionGoal armor_detection_goal_;
-  geometry_msgs::PoseStamped enemy_pose_;
   bool enemy_detected_;
 
   //! cost map
@@ -1359,7 +1284,8 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
   // frame id
   std::string pose_frameID, gimbal_frameID;
   bool use_camera;
-
+  bool connect_wifi;
+  bool use_camera_pose;
   // fusion
   unsigned int num_id_target, ally_num_id_target;
   unsigned int num_no_id_target, ally_num_no_id_target;
@@ -1369,7 +1295,6 @@ double GetDistance(const geometry_msgs::PoseStamped &pose1,
   double my_vel_x{0}, my_vel_y{0};
 
   bool _gimbal_can, in_dodge;
-  
   bool _front_first_enemy, _front_second_enemy;
   bool _dodge_in_reload;
 };
