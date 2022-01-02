@@ -110,7 +110,7 @@ int VideoCapture::cameraInit(const int _CAMERA_RESOLUTION_COLS,
   CameraSetAeState(hCamera, FALSE);
   CameraSetExposureTime(hCamera, _CAMERA_EXPOSURETIME);
   // 设置颜色增益
-  CameraSetGain(hCamera, 100, 100, 100);
+  CameraSetGain(hCamera, 118, 121, 100);
 
   // 让SDK进入工作模式
   CameraPlay(hCamera);

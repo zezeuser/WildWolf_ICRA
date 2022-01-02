@@ -3,9 +3,9 @@ para_basic {
   is_debug: true
 }
 para_costmap_interface {
-  global_frame: "odom"
-  robot_base_frame: "base_link"
-  footprint_padding: 0.05
+  global_frame: "map"  		# local planner global_frame  for get robort gobal pose
+  robot_base_frame: "gimbal"    # for get the robort base pose
+  footprint_padding: 0.05 
   transform_tolerance: 1.0
   distance_threshold: 1.0
   map_width: 5.0
@@ -19,23 +19,23 @@ para_costmap_interface {
   has_static_layer: false
   has_dynamic_obstacle_layer: false
   inflation_file_path: "/config/inflation_layer_config_min.prototxt"
-  map_update_frequency: 10 
+  map_update_frequency: 20 
 }
 footprint {
   point {
     x: -0.3
-    y: -0.3
+    y: -0.25
   }
   point {
     x: -0.3
-    y: 0.3
+    y: 0.25
   }
   point {
     x: 0.3
-    y: 0.3
+    y: 0.25
   }
   point {
     x: 0.3
-    y: -0.3
+    y: -0.25
   }
 }

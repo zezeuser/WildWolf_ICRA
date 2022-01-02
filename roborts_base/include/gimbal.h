@@ -22,6 +22,7 @@
 #include "module.h"
 #include "utils/factory.h"
 #include "roborts_msgs/GimbalInfo.h"
+#include "roborts_msgs/SwingMode.h"
 
 namespace roborts_base {
 /**
@@ -58,6 +59,8 @@ class Gimbal: public Module {
    * @param msg Gimbal angle control data
    */
   void GimbalAngleCtrlCallback(const roborts_msgs::GimbalAngle::ConstPtr &msg);
+
+  void SwingModeCallback(const roborts_msgs::SwingMode::ConstPtr &swing_mode);
   /**
    * @brief Control friction wheel service callback in ROS
    * @param req Friction wheel control data as request
@@ -108,6 +111,8 @@ class Gimbal: public Module {
   roborts_msgs::GimbalInfo gimbal_info_;
   //! ros gimbal tf broadcaster
   tf::TransformBroadcaster        tf_broadcaster_;
+
+  bool swing_mode_;
 
 };
 REGISTER_MODULE(Module, "gimbal", Gimbal, std::shared_ptr<roborts_sdk::Handle>);

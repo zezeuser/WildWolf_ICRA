@@ -40,6 +40,7 @@ Detector::Detector(const std::string _armor_config) {
     fs_armor["V_BLUE_MIN"] >> image_config_.v_blue_min;
     fs_armor["V_BLUE_MAX"] >> image_config_.v_blue_max;
   }
+
   fs_armor["LIGHT_DRAW"]             >> light_config_.light_draw;
   fs_armor["LIGHT_EDTI"]             >> light_config_.light_edit;
 
@@ -171,7 +172,6 @@ bool Detector::findLight() {
 bool Detector::runBasicArmor(const cv::Mat&           _src_img,
                              const uart::Receive_Data _receive_data) {
   // 预处理
-  // std::cout << "1111111111111111" << std::endl;
   runImage(_src_img, _receive_data.my_color);
   draw_img_ = _src_img.clone();
   if (findLight()) {
@@ -401,7 +401,7 @@ bool Detector::fittingArmor() {
         // 拟合装甲板条件判断
         if (lightJudge(light_left, light_right)) {
           // 装甲板内颜色平均强度
-          if (averageColor() < 255) {
+          if (averageColor() < 30) {
             // 储存装甲板
             armor_.push_back(armor_data_);
             if (armor_config_.armor_draw == 1 ||
@@ -530,11 +530,11 @@ void Detector::runImage(const cv::Mat& _src_img, const int _my_color) {
   // 选择预处理类型（ BGR / HSV ）
   switch (image_config_.method) {
   case 0:
-    bin_color_img = fuseImage(grayPretreat(_src_img, _my_color),
+    bin_color_img = fuseImage(grayPretreat(_src_img, _my_color), 
                               bgrPretreat(_src_img, _my_color), whilePretreat(_src_img));
     break;
   default:
-    bin_color_img = fuseImage(grayPretreat(_src_img, _my_color),
+    bin_color_img = fuseImage(grayPretreat(_src_img, _my_color), 
                               hsvPretreat(_src_img, _my_color), whilePretreat(_src_img));
     break;
   }
@@ -675,6 +675,7 @@ inline cv::Mat Detector::bgrPretreat(const cv::Mat& _src_img, const int _my_colo
     cv::threshold(bin_red_green_img, bin_red_green_img, image_config_.green_armor_color_th, 255, cv::THRESH_BINARY);
     cv::bitwise_or(bin_blue_color_img, bin_red_color_img, bin_color_img);
     cv::bitwise_or(bin_blue_green_img, bin_red_green_img, bin_color_green_img);
+    cv::dilate(bin_color_green_img, bin_color_green_img, ele_);
     cv::bitwise_and(bin_color_img, bin_color_green_img, bin_color_img);
     break;
   }
@@ -808,12 +809,11 @@ inline cv::Mat Detector::hsvPretreat(const cv::Mat& _src_img,
 
   return bin_color_img;
 }
-
 Num::Num(int num) {
   char img_;
-  char img_name[67];    
+  char img_name[100];    
   for (int i = 1; i < num; ++i) {
-    std::sprintf(img_name, "/home/zeze/catkin_ws/src/armor_detection/configs/number_img/%d.png", i);
+    std::sprintf(img_name, "/home/wildwolf-nuc02/catkin_ws/src/armor_detection/configs/number_img/%d.png", i);
     cv::Mat src_img = cv::imread(img_name);
     cv::Mat gray_img, thre_img;
     cv::cvtColor(src_img, gray_img, cv::COLOR_BGR2GRAY);
@@ -857,5 +857,4 @@ int Num::detectionNum(cv::Mat _src_img, int _armor_type) {
   }
   return num;
 }
-
 }  // namespace basic_armor

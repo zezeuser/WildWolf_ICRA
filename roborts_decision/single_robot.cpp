@@ -12,7 +12,6 @@
 #include "example_behavior/test_behavior.h"
 #include "example_behavior/ambush_behavior.h"
 #include "example_behavior/attack_behavior.h"
-#include "example_behavior/nn_behavior.h"
 #include "example_behavior/defense_behavior.h"
 
 enum BehaviorStateEnum{
@@ -25,8 +24,7 @@ enum BehaviorStateEnum{
         RELOAD=5,
         SHIELD=6,
         AMBUSH=7,
-        ATTACK=8,
-        NN = 9
+        ATTACK=8
 
 };
 
@@ -54,7 +52,6 @@ int main(int argc, char **argv) {
     roborts_decision::TestBehavior      test_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::AmbushBehavior    ambush_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::AttackBehavior    attack_behavior(chassis_executor, blackboard, full_path);
-    roborts_decision::NNBehavior        nn_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::DefenseBehavior   defense_behavior(chassis_executor, blackboard, full_path);
     ros::Rate rate(10);
 
@@ -351,9 +348,6 @@ int main(int argc, char **argv) {
                             case BehaviorStateEnum::ATTACK:
                                     attack_behavior.Cancel();
                                     break;
-                            case BehaviorStateEnum::NN:
-                                    nn_behavior.Cancel();
-                                    break;
                     }
             }
 
@@ -402,10 +396,6 @@ int main(int argc, char **argv) {
                             std::cout<<"ATTACK" << std::endl;
                             break;
 
-                            case BehaviorStateEnum::NN:
-                            nn_behavior.Run();
-                            std::cout<<"NN" << std::endl;
-                            break;
 
             }
 

@@ -84,7 +84,6 @@ void Gimbal::ROS_Init(){
   //ros_message_init
   gimbal_tf_.header.frame_id = "base_link";
   gimbal_tf_.child_frame_id = "gimbal";
-
 }
 
 void Gimbal::GimbalInfoCallback(const std::shared_ptr<roborts_sdk::cmd_gimbal_info> gimbal_info){
@@ -119,6 +118,10 @@ void Gimbal::GimbalAngleCtrlCallback(const roborts_msgs::GimbalAngle::ConstPtr &
 
   gimbal_angle_pub_->Publish(gimbal_angle);
 
+}
+
+void Gimbal::SwingModeCallback(const roborts_msgs::SwingMode::ConstPtr &swing_mode){
+    swing_mode_ = swing_mode->swing_mode;
 }
 
 bool Gimbal::CtrlFricWheelService(roborts_msgs::FricWhl::Request &req,

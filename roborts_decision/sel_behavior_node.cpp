@@ -15,7 +15,6 @@
 #include "example_behavior/ambush_behavior.h"
 #include "example_behavior/attack_behavior.h"
 #include "example_behavior/defense_behavior.h"
-#include "example_behavior/nn_behavior.h"
 #include "example_behavior/sentry_behavior.h"
 
 void Command();
@@ -37,7 +36,6 @@ int main(int argc, char **argv) {
     roborts_decision::ShieldBehavior     shield_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::TestBehavior      test_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::AttackBehavior    attack_behavior(chassis_executor, blackboard, full_path);
-    roborts_decision::NNBehavior        nn_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::DefenseBehavior   defense_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::SentryBehavior    sentry_behavior(chassis_executor, blackboard, full_path);
 
@@ -73,12 +71,12 @@ int main(int argc, char **argv) {
                                 {
                                     sentry_behavior.Run();
                                 }
-                        printf("State: Defense\n");
+                        printf("State: sentry\n");
                         break;
                 //back to boot area
                 case '1':
-                        back_boot_area_behavior.Run();
-                        printf("State: BackBoot\n");
+                        defense_behavior.Run();
+                        printf("State: defense\n");
                         break;
                         //patrol
                 case '2':
@@ -102,6 +100,7 @@ int main(int argc, char **argv) {
                         break;
                         //goal.
                 case '6':
+                        defense_behavior.Run();
                         goal_behavior.Run();
                         printf("State: Goal\n");
                         break;
@@ -140,8 +139,8 @@ void Command() {
         while (command != 27) {
                 std::cout << "**************************************************************************************" << std::endl;
                 std::cout << "*********************************please send a command********************************" << std::endl;   
-                std::cout << "0: defense behavior" << std::endl
-                        << "1: back boot area behavior" << std::endl
+                std::cout << "0: sentry behavior" << std::endl
+                        << "1: defense behavior" << std::endl
                         << "2: patrol behavior" << std::endl
                         << "3: chase_behavior" << std::endl
                         << "4: search behavior" << std::endl

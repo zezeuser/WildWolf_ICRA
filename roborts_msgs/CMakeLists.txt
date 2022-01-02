@@ -50,6 +50,7 @@ add_message_files(
     ShootState.msg
     ShooterCmd.msg
     SentryInfo.msg
+    SwingMode.msg
     ArmorPos.msg
     ArmorsPos.msg
     AllyPose.msg

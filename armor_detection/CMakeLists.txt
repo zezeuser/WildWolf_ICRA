@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(armor_detection)
 add_subdirectory(3rdparty/fmt)
+add_subdirectory(3rdparty/nadjieb_mjpeg_streamer)
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf
@@ -9,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roborts_msgs
   roborts_common
 )
+#find_package (nadjieb_mjpeg_streamer REQUIRED )
 find_package(OpenCV 4 REQUIRED)
 find_package(Eigen3 REQUIRED)
 catkin_package()
@@ -41,9 +44,10 @@ target_link_libraries(armor_detection_node
         PUBLIC
         ${catkin_LIBRARIES}
         ${OpenCV_LIBS}
-	${EXTRA_LIBS}
+	    ${EXTRA_LIBS}
         /lib/libMVSDK.so
         fmt::fmt
+        PRIVATE nadjieb_mjpeg_streamer::nadjieb_mjpeg_streamer
 )
 
 
@@ -56,3 +60,4 @@ add_dependencies(armor_detection_node
   roborts_msgs_generate_messages)
 add_dependencies(armor_detection_client 
   roborts_msgs_generate_messages)
+

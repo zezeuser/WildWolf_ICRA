@@ -1,13 +1,9 @@
 project(roborts_decision)
 cmake_minimum_required(VERSION 3.1)
 
-set(Torch_PLACE ${CMAKE_CURRENT_SOURCE_DIR}/../../pytorch)
-
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_module)
 set(CMAKE_BUILD_TYPE Release)
-
-set(Torch_DIR ${Torch_PLACE})
 
 find_package(catkin REQUIRED COMPONENTS
 roscpp
@@ -23,17 +19,12 @@ roborts_costmap
 
 find_package(Eigen3 REQUIRED)
 find_package(ProtoBuf REQUIRED)
-find_package(Torch REQUIRED)
 
 include_directories(
 include
 ${catkin_INCLUDE_DIRS}
-${Torch_PLACE}/include
 )
 
-link_directories(
-${Torch_PLACE}/lib
-)
 
 
 #generate proto files
@@ -57,7 +48,6 @@ example_behavior/back_boot_area_behavior.h
 example_behavior/chase_behavior.h
 example_behavior/patrol_behavior.h
 example_behavior/search_behavior.h
-example_behavior/nn_behavior.h
 example_behavior/defense_behavior.h
 executor/chassis_executor.cpp
 )
@@ -82,7 +72,6 @@ example_behavior/back_boot_area_behavior.h
 example_behavior/chase_behavior.h
 example_behavior/patrol_behavior.h
 example_behavior/search_behavior.h
-example_behavior/nn_behavior.h
 example_behavior/defense_behavior.h
 example_behavior/sentry_behavior.h
 executor/chassis_executor.cpp
@@ -109,7 +98,6 @@ add_executable(rmul_behavior_node
     example_behavior/chase_behavior.h
     example_behavior/patrol_behavior.h
     example_behavior/search_behavior.h
-    example_behavior/nn_behavior.h
     example_behavior/defense_behavior.h
     executor/chassis_executor.cpp
 )
@@ -133,7 +121,6 @@ add_executable(single_robot_node
     example_behavior/chase_behavior.h
     example_behavior/patrol_behavior.h
     example_behavior/search_behavior.h
-    example_behavior/nn_behavior.h
     example_behavior/defense_behavior.h
     executor/chassis_executor.cpp
 )

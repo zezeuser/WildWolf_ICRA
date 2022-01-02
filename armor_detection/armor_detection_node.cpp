@@ -1,17 +1,18 @@
 #include  "armor_detection_node.hpp"
+
 auto down_ =  std::chrono::system_clock::now();
 ArmorDetectionNode::ArmorDetectionNode():
 node_state_(roborts_common::IDLE),
 initialized_(false),
 detected_enemy_(false),
-undetected_armor_delay_(200),
+undetected_armor_delay_(100),
 target_id_(1),
 shooting_(false),
 fricwhl_open_(false),
 as_(nh_, "armor_detection_node_action", boost::bind(&ArmorDetectionNode::ActionCB, this, _1), false),
-basic_armor_("/home/zeze/catkin_ws/src/armor_detection/configs/armor/basic_armor_config.xml"),
-pnp_("/home/zeze/catkin_ws/src/armor_detection/configs/camera/mv_camera_config_337.xml",
-                                         "/home/zeze/catkin_ws/src/armor_detection/configs/angle_solve/basic_pnp_config.xml"),
+basic_armor_("/home/wildwolf-nuc02/catkin_ws/src/armor_detection/configs/armor/basic_armor_config.xml"),
+pnp_("/home/wildwolf-nuc02/catkin_ws/src/armor_detection/configs/camera/mv_camera_config_337.xml",
+                                         "/home/wildwolf-nuc02/catkin_ws/src/armor_detection/configs/angle_solve/basic_pnp_config.xml"),
 num_(2)
 {            
     mv_capture_ = new mindvision::VideoCapture(
@@ -43,7 +44,7 @@ num_(2)
     _Kalman::Matrix_zzd Q{20};
     _Kalman::Matrix_x1d init{0, 0};
     kalman = _Kalman(A, H, R, Q, init, 0);
-
+    streamer.start(8080);
     as_.start();
     ROS_INFO("armor_detection server success start ! !");
 }
@@ -155,10 +156,10 @@ void ArmorDetectionNode::ExecuteLoop() {
             }
                 if (!img_.empty()){
                     double m_yaw = data_.Receive_Yaw_Angle_Info.yaw_angle;
-                    cv::putText(img_, std::to_string(m_yaw), cv::Point(50, 50), cv::FONT_HERSHEY_COMPLEX, 1.2, cv::Scalar(0, 255, 0));
+                    // cv::putText(img_, std::to_string(m_yaw), cv::Point(50, 50), cv::FONT_HERSHEY_COMPLEX, 1.2, cv::Scalar(0, 255, 0));
                     auto end = std::chrono::system_clock::now();
                     static double last_yaw = 0, last_speed = 0.0;
-                    cv::putText(img_, std::to_string(std::fabs(last_yaw - m_yaw)), cv::Point(50, 200), cv::FONT_HERSHEY_COMPLEX, 1.2, cv::Scalar(0, 255, 0));
+                    // cv::putText(img_, std::to_string(std::fabs(last_yaw - m_yaw)), cv::Point(50, 200), cv::FONT_HERSHEY_COMPLEX, 1.2, cv::Scalar(0, 255, 0));
                     if (std::fabs(last_yaw - m_yaw) > (25 / 180. * M_PI)) {
                         kalman.reset(m_yaw, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() * 0.001);
                         last_yaw = m_yaw;
@@ -169,7 +170,7 @@ void ArmorDetectionNode::ExecuteLoop() {
                         _Kalman::Matrix_x1d         state = kalman.update(z_k, std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() * 0.001);
                         c_speed                           = state(1, 0) * 1.75;
                         c_speed                           = (c_speed + last_speed) * 0.5;
-                        cv::putText(img_, std::to_string(c_speed), cv::Point(50, 150), cv::FONT_HERSHEY_COMPLEX, 1.2, cv::Scalar(0, 255, 0));
+                        // cv::putText(img_, std::to_string(c_speed), cv::Point(50, 150), cv::FONT_HERSHEY_COMPLEX, 1.2, cv::Scalar(0, 255, 0));
 
                         last_speed                        = c_speed;
                     }
@@ -199,7 +200,7 @@ void ArmorDetectionNode::ExecuteLoop() {
                         compensate_w           = (last_last_compensate_w + last_compensate_w + compensate_w) * 0.333;
                         last_last_compensate_w = last_compensate_w;
                         last_compensate_w      = compensate_w;
-                        cv::putText(img_, std::to_string(compensate_w), cv::Point(50, 100), cv::FONT_HERSHEY_COMPLEX, 1.2, cv::Scalar(0, 255, 0));
+                        // cv::putText(img_, std::to_string(compensate_w), cv::Point(50, 100), cv::FONT_HERSHEY_COMPLEX, 1.2, cv::Scalar(0, 255, 0));
                         static cv::Point2f ss = cv::Point2f(0, 0);
                         ss                    = cv::Point2f(-compensate_w, 0);
                         std::vector<cv::Point2f> traget_2d = basic_armor_.returnFinalArmor4Point(0);
@@ -210,19 +211,22 @@ void ArmorDetectionNode::ExecuteLoop() {
                         for (size_t l = 0; l != 4; ++l) {
                             cv::line(img_, traget_2d[l], traget_2d[(l + 1) % 4], cv::Scalar(0, 255, 255), 3, 8);
                         }
-                        pnp_.solvePnP(data_.bullet_velocity, 1, traget_2d);
-                        target_pnp.x = pnp_.returnYawAngle();
+                     //   pnp_.solvePnP(data_.bullet_velocity, 1, traget_2d);
+                      //  target_pnp.x = pnp_.returnYawAngle();
                         front_camera_robot_pos.num_armor = basic_armor_.returnArmorNum();
                     }
                     detected_enemy_ = basic_armor_.returnSuccessArmor();
-                    cv::imshow("SJUT", img_);
-                    if (cv::waitKey(1) == 'q'){
-                            break;
-                    }
+                    // cv::imshow("SJUT", img_);
+                    // if (cv::waitKey(1) == 'q'){
+                    //         break;
+                    // }
                 }
                 else{
                     detected_enemy_ = false;
                 }
+                std::vector<uchar> buff_img_;
+                cv::imencode(".jpg", img_, buff_img_, params);
+                streamer.publish("/bgr", std::string(buff_img_.begin(), buff_img_.end()));
                 basic_armor_.freeMemory();
                 mv_capture_->cameraReleasebuff();
           }
@@ -249,11 +253,12 @@ void ArmorDetectionNode::ExecuteLoop() {
           }else{
               undetected_count_ ++;
               if(undetected_count_ >= undetected_armor_delay_){
-                gimbal_angle_.yaw_mode = false;
-                gimbal_angle_.pitch_mode = false;
-                gimbal_angle_.yaw_angle = 0;
-                gimbal_angle_.pitch_angle = 0;
-                enemy_info_pub_.publish(gimbal_angle_);
+                // 哨兵模式不需要复位云台
+                // gimbal_angle_.yaw_mode = false;
+                // gimbal_angle_.pitch_mode = false;
+                // gimbal_angle_.yaw_angle = 0;
+                // gimbal_angle_.pitch_angle = 0.08;
+                // enemy_info_pub_.publish(gimbal_angle_);
                 camera_armor_pub_.publish(front_camera_robot_pos);
               }
           }
@@ -262,6 +267,7 @@ void ArmorDetectionNode::ExecuteLoop() {
               condition_var_.wait(lock);
           }
         }
+        streamer.stop();
   }
 
 
@@ -361,7 +367,7 @@ void ArmorDetectionNode::TargeIdCallBack(const roborts_msgs::Aimtargeid::ConstPt
 void ArmorDetectionNode::UpdateGimbalDataCallBack(const roborts_msgs::GimbalInfo::ConstPtr& data){
     auto start  = std::chrono::system_clock::now();
     // std::cout << "time : " << std::chrono::duration_cast<std::chrono::milliseconds>(down_ - start).count() * 0.001 << std::endl;
-     std::cout << data_.Receive_Yaw_Angle_Info.yaw_angle - (data->gyro_yaw/10 +180) << std::endl;
+   //  std::cout << data_.Receive_Yaw_Angle_Info.yaw_angle - (data->gyro_yaw/10 +180) << std::endl;
     data_.Receive_Yaw_Angle_Info.yaw_angle = data->gyro_yaw/10 + 180 ;
     data_.Receive_Pitch_Angle_Info.pitch_angle = data->gyro_pitch/10;
     down_  =  std::chrono::system_clock::now();

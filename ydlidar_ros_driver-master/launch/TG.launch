@@ -1,8 +1,8 @@
 <launch>
   <node name="ydlidar_lidar_publisher"  pkg="ydlidar_ros_driver"  type="ydlidar_ros_driver_node" output="screen" respawn="false" >
     <!-- string property -->
-    <param name="port"         type="string" value="/dev/ydlidar"/>  
-    <param name="frame_id"     type="string" value="laser_link"/>
+    <param name="port"         type="string" value="/dev/ttyUSB0"/>  
+    <param name="frame_id"     type="string" value="laser_link_TG15"/>
     <param name="ignore_array"     type="string" value=""/>
 
     <!-- int property -->
@@ -28,10 +28,12 @@
     <param name="angle_min"    type="double" value="-180" />
     <param name="angle_max"    type="double" value="180" />
     <param name="range_min"    type="double" value="0.01" />
-    <param name="range_max"    type="double" value="50.0" />
-    <param name="frequency"    type="double" value="10.0"/>
+    <param name="range_max"    type="double" value="10.0" />
+    <param name="frequency"    type="double" value="12.0"/>
     <remap from="scan" to="scan_TG15"/>
   </node>
-  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser4"
-    args="0.0 0.0 0.2 0.0 0.0 0.0 /base_link /laser_link 40" />
+
+
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_TG15"
+    args="0 0 0 0 0 0 /base_link /laser_link_TG15 40" />
 </launch>

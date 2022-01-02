@@ -44,6 +44,7 @@
 #include "roborts_msgs/DodgeMode.h"
 #include "roborts_msgs/GimbalAngle.h"
 #include "roborts_msgs/Aimtargeid.h"
+#include "roborts_msgs/GimbalInfo.h"
 
 #include "io/io.h"
 #include "../proto/decision.pb.h"
@@ -90,6 +91,7 @@ struct DecisionInfoPool{
         bool is_shielding;
         bool got_last_enemy;
         bool use_refree;
+        float gyro_yaw;
 
         // ally enemy part
         bool has_ally_first_enemy;
@@ -106,6 +108,8 @@ struct DecisionInfoPool{
 
         bool is_hitted;
         bool is_chase;
+        bool is_swing;
+        bool is_sentry;
         bool valid_camera_armor;
         bool valid_front_camera_armor;
         int remain_bullet;
@@ -182,6 +186,7 @@ class Blackboard {
     //car_info
     cmd_gimbal_sub_ = nh.subscribe<roborts_msgs::GimbalAngle>("cmd_gimbal_angle", 10, &Blackboard::CmdGimbalCallback, this);
     vel_acc_sub_ = nh.subscribe<roborts_msgs::TwistAccel>("cmd_vel_acc", 10, &Blackboard::VelAccCallback, this);
+    gimbal_info_sub_ = nh.subscribe<roborts_msgs::GimbalInfo>("gimbal_info", 50 ,&Blackboard::GimbalInfoCallback,this);
     // pub
     shoot_pub_ = nh.advertise<roborts_msgs::ShooterCmd>("shoot_cmd", 10, this);
     ally_pub_ = nh.advertise<geometry_msgs::PoseStamped>("friend_pose", 10, this);
@@ -455,6 +460,10 @@ class Blackboard {
     void VelAccCallback(const roborts_msgs::TwistAccel::ConstPtr &msg){
         my_vel_x = msg->twist.linear.x;
         my_vel_y = msg->twist.linear.y;
+    }
+
+    void GimbalInfoCallback(const roborts_msgs::GimbalInfo::ConstPtr &msg){
+        info.gyro_yaw = msg->gyro_yaw/ 1800.0 * M_PI;
     }
   
     // Game Status call back
@@ -1237,7 +1246,7 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
   //! fake Enenmy  sub
   ros::Subscriber enemy_sub_;
   // Info  sub
-  ros::Subscriber armor_sub_, camera_armor_sub_, back_camera_sub_, info_sub_, fusion_target_sub_, cmd_gimbal_sub_;
+  ros::Subscriber armor_sub_, camera_armor_sub_, back_camera_sub_, info_sub_, fusion_target_sub_, cmd_gimbal_sub_ , gimbal_info_sub_;
   // referee sub
   ros::Subscriber robot_status_sub_, robot_shoot_sub_, robot_heat_sub_, game_status_sub_, supply_sub_, buff_sub_, 
                                 vel_acc_sub_,robot_damage_sub_ ,game_zone_sub_ , emeny_hp_sub_,emeny_bullet_sub_;

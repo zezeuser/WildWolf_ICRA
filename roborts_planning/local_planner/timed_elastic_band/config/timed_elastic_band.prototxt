@@ -1,5 +1,5 @@
 opt_frame {
-    odom_frame: "odom"
+    odom_frame: "gimbal_odom"   #for get robort speed
     map_frame: "map"
 }
 
@@ -21,13 +21,13 @@ trajectory_opt {
 }
 
 kinematics_opt {
-    max_vel_x: 2.0  #1.5
-    max_vel_x_backwards: 0.2
+    max_vel_x: 2.5 #1.5
+    max_vel_x_backwards: 1.5
     max_vel_y: 2.5 #1.0
-    max_vel_theta: 2.0 #1.0
+    max_vel_theta: 0 #1.0
     acc_lim_x: 1.5 #1.0
     acc_lim_y: 1.5 #1.0
-    acc_lim_theta: 1.0
+    acc_lim_theta: 0
     min_turning_radius: 0
     wheelbase: 0
     cmd_angle_instead_rotvel: false
@@ -35,7 +35,7 @@ kinematics_opt {
 
 tolerance_opt {
     xy_goal_tolerance: 0.1
-    yaw_goal_tolerance: 0.1
+    yaw_goal_tolerance: 0.5   #0.1
     free_goal_vel: false
 }
 
@@ -45,7 +45,7 @@ obstacles_opt {
     include_costmap_obstacles: True
     costmap_obstacles_behind_robot_dist: 0.1
     obstacle_poses_affected: 30
-    legacy_obstacle_association: False
+    legacy_obstacle_association: true
     obstacle_association_cutoff_factor: 5.0
     obstacle_association_force_inclusion_factor: 1.5
 }
@@ -53,19 +53,19 @@ obstacles_opt {
 robot_type {
     type: POINT
     robot_vertices {
-        x: 0.35
+        x: 0.3
         y: 0.25
     }
     robot_vertices {
-        x: -0.35
+        x: -0.3
         y: 0.25
     }
     robot_vertices {
-        x: -0.35
+        x: -0.3
         y: -0.25
     }
     robot_vertices {
-        x: 0.35
+        x: 0.3
         y: -0.25
     }
 }
@@ -76,12 +76,12 @@ optimize_info {
     optimization_activate: True
     optimization_verbose: False
     penalty_epsilon: 0.1
-    weight_max_vel_x: 1.5
+    weight_max_vel_x: 1
     weight_max_vel_y: 1
-    weight_max_vel_theta: 3
-    weight_acc_lim_x: 1.5
+    weight_max_vel_theta: 0  #3
+    weight_acc_lim_x: 1
     weight_acc_lim_y: 1
-    weight_acc_lim_theta: 3
+    weight_acc_lim_theta: 0 #3
     weight_kinematics_nh: 1
     weight_kinematics_forward_drive: 1
     weight_kinematics_turning_radius: 0.0

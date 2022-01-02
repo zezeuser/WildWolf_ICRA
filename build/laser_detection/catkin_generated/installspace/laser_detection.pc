@@ -1,8 +1,0 @@
-prefix=/usr/local
-
-Name: laser_detection
-Description: Description of laser_detection
-Version: 0.1.0
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib 
-Requires: image_transport pcl_ros roscpp rospy sensor_msgs std_msgs

@@ -24,10 +24,11 @@
 #include "state/node_state.h"
 #include "state/error_code.h"
 #include "kalman.h"
+#include  <nadjieb/mjpeg_streamer.hpp>
 
 using roborts_common::NodeState;
 using roborts_common::ErrorInfo;
-
+using MJPEGStreamer = nadjieb::MJPEGStreamer;
 constexpr int S = 2;
 
 class ArmorDetectionNode
@@ -54,6 +55,7 @@ public:
     ~ArmorDetectionNode();
 
     private:
+    std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 50};
     NodeState node_state_;
     ErrorInfo error_info_;
     bool initialized_;
@@ -63,6 +65,7 @@ public:
     basic_armor::Num num_;
     basic_armor::Detector basic_armor_;
     basic_pnp::PnP pnp_;
+    MJPEGStreamer streamer;
     uart::Receive_Data data_;
     cv::Mat img_;
     using _Kalman = Kalman<1, S>;

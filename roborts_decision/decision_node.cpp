@@ -12,7 +12,6 @@
 #include "example_behavior/test_behavior.h"
 #include "example_behavior/ambush_behavior.h"
 #include "example_behavior/attack_behavior.h"
-#include "example_behavior/nn_behavior.h"
 #include "example_behavior/defense_behavior.h"
 #include "example_behavior/sentry_behavior.h"
 
@@ -27,8 +26,7 @@ enum BehaviorStateEnum{
         RELOAD=5,
         SHIELD=6,
         AMBUSH=7,
-        ATTACK=8,
-        NN = 9
+        ATTACK=8
 
 };
 
@@ -57,7 +55,6 @@ int main(int argc, char **argv) {
     roborts_decision::TestBehavior      test_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::AmbushBehavior    ambush_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::AttackBehavior    attack_behavior(chassis_executor, blackboard, full_path);
-    roborts_decision::NNBehavior        nn_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::DefenseBehavior   defense_behavior(chassis_executor, blackboard, full_path);
     roborts_decision::SentryBehavior    sentrybehavior(chassis_executor, blackboard, full_path);
 
@@ -443,53 +440,6 @@ int main(int argc, char **argv) {
                         
                 }
 
-                // Nerual Network Behavior
-                else if (blackboard->info.strategy == "nn"){
-                // state decision behavior
-                        if (blackboard->info.remain_hp >= 400){
-                                if (blackboard->info.remain_bullet > 0){
-                                //   if (!blackboard->info.has_buff){
-                                //         cur_state = BehaviorStateEnum::SHIELD;
-                                //   }
-                                //   else 
-                                        if (!blackboard->info.has_my_enemy  && !blackboard->info.has_ally_enemy){
-                                                cur_state = BehaviorStateEnum::NN;
-                                        }
-                                        else{
-                                                if (blackboard->info.has_my_enemy || blackboard->info.valid_camera_armor ){
-                                                cur_state = BehaviorStateEnum::AMBUSH;
-                                        
-                                                }
-                                                else if(blackboard->info.has_ally_enemy){
-                                                cur_state = BehaviorStateEnum::ATTACK;
-                                                }
-                                                //    cur_state = BehaviorStateEnum::CHASE;
-                                                //    cur_state = BehaviorStateEnum::AMBUSH;
-                                                //   cur_state = BehaviorStateEnum::ATTACK;
-                                        }
-                                }
-                                else if (blackboard->info.bullet_buff_active){
-                                cur_state = BehaviorStateEnum::RELOAD;  
-                                }
-                                else{
-                                cur_state = BehaviorStateEnum::ESCAPE;  
-                                }
-                        }
-                        else{
-                                if (blackboard->info.remain_bullet > 0){
-                                        if (!blackboard->info.has_my_enemy  && !blackboard->info.has_ally_enemy){
-                                                cur_state = BehaviorStateEnum::PATROL;
-                                        }
-                                        else{
-                                                cur_state = BehaviorStateEnum::CHASE;
-                                        }
-                                
-                        }
-                        else{
-                                cur_state = BehaviorStateEnum::BACKBOOT;
-                        }
-                        }
-                }
 
 
                 // filter
@@ -527,9 +477,6 @@ int main(int argc, char **argv) {
                                     break;
                             case BehaviorStateEnum::ATTACK:
                                     attack_behavior.Cancel();
-                                    break;
-                            case BehaviorStateEnum::NN:
-                                    nn_behavior.Cancel();
                                     break;
                     }
             }
@@ -579,10 +526,6 @@ int main(int argc, char **argv) {
                             std::cout<<"ATTACK" << std::endl;
                             break;
 
-                            case BehaviorStateEnum::NN:
-                            nn_behavior.Run();
-                            std::cout<<"NN" << std::endl;
-                            break;
 
             }
 

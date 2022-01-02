@@ -20,14 +20,11 @@ class SentryBehavior {
                const std::string & proto_file_path) :
       chassis_executor_(chassis_executor),
       blackboard_(blackboard) {
-        yaw_count_ =  0;
-        pitch_count_ = 0;
-        last_time_ = ros::Time::now();
         gimbal_angle_.pitch_angle = 0;
         gimbal_angle_.yaw_angle = 0;
-        gimbal_angle_.pitch_mode = false;
-        gimbal_angle_.yaw_mode = false;
-        gimbal_publisher_ = nh_.advertise<roborts_msgs::GimbalAngle>("cmd_gimbal_angle", 10, this);
+        gimbal_angle_.pitch_mode = true;
+        gimbal_angle_.yaw_mode = true;
+        gimbal_publisher_ = nh_.advertise<roborts_msgs::GimbalAngle>("cmd_gimbal_angle", 100, this);
         yaw_direction = true;
         pitch_direction = true;
       }
@@ -41,42 +38,31 @@ class SentryBehavior {
 
     float degree_10 = 0.174;
     float degree_45 = 0.785;
-    float degree_6 = 0.1;
+    float degree_6 = 0.1;     
     float degree_3 = 0.052; 
-    // pitch = pitch > degree_10 ? degree_10 : pitch;    // 0.523 rad = 30 degree
-    // pitch = pitch < 0 ? 0 : pitch;
-    yaw = yaw > degree_45 ? degree_45 : yaw; // 0.785 rad = 45 degree
-    yaw = yaw < -degree_45 ? -degree_45 : yaw; 
+
+    yaw_direction = yaw >= degree_45 ? false : yaw_direction; // 0.785 rad = 45 degree
+    yaw_direction = yaw <= -degree_45 ? true : yaw_direction; 
+    pitch_direction = pitch >= degree_10 ? false : pitch_direction;    // 0.523 rad = 30 degree
+    pitch_direction = pitch <= 0 ? true : pitch_direction;
     
-    if (yaw_direction){
-        gimbal_angle_.yaw_angle = yaw + degree_6;
+
+    // pitch_direction : True mean left   , False mean right
+    if(yaw_direction){
+         gimbal_angle_.yaw_angle = degree_6;
     }else{
-        gimbal_angle_.yaw_angle = yaw - degree_6;
-    }
-    if(gimbal_angle_.yaw_angle > degree_45){
-        yaw_direction = false;
-    }
-    if(gimbal_angle_.yaw_angle <= -degree_45){
-        yaw_direction = true;
+        gimbal_angle_.yaw_angle = -degree_6;
     }
 
 
     // pitch_direction : True mean down  , False mean up  
-    if (pitch_direction){
-        gimbal_angle_.pitch_angle = pitch + degree_3;
+    if(pitch_direction){
+         gimbal_angle_.pitch_angle = degree_3;
     }else{
-        gimbal_angle_.pitch_angle = pitch - degree_3;
+        gimbal_angle_.pitch_angle = -degree_3;
     }
-    if(pitch  > degree_10){
-        pitch_direction = false;
-    }
-    if(pitch <= 0){
-        pitch_direction = true;
-    }
-
-    
+    blackboard_->info.is_sentry = true;
     gimbal_publisher_.publish(gimbal_angle_);
-    last_time_ = ros::Time::now();
   }
 
   void Cancel() {
@@ -100,13 +86,8 @@ class SentryBehavior {
   roborts_msgs::GimbalAngle gimbal_angle_;
   ros::Publisher gimbal_publisher_;
 
-  float yaw_count_;
-  float pitch_count_;
-
   bool yaw_direction;
   bool pitch_direction;
-
-  ros::Time last_time_;
   
 };
 }

@@ -11,7 +11,8 @@
 
 #include <algorithm>
 #include <string>
-#include <vector> 
+#include <vector>
+
 #include <fmt/core.h>
 #include <fmt/color.h>
 
@@ -20,6 +21,7 @@
 #include <opencv2/imgproc.hpp>
 
 #include "uart_serial.hpp"
+
 
 namespace basic_armor {
 
@@ -52,48 +54,48 @@ struct Armor_Data {
 
 struct Armor_Config {
   // 装甲板绘制和调试开关
-  int armor_edit = 0;
-  int armor_draw = 0;
-  int armor_forecast = 0;
+  int armor_edit;
+  int armor_draw;
+  int armor_forecast;
   // 左右灯条高度范围
-  int light_height_ratio_min = 5;
-  int light_height_ratio_max = 20;
+  int light_height_ratio_min;
+  int light_height_ratio_max;
   // 左右灯条宽度范围
-  int light_width_ratio_min = 5;
-  int light_width_ratio_max = 30;
+  int light_width_ratio_min;
+  int light_width_ratio_max;
   // 左右灯条 y 的差值不超过灯条平均高度的倍数
-  int light_y_different = 10;
+  int light_y_different;
   // 左右灯条高度差值不超过灯条平均高度的倍数
-  int light_height_different = 10;
+  int light_height_different;
   // 左右灯条角度差
-  int armor_angle_different = 80;
+  int armor_angle_different;
   // 装甲板比例范围
-  int small_armor_aspect_min = 11;
-  int armor_type_th = 33;
-  int big_armor_aspect_max = 42;
+  int small_armor_aspect_min;
+  int armor_type_th;
+  int big_armor_aspect_max;
 };
 
 struct Light_Config {
   // 绘图和调试开关
-  int light_draw = 0;
-  int light_edit = 0;
+  int light_draw;
+  int light_edit;
   // 灯条高宽比范围
-  int ratio_w_h_min = 1;
-  int ratio_w_h_max = 15;
+  int ratio_w_h_min;
+  int ratio_w_h_max;
   // 灯条角度范围
-  int angle_min = 60;
-  int angle_max = 60;
+  int angle_min;
+  int angle_max;
   // 灯条周长范围
-  int perimeter_max = 16;
-  int perimeter_min = 1000;
+  int perimeter_max;
+  int perimeter_min;
 };
 
 struct Image_Config {
   // 红蓝 BGR 及灰度图参数
-  int red_armor_gray_th = 45;
-  int red_armor_color_th = 110;
-  int blue_armor_gray_th = 80;
-  int blue_armor_color_th = 110;
+  int red_armor_gray_th;
+  int red_armor_color_th;
+  int blue_armor_gray_th;
+  int blue_armor_color_th;
   int while_armor_color_th;
   int green_armor_color_th;
   // 红 HSV 参数
@@ -188,9 +190,8 @@ class Detector {
    * @return int 返回图像颜色平均强度
    */
   int   averageColor();
-  
   int   motionDirection();
-    /**
+      /**
    * @brief 返回丢失次数
    * 
    * @return int  
@@ -209,8 +210,11 @@ class Detector {
     inline cv::Point3f             returnArmorPnp( int _num)  {
         return armor_[_num].armor_pnp;
   }
-
-
+  /**
+   * @brief 返回丢失次数
+   * 
+   * @return int  
+   */
   inline int             returnLostCnt()                                  { return lost_cnt_--; }
   /**
    * @brief 返回装甲板数量
@@ -246,8 +250,8 @@ class Detector {
    * @return cv::RotatedRect 返回装甲板的旋转矩形
    */
   inline cv::RotatedRect returnFinalArmorRotatedRect(const int _num)      { return armor_[_num].armor_rect; }
-
-    cv::Mat returnArmorNumImg(const int _num, cv::Mat _src_img) {
+  
+  cv::Mat returnArmorNumImg(const int _num, cv::Mat _src_img) {
     cv::Point2f target2d[4];
 
     static cv::Point2f vertex[4];
@@ -333,7 +337,7 @@ class Detector {
   inline void fixFinalArmorCenter(const int _num, const cv::Point2f _tl) {
     armor_[_num].armor_rect.center += _tl;
   }
-    /**
+      /**
    * @brief 返回最优装甲板的旋转矩形
    *
    * @param _num             返回第 _num 个装甲板的旋转矩形
@@ -417,7 +421,7 @@ class Detector {
   Light_Config light_config_;
   Armor_Data   armor_data_;
 
-  // basic_kalman::firstKalman kalman_ = basic_kalman::firstKalman();
+
   cv::Mat frame;
   cv::Mat draw_img_;
   cv::Mat gray_img_;
@@ -503,7 +507,7 @@ class Detector {
   float last_direction_          = 0.f;
   // 这一帧运动方向
   float current_direction_       = 0.f;
-  // 预测角度 
+  // 预测角度
   float forecast_angle_          = 0.f;
   // 哨兵到初始化位置的偏差角度
   float deviation_angle_         = 0.f;

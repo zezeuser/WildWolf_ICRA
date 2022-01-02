@@ -21,6 +21,8 @@
 #include "ros_dep.h"
 #include "module.h"
 #include "utils/factory.h"
+#include "roborts_msgs/GimbalInfo.h"
+#include "roborts_msgs/SwingMode.h"
 
 namespace roborts_base {
 /**
@@ -74,6 +76,12 @@ class Chassis: public Module{
    */
   void ChassisSpeedAccCtrlCallback(const roborts_msgs::TwistAccel::ConstPtr &vel_acc);
 
+  // gimbal info Callback
+  void UpdateGimbalDataCallBack(const roborts_msgs::GimbalInfo::ConstPtr &gimbal_info);
+
+  // swing mode CallBack 
+  void UpdateSwingModeCallBack(const roborts_msgs::SwingMode::ConstPtr &swing_mode);
+
   //! sdk version client
   std::shared_ptr<roborts_sdk::Client<roborts_sdk::cmd_version_id,
                                       roborts_sdk::cmd_version_id>> verison_client_;
@@ -94,20 +102,35 @@ class Chassis: public Module{
   ros::Subscriber ros_sub_cmd_chassis_vel_;
   //! ros subscriber for chassis speed and acceleration control
   ros::Subscriber ros_sub_cmd_chassis_vel_acc_;
+  //! ros gimbal w vel
+  ros::Subscriber ros_sub_gimbal;
+  //! swing mode sub
+  ros::Subscriber ros_swing_mode;
   //! ros publisher for odometry information
   ros::Publisher ros_odom_pub_;
+  //! ros publisher for odometry information
+  ros::Publisher ros_gimbal_odom_pub_;
   //! ros publisher for uwb information
   ros::Publisher ros_uwb_pub_;
 
-
   //! ros chassis odometry tf
   geometry_msgs::TransformStamped odom_tf_;
+  //! ros gimbal odometry tf
+  geometry_msgs::TransformStamped gimbal_odom_tf_;
   //! ros chassis odometry tf broadcaster
   tf::TransformBroadcaster tf_broadcaster_;
   //! ros odometry message
   nav_msgs::Odometry odom_;
+  //! ros odometry message
+  nav_msgs::Odometry gimbal_odom_;
   //! ros uwb message
   geometry_msgs::PoseStamped uwb_data_;
+
+  float gimbal_yaw_rate_;
+  float gimbal_yaw_;
+  double relative_yaw_;
+  bool swing_mode_;
+  bool yaw_direction_;
 };
 REGISTER_MODULE(Module, "chassis", Chassis, std::shared_ptr<roborts_sdk::Handle>);
 }
