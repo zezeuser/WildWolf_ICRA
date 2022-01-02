@@ -7,8 +7,8 @@
  *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
@@ -82,12 +82,17 @@ class StaticLayer : public CostmapLayer {
   std::string global_frame_;
   std::string map_frame_;
   std::string map_topic_;
+
+
+  //增加buff区信息
   roborts_msgs::GameZoneArray buff_info;
   bool last_mactive_{false};
   bool last_sactive_{false};
   bool nomove_active_{false};
   bool noshoot_active_{false};
   float buff_point_[12] = {7.58, 2.16, 6.18, 3.3, 4.45, 0.9, 4.5, 4.48, 2.47, 2.07, 1.08, 3.34};
+
+
   bool subscribe_to_updates_;
   bool map_received_;
   bool has_updated_data_;
