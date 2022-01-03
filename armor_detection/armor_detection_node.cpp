@@ -1,6 +1,4 @@
 #include  "armor_detection_node.hpp"
-
-auto down_ =  std::chrono::system_clock::now();
 ArmorDetectionNode::ArmorDetectionNode():
 node_state_(roborts_common::IDLE),
 initialized_(false),
@@ -230,12 +228,6 @@ void ArmorDetectionNode::ExecuteLoop() {
                 basic_armor_.freeMemory();
                 mv_capture_->cameraReleasebuff();
           }
-        //   if (fabs(target_pnp.x) < 0.2) {
-        //       target_pnp.x = 0;
-        //   }
-        //   if (fabs(target_pnp.y) < 0.2) {
-        //       target_pnp.y = 0;
-        //   }
         //   target_pnp.x += x_last;
         //   x_last *= 0.5;
           target_pnp.y += y_last;
@@ -365,12 +357,8 @@ void ArmorDetectionNode::TargeIdCallBack(const roborts_msgs::Aimtargeid::ConstPt
 }
 
 void ArmorDetectionNode::UpdateGimbalDataCallBack(const roborts_msgs::GimbalInfo::ConstPtr& data){
-    auto start  = std::chrono::system_clock::now();
-    // std::cout << "time : " << std::chrono::duration_cast<std::chrono::milliseconds>(down_ - start).count() * 0.001 << std::endl;
-   //  std::cout << data_.Receive_Yaw_Angle_Info.yaw_angle - (data->gyro_yaw/10 +180) << std::endl;
     data_.Receive_Yaw_Angle_Info.yaw_angle = data->gyro_yaw/10 + 180 ;
     data_.Receive_Pitch_Angle_Info.pitch_angle = data->gyro_pitch/10;
-    down_  =  std::chrono::system_clock::now();
 }
 
 

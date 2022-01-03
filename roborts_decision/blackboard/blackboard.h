@@ -28,7 +28,6 @@
 #include "roborts_msgs/ArmorPos.h"
 #include "roborts_msgs/ArmorsPos.h"
 
-#include "roborts_msgs/ShooterCmd.h"
 #include "roborts_msgs/RobotStatus.h"
 #include "roborts_msgs/RobotHeat.h"
 #include "roborts_msgs/GameStatus.h"
@@ -188,7 +187,6 @@ class Blackboard {
     vel_acc_sub_ = nh.subscribe<roborts_msgs::TwistAccel>("cmd_vel_acc", 10, &Blackboard::VelAccCallback, this);
     gimbal_info_sub_ = nh.subscribe<roborts_msgs::GimbalInfo>("gimbal_info", 50 ,&Blackboard::GimbalInfoCallback,this);
     // pub
-    shoot_pub_ = nh.advertise<roborts_msgs::ShooterCmd>("shoot_cmd", 10, this);
     ally_pub_ = nh.advertise<geometry_msgs::PoseStamped>("friend_pose", 10, this);
     dodge_pub_ = nh.advertise<roborts_msgs::DodgeMode>("dodge_mode", 10, this);
     cmd_vel_pub_ = nh.advertise<geometry_msgs::Twist>("cmd_vel", 10, this);
@@ -1251,7 +1249,7 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
   ros::Subscriber robot_status_sub_, robot_shoot_sub_, robot_heat_sub_, game_status_sub_, supply_sub_, buff_sub_, 
                                 vel_acc_sub_,robot_damage_sub_ ,game_zone_sub_ , emeny_hp_sub_,emeny_bullet_sub_;
   //info  publisher
-  ros::Publisher shoot_pub_, ally_pub_, fusion_pub_, dodge_pub_, supply_pub_, cmd_vel_pub_ , target_id_pub_;
+  ros::Publisher  ally_pub_, fusion_pub_, dodge_pub_, supply_pub_, cmd_vel_pub_ , target_id_pub_;
 
   //! Goal info
   geometry_msgs::PoseStamped goal_;

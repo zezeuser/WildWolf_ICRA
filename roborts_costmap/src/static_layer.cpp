@@ -7,8 +7,8 @@
  *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
@@ -51,9 +51,10 @@
  *********************************************************************/
 #include "static_layer_setting.pb.h"
 #include "static_layer.h"
+#include "line_iterator.h"
 
 namespace roborts_costmap {
-
+using roborts_local_planner::FastLineIterator;
 void StaticLayer::OnInitialize() {
   ros::NodeHandle nh;
   is_current_ = true;
@@ -74,7 +75,12 @@ void StaticLayer::OnInitialize() {
   bool is_debug_ = para_static_layer.is_debug();
   map_topic_ = para_static_layer.topic_name();
   map_sub_ = nh.subscribe(map_topic_.c_str(), 1, &StaticLayer::InComingMap, this);
+
+
+  //订阅裁判系统惩罚区信息
   buff_sub_ = nh.subscribe("game_zone_array_status", 1 ,&StaticLayer::UpdateBuffCallBack,this);
+
+
   ros::Rate temp_rate(10);
   while(!map_received_) {
     ros::spinOnce();
@@ -87,50 +93,63 @@ void StaticLayer::OnInitialize() {
   has_updated_data_ = true;
 }
 
+//惩罚区回调函数
 void StaticLayer::UpdateBuffCallBack(const roborts_msgs::GameZoneArrayConstPtr& zone){
     // buff update point 
     auto nomovement = roborts_msgs::GameZone::DISABLE_MOVEMENT;
     auto noshootment = roborts_msgs::GameZone::DISABLE_SHOOTING;
-    unsigned int nomove_mappoint[2];
-    unsigned int noshoot_mappoint[2];
+    unsigned int nomove_mappoint_leftdown[2];
+    unsigned int noshoot_mappoint_leftdown[2];
+    unsigned int nomove_mappoint_rightup[2];
+    unsigned int noshoot_mappoint_rightup[2];
+    float buff_size = 0.3;
     for (int m = 0; m < 6; m++) {
         if (zone->zone[m].type == nomovement) {
             nomove_active_  = zone->zone[m].active;
-            Costmap2D::World2Map(buff_point_[0 + m*2], buff_point_[1 + m*2], nomove_mappoint[0] ,nomove_mappoint[1]);
+            Costmap2D::World2Map(buff_point_[0 + m*2]- buff_size, buff_point_[1 + m*2]- buff_size, 
+            nomove_mappoint_leftdown[0] ,nomove_mappoint_leftdown[1]);
+
+            Costmap2D::World2Map(buff_point_[0 + m*2]+ buff_size, buff_point_[1 + m*2]+ buff_size, 
+            nomove_mappoint_rightup[0] ,nomove_mappoint_rightup[1]);
         }
         if (zone->zone[m].type == noshootment) {
             noshoot_active_  = zone->zone[m].active;
-            Costmap2D::World2Map(buff_point_[0 + m*2], buff_point_[1 + m*2], noshoot_mappoint[0] ,noshoot_mappoint[1]);
+            Costmap2D::World2Map(buff_point_[0 + m*2]- buff_size, buff_point_[1 + m*2]- buff_size, 
+            noshoot_mappoint_leftdown[0] ,noshoot_mappoint_leftdown[1]);
+
+            Costmap2D::World2Map(buff_point_[0 + m*2]+ buff_size, buff_point_[1 + m*2]+ buff_size, 
+            noshoot_mappoint_rightup[0] ,noshoot_mappoint_rightup[1]);
         }
     }
+    //给惩罚区画线
     if((last_sactive_ != noshoot_active_) || (last_mactive_ != nomove_active_)){
-        if(nomove_active_ ){
-            int  index = GetIndex(nomove_mappoint[0],nomove_mappoint[1]) ;
-            for(int i = index - 5 ; i < index + 5 ; ++i){
-                costmap_[i] = LETHAL_OBSTACLE;
-            }
-        }else{
-            int  index = GetIndex(nomove_mappoint[0],nomove_mappoint[1]) ;
-            for(int i = index - 5 ; i < index + 5 ; ++i){
-                costmap_[i] = FREE_SPACE;
-            }
-        }
-        if(noshoot_active_){
-            int  index = GetIndex(noshoot_mappoint[0],noshoot_mappoint[1]) ;
-            for(int i = index - 5 ; i < index + 5 ; ++i){
-                costmap_[i] = LETHAL_OBSTACLE;
-            }
-        }else{
-            int  index = GetIndex(noshoot_mappoint[0],noshoot_mappoint[1]) ;
-            for(int i = index - 5 ; i < index + 5 ; ++i){
-                costmap_[i] = FREE_SPACE;
-            }
-        }
-        has_updated_data_ = true;
+    for(FastLineIterator line( nomove_mappoint_leftdown[0], nomove_mappoint_leftdown[1],
+     nomove_mappoint_rightup[0], nomove_mappoint_rightup[1]); line.IsValid(); line.Advance()) 
+    {
+      int index = GetIndex((unsigned int) (line.GetX()),(unsigned int) (line.GetY()));
+      if(nomove_active_){
+      costmap_[index] = LETHAL_OBSTACLE;
+      }else{
+        costmap_[index] = FREE_SPACE;
+      }
+    }
+    for(FastLineIterator line( noshoot_mappoint_leftdown[0], noshoot_mappoint_leftdown[1], 
+    noshoot_mappoint_rightup[0], noshoot_mappoint_rightup[1]); line.IsValid(); line.Advance()) 
+    {
+      int index = GetIndex((unsigned int) (line.GetX()),(unsigned int) (line.GetY()));
+      if(noshoot_active_){
+      costmap_[index] = LETHAL_OBSTACLE;
+      }else{
+        costmap_[index] = FREE_SPACE;
+      }
+    }
+      has_updated_data_ = true;
     }
     last_mactive_ = nomove_active_;
     last_sactive_ = noshoot_active_;
 }
+
+
 
 void StaticLayer::MatchSize() {
   if (!layered_costmap_->IsRolling()) {
@@ -271,4 +290,3 @@ void StaticLayer::UpdateCosts(Costmap2D& master_grid, int min_i, int min_j, int 
 }
 
 } //namespace roborts_costmap
-

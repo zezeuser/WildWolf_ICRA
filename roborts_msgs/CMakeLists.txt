@@ -39,35 +39,18 @@ add_message_files(
     DIRECTORY msg
     FILES
     Aimtargeid.msg
-    PunishInfo.msg
     RobotInfo.msg
-    TreeStatus.msg
     TwistAccel.msg
     GimbalAngle.msg
     GimbalRate.msg
-    ObstacleMsg.msg
-    ShootInfo.msg
-    ShootState.msg
-    ShooterCmd.msg
-    SentryInfo.msg
     SwingMode.msg
     ArmorPos.msg
     ArmorsPos.msg
     AllyPose.msg
-    Distance.msg
-    GimbalPID.msg
     GimbalControl.msg
-    TargetInfo.msg
-    FVector.msg
-    FusionTarget.msg
-    LaserTarget.msg
     Target.msg
     DodgeMode.msg
-    PyArmorInfo.msg
     GimbalInfo.msg
-    BallCollision.msg
-    GimbalActionlib.msg
-    Speech.msg
 )
 
 add_service_files(

@@ -323,10 +323,10 @@ class ParaCostmapInterface : public ::google::protobuf::Message /* @@protoc_inse
   ::std::string* release_robot_base_frame();
   void set_allocated_robot_base_frame(::std::string* robot_base_frame);
 
-  // required string inflation_file_path = 16;
+  // required string inflation_file_path = 15;
   bool has_inflation_file_path() const;
   void clear_inflation_file_path();
-  static const int kInflationFilePathFieldNumber = 16;
+  static const int kInflationFilePathFieldNumber = 15;
   const ::std::string& inflation_file_path() const;
   void set_inflation_file_path(const ::std::string& value);
   #if LANG_CXX11
@@ -394,6 +394,13 @@ class ParaCostmapInterface : public ::google::protobuf::Message /* @@protoc_inse
   double map_resolution() const;
   void set_map_resolution(double value);
 
+  // required double map_update_frequency = 16;
+  bool has_map_update_frequency() const;
+  void clear_map_update_frequency();
+  static const int kMapUpdateFrequencyFieldNumber = 16;
+  double map_update_frequency() const;
+  void set_map_update_frequency(double value);
+
   // required bool is_tracking_unknown = 11;
   bool has_is_tracking_unknown() const;
   void clear_is_tracking_unknown();
@@ -421,20 +428,6 @@ class ParaCostmapInterface : public ::google::protobuf::Message /* @@protoc_inse
   static const int kHasStaticLayerFieldNumber = 14;
   bool has_static_layer() const;
   void set_has_static_layer(bool value);
-
-  // required bool has_dynamic_obstacle_layer = 15;
-  bool has_has_dynamic_obstacle_layer() const;
-  void clear_has_dynamic_obstacle_layer();
-  static const int kHasDynamicObstacleLayerFieldNumber = 15;
-  bool has_dynamic_obstacle_layer() const;
-  void set_has_dynamic_obstacle_layer(bool value);
-
-  // required double map_update_frequency = 17;
-  bool has_map_update_frequency() const;
-  void clear_map_update_frequency();
-  static const int kMapUpdateFrequencyFieldNumber = 17;
-  double map_update_frequency() const;
-  void set_map_update_frequency(double value);
 
   // @@protoc_insertion_point(class_scope:roborts_costmap.ParaCostmapInterface)
  private:
@@ -466,8 +459,6 @@ class ParaCostmapInterface : public ::google::protobuf::Message /* @@protoc_inse
   void clear_has_has_obstacle_layer();
   void set_has_has_static_layer();
   void clear_has_has_static_layer();
-  void set_has_has_dynamic_obstacle_layer();
-  void clear_has_has_dynamic_obstacle_layer();
   void set_has_inflation_file_path();
   void clear_has_inflation_file_path();
   void set_has_map_update_frequency();
@@ -490,12 +481,11 @@ class ParaCostmapInterface : public ::google::protobuf::Message /* @@protoc_inse
   double map_origin_x_;
   double map_origin_y_;
   double map_resolution_;
+  double map_update_frequency_;
   bool is_tracking_unknown_;
   bool is_rolling_window_;
   bool has_obstacle_layer_;
   bool has_static_layer_;
-  bool has_dynamic_obstacle_layer_;
-  double map_update_frequency_;
   friend struct ::protobuf_costmap_5fparameter_5fsetting_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
@@ -1283,13 +1273,13 @@ inline void ParaCostmapInterface::set_map_resolution(double value) {
 
 // required bool is_tracking_unknown = 11;
 inline bool ParaCostmapInterface::has_is_tracking_unknown() const {
-  return (_has_bits_[0] & 0x00000800u) != 0;
+  return (_has_bits_[0] & 0x00001000u) != 0;
 }
 inline void ParaCostmapInterface::set_has_is_tracking_unknown() {
-  _has_bits_[0] |= 0x00000800u;
+  _has_bits_[0] |= 0x00001000u;
 }
 inline void ParaCostmapInterface::clear_has_is_tracking_unknown() {
-  _has_bits_[0] &= ~0x00000800u;
+  _has_bits_[0] &= ~0x00001000u;
 }
 inline void ParaCostmapInterface::clear_is_tracking_unknown() {
   is_tracking_unknown_ = false;
@@ -1307,13 +1297,13 @@ inline void ParaCostmapInterface::set_is_tracking_unknown(bool value) {
 
 // required bool is_rolling_window = 12;
 inline bool ParaCostmapInterface::has_is_rolling_window() const {
-  return (_has_bits_[0] & 0x00001000u) != 0;
+  return (_has_bits_[0] & 0x00002000u) != 0;
 }
 inline void ParaCostmapInterface::set_has_is_rolling_window() {
-  _has_bits_[0] |= 0x00001000u;
+  _has_bits_[0] |= 0x00002000u;
 }
 inline void ParaCostmapInterface::clear_has_is_rolling_window() {
-  _has_bits_[0] &= ~0x00001000u;
+  _has_bits_[0] &= ~0x00002000u;
 }
 inline void ParaCostmapInterface::clear_is_rolling_window() {
   is_rolling_window_ = false;
@@ -1331,13 +1321,13 @@ inline void ParaCostmapInterface::set_is_rolling_window(bool value) {
 
 // required bool has_obstacle_layer = 13;
 inline bool ParaCostmapInterface::has_has_obstacle_layer() const {
-  return (_has_bits_[0] & 0x00002000u) != 0;
+  return (_has_bits_[0] & 0x00004000u) != 0;
 }
 inline void ParaCostmapInterface::set_has_has_obstacle_layer() {
-  _has_bits_[0] |= 0x00002000u;
+  _has_bits_[0] |= 0x00004000u;
 }
 inline void ParaCostmapInterface::clear_has_has_obstacle_layer() {
-  _has_bits_[0] &= ~0x00002000u;
+  _has_bits_[0] &= ~0x00004000u;
 }
 inline void ParaCostmapInterface::clear_has_obstacle_layer() {
   has_obstacle_layer_ = false;
@@ -1355,13 +1345,13 @@ inline void ParaCostmapInterface::set_has_obstacle_layer(bool value) {
 
 // required bool has_static_layer = 14;
 inline bool ParaCostmapInterface::has_has_static_layer() const {
-  return (_has_bits_[0] & 0x00004000u) != 0;
+  return (_has_bits_[0] & 0x00008000u) != 0;
 }
 inline void ParaCostmapInterface::set_has_has_static_layer() {
-  _has_bits_[0] |= 0x00004000u;
+  _has_bits_[0] |= 0x00008000u;
 }
 inline void ParaCostmapInterface::clear_has_has_static_layer() {
-  _has_bits_[0] &= ~0x00004000u;
+  _has_bits_[0] &= ~0x00008000u;
 }
 inline void ParaCostmapInterface::clear_has_static_layer() {
   has_static_layer_ = false;
@@ -1377,31 +1367,7 @@ inline void ParaCostmapInterface::set_has_static_layer(bool value) {
   // @@protoc_insertion_point(field_set:roborts_costmap.ParaCostmapInterface.has_static_layer)
 }
 
-// required bool has_dynamic_obstacle_layer = 15;
-inline bool ParaCostmapInterface::has_has_dynamic_obstacle_layer() const {
-  return (_has_bits_[0] & 0x00008000u) != 0;
-}
-inline void ParaCostmapInterface::set_has_has_dynamic_obstacle_layer() {
-  _has_bits_[0] |= 0x00008000u;
-}
-inline void ParaCostmapInterface::clear_has_has_dynamic_obstacle_layer() {
-  _has_bits_[0] &= ~0x00008000u;
-}
-inline void ParaCostmapInterface::clear_has_dynamic_obstacle_layer() {
-  has_dynamic_obstacle_layer_ = false;
-  clear_has_has_dynamic_obstacle_layer();
-}
-inline bool ParaCostmapInterface::has_dynamic_obstacle_layer() const {
-  // @@protoc_insertion_point(field_get:roborts_costmap.ParaCostmapInterface.has_dynamic_obstacle_layer)
-  return has_dynamic_obstacle_layer_;
-}
-inline void ParaCostmapInterface::set_has_dynamic_obstacle_layer(bool value) {
-  set_has_has_dynamic_obstacle_layer();
-  has_dynamic_obstacle_layer_ = value;
-  // @@protoc_insertion_point(field_set:roborts_costmap.ParaCostmapInterface.has_dynamic_obstacle_layer)
-}
-
-// required string inflation_file_path = 16;
+// required string inflation_file_path = 15;
 inline bool ParaCostmapInterface::has_inflation_file_path() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
@@ -1467,15 +1433,15 @@ inline void ParaCostmapInterface::set_allocated_inflation_file_path(::std::strin
   // @@protoc_insertion_point(field_set_allocated:roborts_costmap.ParaCostmapInterface.inflation_file_path)
 }
 
-// required double map_update_frequency = 17;
+// required double map_update_frequency = 16;
 inline bool ParaCostmapInterface::has_map_update_frequency() const {
-  return (_has_bits_[0] & 0x00010000u) != 0;
+  return (_has_bits_[0] & 0x00000800u) != 0;
 }
 inline void ParaCostmapInterface::set_has_map_update_frequency() {
-  _has_bits_[0] |= 0x00010000u;
+  _has_bits_[0] |= 0x00000800u;
 }
 inline void ParaCostmapInterface::clear_has_map_update_frequency() {
-  _has_bits_[0] &= ~0x00010000u;
+  _has_bits_[0] &= ~0x00000800u;
 }
 inline void ParaCostmapInterface::clear_map_update_frequency() {
   map_update_frequency_ = 0;

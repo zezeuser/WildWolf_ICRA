@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -g  -shared -Wl,-soname,libfmtd.so.8 -o ../../../devel/lib/libfmtd.so.8.0.1 CMakeFiles/fmt.dir/src/format.cc.o CMakeFiles/fmt.dir/src/os.cc.o -Wl,--as-needed 

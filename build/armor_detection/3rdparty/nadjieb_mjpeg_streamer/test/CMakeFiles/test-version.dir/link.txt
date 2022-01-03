@@ -1,0 +1,1 @@
+/usr/bin/c++  -g  -rdynamic CMakeFiles/test-version.dir/src/unit-version.cpp.o CMakeFiles/doctest_main.dir/src/unit.cpp.o  -o test-version -lpthread 

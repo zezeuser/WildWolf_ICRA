@@ -153,11 +153,7 @@ add_executable(simu_shoot_node
 
 ## Add cmake target dependencies of the executable
 ## same as for the library abadd_dependencies(${PROJECT_NAME}_node 
-  roborts_msgs_generate_messages)
-add_dependencies(keyboard_ctrl_node 
-  roborts_msgs_generate_messages)
-add_dependencies(simu_shoot_node 
-  roborts_msgs_generate_messages)ove
+
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against

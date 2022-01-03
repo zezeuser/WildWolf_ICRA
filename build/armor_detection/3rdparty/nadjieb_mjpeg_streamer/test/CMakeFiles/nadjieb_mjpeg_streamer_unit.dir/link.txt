@@ -1,0 +1,1 @@
+/usr/bin/c++  -g  -rdynamic CMakeFiles/nadjieb_mjpeg_streamer_unit.dir/src/unit-version.cpp.o CMakeFiles/nadjieb_mjpeg_streamer_unit.dir/src/unit-http-message.cpp.o CMakeFiles/nadjieb_mjpeg_streamer_unit.dir/src/unit-streamer.cpp.o CMakeFiles/doctest_main.dir/src/unit.cpp.o  -o nadjieb_mjpeg_streamer_unit -lpthread 

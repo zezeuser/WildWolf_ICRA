@@ -42,7 +42,6 @@ add_executable(decision_node
 decision_node.cpp
 ${DecisionProtoHds}
 ${DecisionProtoSrc}
-${TORCH_INCLUDE_DIRS}
 example_behavior/escape_behavior.h
 example_behavior/back_boot_area_behavior.h
 example_behavior/chase_behavior.h
@@ -54,10 +53,9 @@ executor/chassis_executor.cpp
 
 target_link_libraries(decision_node 
 PRIVATE
-${TORCH_LIBRARIES}
 roborts_costmap
 ${catkin_LIBRARIES}
-#${PROTOBUF_LIBRARIES}
+${PROTOBUF_LIBRARIES}
 -lzmq
 )
 
@@ -66,7 +64,6 @@ add_executable(sel_behavior_node
 sel_behavior_node.cpp
 ${DecisionProtoHds}
 ${DecisionProtoSrc}
-${TORCH_INCLUDE_DIRS}
 example_behavior/escape_behavior.h
 example_behavior/back_boot_area_behavior.h
 example_behavior/chase_behavior.h
@@ -80,10 +77,9 @@ executor/chassis_executor.cpp
 
 target_link_libraries(sel_behavior_node 
 PRIVATE
-${TORCH_LIBRARIES}
 roborts_costmap
 ${catkin_LIBRARIES}
-#${PROTOBUF_LIBRARIES}
+${PROTOBUF_LIBRARIES}
 -lzmq
 )
 
@@ -92,7 +88,6 @@ add_executable(rmul_behavior_node
     rmul_behavior_node.cpp
     ${DecisionProtoHds}
     ${DecisionProtoSrc}
-    ${TORCH_INCLUDE_DIRS}
     example_behavior/escape_behavior.h
     example_behavior/back_boot_area_behavior.h
     example_behavior/chase_behavior.h
@@ -104,10 +99,9 @@ add_executable(rmul_behavior_node
 
 target_link_libraries(rmul_behavior_node 
     PRIVATE
-    ${TORCH_LIBRARIES}
     roborts_costmap
     ${catkin_LIBRARIES}
-    #${PROTOBUF_LIBRARIES}
+    ${PROTOBUF_LIBRARIES}
     -lzmq
 )
 
@@ -115,7 +109,6 @@ add_executable(single_robot_node
     single_robot.cpp
     ${DecisionProtoHds}
     ${DecisionProtoSrc}
-    ${TORCH_INCLUDE_DIRS}
     example_behavior/escape_behavior.h
     example_behavior/back_boot_area_behavior.h
     example_behavior/chase_behavior.h
@@ -127,10 +120,9 @@ add_executable(single_robot_node
 
 target_link_libraries(single_robot_node 
 PRIVATE
-${TORCH_LIBRARIES}
 roborts_costmap
 ${catkin_LIBRARIES}
-#${PROTOBUF_LIBRARIES}
+${PROTOBUF_LIBRARIES}
 -lzmq
 )
 

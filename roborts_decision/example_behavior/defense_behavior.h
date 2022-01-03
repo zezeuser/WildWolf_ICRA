@@ -11,8 +11,6 @@
 #include <geometry_msgs/PoseStamped.h>
 #include "roborts_msgs/SwingMode.h"
 #include <roborts_msgs/GimbalInfo.h>
-#include <geometry_msgs/Twist.h>
-#include <nav_msgs/Odometry.h>
 
 namespace roborts_decision {
 class DefenseBehavior {

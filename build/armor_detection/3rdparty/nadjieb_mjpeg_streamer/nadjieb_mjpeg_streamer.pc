@@ -1,0 +1,4 @@
+Name: nadjieb_mjpeg_streamer
+Description: C++ MJPEG over HTTP Library
+Version: 2.0.0
+Cflags: -I/usr/local/include
