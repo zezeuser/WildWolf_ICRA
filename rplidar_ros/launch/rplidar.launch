@@ -1,0 +1,18 @@
+<launch>
+  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
+  <param name="serial_port"         type="string" value="/dev/ttyUSB1"/>
+  <param name="serial_baudrate"     type="int"    value="256000"/><!--A1/A2 -->
+  <!--param name="serial_baudrate"     type="int"    value="256000"--><!--A3 -->
+  <param name="frame_id"            type="string" value="laser_link_rp"/>
+  <param name="inverted"            type="bool"   value="false"/>
+  <param name="angle_compensate"    type="bool"   value="true"/>
+  <!-- 重映射雷达扫描信息 -->
+  <remap from="scan" to="scan_rp"/>
+  <param name="frequency"    type="double" value="15.0"/>
+  </node>
+  <!-- 添加雷达坐标系与基坐标系之间的位置关系 -->
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_rp"
+    args="0.25 -0.08 0.0 3.14 0.0  0 /base_link /laser_link_rp 40" />
+  
+
+</launch>
