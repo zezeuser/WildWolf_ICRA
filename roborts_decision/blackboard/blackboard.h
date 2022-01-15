@@ -78,14 +78,12 @@ struct DecisionInfoPool{
         bool is_begin;
         bool is_master;
         bool team_blue;
-        bool has_buff;
         bool has_ally;
         bool has_my_enemy;
         bool has_ally_enemy;
         bool has_first_enemy;
         bool has_second_enemy;
         bool can_shoot;
-        bool can_dodge;
         bool is_supplying;
         bool is_shielding;
         bool got_last_enemy;
@@ -132,6 +130,7 @@ struct DecisionInfoPool{
         // all goal
         geometry_msgs::PoseStamped my_goal;
         geometry_msgs::PoseStamped ally_goal;
+        geometry_msgs::PoseStamped toward_goal;
 
         geometry_msgs::PoseStamped last_enemy;
 
@@ -227,8 +226,6 @@ class Blackboard {
     info.is_master = decision_config.master();
     info.team_blue = decision_config.isblue();
     info.can_shoot = decision_config.can_shoot();
-    info.can_dodge = decision_config.can_dodge();
-    info.has_buff = false;
     info.has_ally = false;
     info.has_my_enemy = false;
     info.has_ally_enemy = false;
@@ -262,7 +259,7 @@ class Blackboard {
     // goal passport
     info.my_goal = InitMapPose();
     info.ally_goal = InitMapPose();
-    
+
     //buff init
     info.my_shield = InitMapPose();
     info.my_reload = InitMapPose();
@@ -283,7 +280,6 @@ class Blackboard {
     threshold.heat_upper_bound = 110; // limit
 
     // initialize enemy
-    in_dodge = false;
     _front_first_enemy = false;
     _front_second_enemy = false;
     my_shoot_1_cnt = 0;
@@ -291,8 +287,6 @@ class Blackboard {
     ally_shoot_1_cnt = 0;
     ally_shoot_2_cnt = 0;
 
-    // dodge config
-    _dodge_in_reload = decision_config.dodge_in_reload();
 
     // load all shield reload points
     if (info.team_blue){     
@@ -305,7 +299,7 @@ class Blackboard {
         info.first_enemy  = Point2PoseStamped(decision_config.blue().master_bot().start_position());
         info.second_enemy =  Point2PoseStamped(decision_config.blue().wing_bot().start_position());
     }
-
+    info.toward_goal = info.second_enemy;
 
     // use wifi
     if (decision_config.usewifi()){
@@ -365,21 +359,6 @@ class Blackboard {
     }
 
 
-  void StartDodge(){
-      if (info.can_dodge){
-          roborts_msgs::DodgeMode dg;
-          dg.is_dodge = true;
-          dodge_pub_.publish(dg);
-          in_dodge = true;
-      }
-  }
-
-  void StopDodge(){
-      roborts_msgs::DodgeMode dg;
-      dg.is_dodge = false;
-      dodge_pub_.publish(dg);
-      in_dodge = false;
-  }
   
   // Front Camera Armor Detection
   void FrontCameraArmorCallback(const roborts_msgs::ArmorsPos::ConstPtr &armors){
@@ -509,6 +488,7 @@ class Blackboard {
         info.frequency = msg->frequency;
         info.speed = msg->speed;
     }
+    
     // buff zone x y call back 
     void GameZoneCallback(const roborts_msgs::GameZoneArrayConstPtr& zone) {
         geometry_msgs::PoseStamped blue_bullet_point , blue_shield_point, red_bullet_point, red_shield_point;
@@ -626,7 +606,7 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
             }
             else{
                 if(info.emeny_first_bullet < 0 || info.emeny_second_bullet < 0){
-                // 都不超范围则选择且无低血量若有无子弹的车则选择该车
+                // 都不超范围且无低血量若有无子弹的车则选择该车
                     enemyPose = info.emeny_first_bullet <= info.emeny_first_bullet ? info.first_enemy : info.second_enemy;
                 }
                 else{
@@ -729,56 +709,6 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
        }
   }
 
-  bool CanDodge(){
-      // whether dodge in my reload!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      geometry_msgs::PoseStamped myPose = GetRobotMapPose();
-      // relative yaw angle
-      //云台不可移动，车辆没有被攻击，无子弹且无供给，不在装载区
-      if (!_gimbal_can 
-         || !info.is_hitted
-         || (GetDistance(info.my_reload, myPose) <=0.65 && !_dodge_in_reload)
-         || (info.remain_bullet <0 && info.bullet_buff_active)
-      )
-      {
-          StopDodge();
-          return false;
-      }
-
-      geometry_msgs::PoseStamped enemyPose = GetEnemy();
-      
-      // absolute distance
-      double distance = GetDistance(myPose, enemyPose);
-      if (distance >2.0 && distance<0.5 && info.remain_bullet >= 1000){
-          StopDodge();
-          return false;
-      }
-
-    // // Stop Dodge Condition in Costmap.
-    //   const double radius = 0.125;
-    //   const double sqrt2 = 1.414;
-    //   double x,y;
-    //   double cur_x, cur_y;
-    //   double cost;
-    //   double int_x[] = {-radius, -radius/sqrt2, 0, radius/sqrt2, radius, radius/sqrt2, 0, -radius/sqrt2};
-    //   double int_y[] = {0, -radius/sqrt2, -radius, radius/sqrt2, 0, radius/sqrt2, radius, -radius/sqrt2};
-    //   int u_x, u_y;
-    //   x = myPose.pose.position.x;
-    //   y = myPose.pose.position.y;
-    //   for (int i=0; i<=7; i++){
-    //         cur_x = x + int_x[i];
-    //         cur_y = y + int_y[i];
-    //         GetCostMap2D()->World2MapWithBoundary(cur_x, cur_y, u_x, u_y);
-    //         cost = GetCostMap2D()->GetCost(u_x, u_y);
-    //         if (cost >=253){
-    //             StopDodge();
-    //             return false;
-    //         }
-                      
-          
-    //   }
-      return true;
-
-  }
 
   bool IsEnemyDetected() const{
     ROS_INFO("%s: %d", __FUNCTION__, (int)enemy_detected_);
@@ -802,6 +732,10 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
   
   void SetMyGoal(geometry_msgs::PoseStamped goal){
       info.my_goal = goal;
+  }
+  
+  void SetMyToward(geometry_msgs::PoseStamped toward_goal){
+      info.toward_goal = toward_goal;
   }
   
   bool IsNewGoal(){
@@ -1236,6 +1170,7 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
       p.pose.position.x = -99;
       p.pose.position.y = -99;
       return p;
+
   }
 
   //! tf
@@ -1301,9 +1236,8 @@ geometry_msgs::PoseStamped GetEnemy() {  // const: Can not introduce New Argumen
   roborts_msgs::Target no_id_targets[4], ally_no_id_targets[4];
   double my_vel_x{0}, my_vel_y{0};
 
-  bool _gimbal_can, in_dodge;
+  bool _gimbal_can ;
   bool _front_first_enemy, _front_second_enemy;
-  bool _dodge_in_reload;
 };
 } //namespace roborts_decision
 #endif //ROBORTS_DECISION_BLACKBOARD_H

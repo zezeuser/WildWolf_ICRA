@@ -1,1 +1,0 @@
-/usr/bin/c++  -g  -rdynamic CMakeFiles/test-streamer.dir/src/unit-streamer.cpp.o CMakeFiles/doctest_main.dir/src/unit.cpp.o  -o test-streamer -lpthread 

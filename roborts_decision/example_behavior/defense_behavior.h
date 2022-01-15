@@ -42,10 +42,11 @@ class DefenseBehavior {
     swing_publisher_.publish(swing_mode_);
     if(!blackboard_->info.has_my_enemy){
         float gyro_yaw = blackboard_->info.gyro_yaw;
-        float target_yaw = gyro_yaw - 0 -  relative_yaw_;
-        target_yaw = (target_yaw + last_target_yaw_) * 0.5;
+        float toward_yaw = tf::getYaw(blackboard_->info.toward_goal.pose.orientation);
+        float target_yaw = gyro_yaw - toward_yaw -  relative_yaw_;
+        // target_yaw = (target_yaw + last_target_yaw_) * 0.5;
         gimbal_angle_.yaw_angle = -target_yaw;
-        last_target_yaw_ = target_yaw;
+        // last_target_yaw_ = target_yaw;
         gimbal_publisher_.publish(gimbal_angle_);
         std::cout << "relative_yaw : " <<  relative_yaw_ << std::endl;
     }

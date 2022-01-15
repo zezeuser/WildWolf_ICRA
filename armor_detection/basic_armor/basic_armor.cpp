@@ -809,16 +809,18 @@ inline cv::Mat Detector::hsvPretreat(const cv::Mat& _src_img,
 
   return bin_color_img;
 }
-Num::Num(int num) {
+Num::Num(int num ,std::string config_file) {
   char img_;
-  char img_name[100];    
+  std::ostringstream img_file;
   for (int i = 1; i < num; ++i) {
-    std::sprintf(img_name, "/home/wildwolf-nuc02/catkin_ws/src/armor_detection/configs/number_img/%d.png", i);
-    cv::Mat src_img = cv::imread(img_name);
+    img_file << config_file;
+    img_file << "/number_img/" << i << ".png";
+    cv::Mat src_img = cv::imread(img_file.str());
     cv::Mat gray_img, thre_img;
     cv::cvtColor(src_img, gray_img, cv::COLOR_BGR2GRAY);
     cv::threshold(gray_img, thre_img, 80, 255, cv::THRESH_BINARY);
     src_img_[i] = thre_img.clone();
+    img_file.clear();
     // cv::imshow("num", final_img);
     // cv::waitKey(0);
   }

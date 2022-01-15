@@ -72,14 +72,6 @@ int main(int argc, char **argv) {
                 // 若陷入障碍层中，发布速度走出障碍
                 // blackboard->IsInStuckArea();
                 
-                // shoot and dodge command when game is on!
-                if (last_state != BehaviorStateEnum::ESCAPE){
-                
-                        if (blackboard->CanDodge()) {
-                        blackboard->StartDodge(); 
-                        // defense_behavior.Run();
-                        }
-                }
                 if (blackboard->CanShoot()) blackboard->Shoot(blackboard->info.shoot_hz);
                 // my pose
                 geometry_msgs::PoseStamped mypose = blackboard->GetRobotMapPose();

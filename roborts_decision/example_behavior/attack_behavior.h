@@ -32,6 +32,7 @@ class AttackBehavior {
         geometry_msgs::PoseStamped enemy_pose = blackboard_->GetEnemy();
         chassis_executor_->Execute(enemy_pose);
         blackboard_->SetMyGoal(enemy_pose);
+        blackboard_->SetMyToward(enemy_pose);
     }
 
     

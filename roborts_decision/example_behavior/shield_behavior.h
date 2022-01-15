@@ -40,6 +40,7 @@ class ShieldBehavior {
     auto dx = shield_position_.pose.position.x - robot_map_pose.pose.position.x;
     auto dy = shield_position_.pose.position.y - robot_map_pose.pose.position.y;
     geometry_msgs::PoseStamped enemy_position = blackboard_->GetEnemy();
+    blackboard_->SetMyToward(enemy_position);
     shield_position_.pose.orientation = blackboard_->GetRelativeQuaternion(shield_position_,enemy_position);
 
     if (executor_state != BehaviorState::RUNNING) {
@@ -59,15 +60,14 @@ class ShieldBehavior {
       }  
     }
 
-    if (std::sqrt(std::pow(dx,2) + std::pow(dy,2))<= blackboard_->threshold.near_dist  && count==0){
-        new_thread = new std::thread(boost::bind(& ShieldBehavior::CountLoop, this));
+    if (std::sqrt(std::pow(dx,2) + std::pow(dy,2))<= blackboard_->threshold.near_dist  && !starting_buff){
+        new_thread = new std::thread(boost::bind(&ShieldBehavior::CountLoop, this));
         starting_buff = true;
         blackboard_->info.is_shielding = true;
     }
 
-    if (count >= count_limit || blackboard_->info.has_buff){
+    if (count >= count_limit){
         std::cout<<"Shield is finised!" << std::endl;
-        blackboard_->info.has_buff = true;
         blackboard_->info.is_shielding = false;
         starting_buff = false;
         new_thread->join();

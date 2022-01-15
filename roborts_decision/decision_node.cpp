@@ -84,13 +84,6 @@ int main(int argc, char **argv) {
             if(blackboard->info.is_begin || blackboard->info.use_refree){   //!!!!!!!!!!!!test
                 // 若陷入障碍层中，发布速度走出障碍
                 blackboard->IsInStuckArea();
-                // shoot and dodge command when game is on!
-                if (last_state != BehaviorStateEnum::ESCAPE){
-                        if (blackboard->CanDodge()) {
-                        blackboard->StartDodge(); 
-                        // defense_behavior.Run();
-                        }
-                }
                 // 哨兵模式
                 if(!blackboard->info.has_my_enemy){
                     sentrybehavior.Run();
@@ -119,7 +112,7 @@ int main(int argc, char **argv) {
                                                 }       
                                         else{
                                                 if (blackboard->info.has_my_enemy || blackboard->info.valid_camera_armor ){
-                                                // hp > 400 , remain_bullet > 0 , shield buff 已经获取或距离 shield buff太远时，视野内有敌人，执行朝向敌人
+                                                // hp > 400 , remain_bullet > 0 , shield buff 已经获取或距离 shield buff太远时，视野内有敌人，执行埋伏敌人
                                                 cur_state = BehaviorStateEnum::AMBUSH;
                                                 }
                                                 else if(blackboard->info.has_ally_enemy){
@@ -260,8 +253,7 @@ int main(int argc, char **argv) {
                         if (blackboard->info.remain_hp >= 400){
                                 // according bullet to the buff
                                 if (blackboard->info.remain_bullet > 0){
-                                        if ( (!blackboard->info.has_buff
-                                                && blackboard->GetDistance(blackboard->info.ally, blackboard->info.my_shield)>= blackboard->threshold.near_dist)
+                                        if ( (blackboard->info.shield_buff_active && blackboard->GetDistance(blackboard->info.ally, blackboard->info.my_shield)>= blackboard->threshold.near_dist)
                                                 || blackboard->info.is_shielding)
                                                 {
                                                 cur_state = BehaviorStateEnum::SHIELD;

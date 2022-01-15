@@ -7,8 +7,6 @@ guard_ip: "tcp://192.168.1.128:5556"
 remain_bullet: 100
 strategy:  "attack"   # "go_buff", "no_go_buff", "together","attack"
 can_shoot: false
-can_dodge: false
-dodge_in_reload: true
 shoot_hz: 10
 use_refree: false
 

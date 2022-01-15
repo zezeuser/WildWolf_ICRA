@@ -58,7 +58,7 @@ class EscapeBehavior {
         else if (blackboard_->GetDistance(my_pose, blackboard_->info.my_shield) <= blackboard_->threshold.near_dist){
               dodge = true;
               chassis_executor_->Cancel();
-              blackboard_->StartDodge();
+            //   blackboard_->StartDodge();
         }
         
     }
@@ -69,13 +69,13 @@ class EscapeBehavior {
     ){
         dodge = true;
         if (executor_state == BehaviorState::RUNNING) chassis_executor_->Cancel();
-        blackboard_->StartDodge();
+        // blackboard_->StartDodge();
     }
 
 
     if (dodge)
     {
-         blackboard_->StartDodge();
+        //  blackboard_->StartDodge();
     }
     
 
@@ -221,7 +221,7 @@ class EscapeBehavior {
 
   void Cancel() {
     chassis_executor_->Cancel();
-    blackboard_->StopDodge();
+    // blackboard_->StopDodge();
     dodge = false;
     wheeling = false;
     start = false;

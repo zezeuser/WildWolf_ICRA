@@ -13,18 +13,18 @@ namespace mindvision {
 
 VideoCapture::VideoCapture(const CameraParam &_camera_param) {
   if (_camera_param.camera_mode == 0) {
-    cameraInit(_camera_param.resolution.cols,
+    if (cameraInit(_camera_param.resolution.cols,
                _camera_param.resolution.rows,
-               _camera_param.camera_exposuretime);
-
-    iscamera0_open = true;
-
-      fmt::print("[{}] Using mindvision industrial camera: {}\n", idntifier_green, _camera_param.camera_mode);
-  } else {
+               _camera_param.camera_exposuretime) != true){
     iscamera0_open = false;
 
-    fmt::print("[{}] Not using mindvision industrial camera: {}\n", idntifier_green, _camera_param.camera_mode);
-  }
+    fmt::print("[{}] Not using mindvision industrial camera: {}\n", idntifier_red, _camera_param.camera_mode);
+    }else {
+    iscamera0_open = true;
+
+    fmt::print("[{}] Using mindvision industrial camera: {}\n", idntifier_green, _camera_param.camera_mode);
+    }
+  } 
 }
 
 VideoCapture::~VideoCapture() {
@@ -57,7 +57,6 @@ bool VideoCapture::isindustryimgInput() {
   } else {
     isindustry_camera_open = false;
   }
-
   return isindustry_camera_open;
 }
 

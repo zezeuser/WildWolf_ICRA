@@ -66,9 +66,7 @@ message DecisionConfig {
     repeated Point search_region_3 = 16;
     repeated Point search_region_4 = 17;
     bool can_shoot = 18;
-    bool can_dodge = 19;
-    bool dodge_in_reload = 20;
-    int32 shoot_hz = 21;
-    bool use_refree = 22;
+    int32 shoot_hz = 19;
+    bool use_refree = 20;
 }
 

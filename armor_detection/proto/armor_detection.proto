@@ -1,0 +1,6 @@
+syntax = "proto2";
+package armor_detection;
+
+message ArmorDetectionParam {
+    optional uint32 undetected_armor_delay = 1;
+}

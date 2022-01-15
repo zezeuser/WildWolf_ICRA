@@ -124,7 +124,7 @@ class Num {
 
  public:
   int detectionNum(cv::Mat _src_img, int _armor_type);
-  explicit Num(int num);
+  explicit Num(int num , std::string config_file);
   Num();
   ~Num();
 };

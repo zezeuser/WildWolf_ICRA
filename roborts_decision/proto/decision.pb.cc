@@ -261,8 +261,6 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::roborts_decision::DecisionConfig, search_region_3_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::roborts_decision::DecisionConfig, search_region_4_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::roborts_decision::DecisionConfig, can_shoot_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::roborts_decision::DecisionConfig, can_dodge_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::roborts_decision::DecisionConfig, dodge_in_reload_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::roborts_decision::DecisionConfig, shoot_hz_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::roborts_decision::DecisionConfig, use_refree_),
 };
@@ -326,7 +324,7 @@ void AddDescriptorsImpl() {
       "nt\030\003 \001(\0132\027.roborts_decision.Point\022-\n\014shi"
       "eld_point\030\004 \001(\0132\027.roborts_decision.Point"
       "\022\'\n\006patrol\030\005 \003(\0132\027.roborts_decision.Poin"
-      "t\"\314\005\n\016DecisionConfig\022\020\n\010strategy\030\001 \001(\t\022\022"
+      "t\"\240\005\n\016DecisionConfig\022\020\n\010strategy\030\001 \001(\t\022\022"
       "\n\nuse_camera\030\002 \001(\010\022\016\n\006master\030\003 \001(\010\022\016\n\006is"
       "blue\030\004 \001(\010\022\017\n\007usewifi\030\005 \001(\010\022\021\n\tmaster_ip"
       "\030\006 \001(\t\022\020\n\010guard_ip\030\007 \001(\t\022\025\n\rremain_bulle"
@@ -341,13 +339,12 @@ void AddDescriptorsImpl() {
       "region_2\030\017 \003(\0132\027.roborts_decision.Point\022"
       "0\n\017search_region_3\030\020 \003(\0132\027.roborts_decis"
       "ion.Point\0220\n\017search_region_4\030\021 \003(\0132\027.rob"
-      "orts_decision.Point\022\021\n\tcan_shoot\030\022 \001(\010\022\021"
-      "\n\tcan_dodge\030\023 \001(\010\022\027\n\017dodge_in_reload\030\024 \001"
-      "(\010\022\020\n\010shoot_hz\030\025 \001(\005\022\022\n\nuse_refree\030\026 \001(\010"
-      "b\006proto3"
+      "orts_decision.Point\022\021\n\tcan_shoot\030\022 \001(\010\022\020"
+      "\n\010shoot_hz\030\023 \001(\005\022\022\n\nuse_refree\030\024 \001(\010b\006pr"
+      "oto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1488);
+      descriptor, 1444);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "decision.proto", &protobuf_RegisterTypes);
 }
@@ -2444,8 +2441,6 @@ const int DecisionConfig::kSearchRegion2FieldNumber;
 const int DecisionConfig::kSearchRegion3FieldNumber;
 const int DecisionConfig::kSearchRegion4FieldNumber;
 const int DecisionConfig::kCanShootFieldNumber;
-const int DecisionConfig::kCanDodgeFieldNumber;
-const int DecisionConfig::kDodgeInReloadFieldNumber;
 const int DecisionConfig::kShootHzFieldNumber;
 const int DecisionConfig::kUseRefreeFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -2503,8 +2498,8 @@ DecisionConfig::DecisionConfig(const DecisionConfig& from)
     whirl_vel_ = NULL;
   }
   ::memcpy(&use_camera_, &from.use_camera_,
-    static_cast<size_t>(reinterpret_cast<char*>(&shoot_hz_) -
-    reinterpret_cast<char*>(&use_camera_)) + sizeof(shoot_hz_));
+    static_cast<size_t>(reinterpret_cast<char*>(&use_refree_) -
+    reinterpret_cast<char*>(&use_camera_)) + sizeof(use_refree_));
   // @@protoc_insertion_point(copy_constructor:roborts_decision.DecisionConfig)
 }
 
@@ -2513,8 +2508,8 @@ void DecisionConfig::SharedCtor() {
   master_ip_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   guard_ip_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&escape_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&shoot_hz_) -
-      reinterpret_cast<char*>(&escape_)) + sizeof(shoot_hz_));
+      reinterpret_cast<char*>(&use_refree_) -
+      reinterpret_cast<char*>(&escape_)) + sizeof(use_refree_));
 }
 
 DecisionConfig::~DecisionConfig() {
@@ -2581,8 +2576,8 @@ void DecisionConfig::Clear() {
   }
   whirl_vel_ = NULL;
   ::memset(&use_camera_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&shoot_hz_) -
-      reinterpret_cast<char*>(&use_camera_)) + sizeof(shoot_hz_));
+      reinterpret_cast<char*>(&use_refree_) -
+      reinterpret_cast<char*>(&use_camera_)) + sizeof(use_refree_));
   _internal_metadata_.Clear();
 }
 
@@ -2836,38 +2831,10 @@ bool DecisionConfig::MergePartialFromCodedStream(
         break;
       }
 
-      // bool can_dodge = 19;
+      // int32 shoot_hz = 19;
       case 19: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(152u /* 152 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &can_dodge_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // bool dodge_in_reload = 20;
-      case 20: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(160u /* 160 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &dodge_in_reload_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // int32 shoot_hz = 21;
-      case 21: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(168u /* 168 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -2878,10 +2845,10 @@ bool DecisionConfig::MergePartialFromCodedStream(
         break;
       }
 
-      // bool use_refree = 22;
-      case 22: {
+      // bool use_refree = 20;
+      case 20: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(176u /* 176 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(160u /* 160 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
@@ -3044,24 +3011,14 @@ void DecisionConfig::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(18, this->can_shoot(), output);
   }
 
-  // bool can_dodge = 19;
-  if (this->can_dodge() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(19, this->can_dodge(), output);
-  }
-
-  // bool dodge_in_reload = 20;
-  if (this->dodge_in_reload() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(20, this->dodge_in_reload(), output);
-  }
-
-  // int32 shoot_hz = 21;
+  // int32 shoot_hz = 19;
   if (this->shoot_hz() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(21, this->shoot_hz(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(19, this->shoot_hz(), output);
   }
 
-  // bool use_refree = 22;
+  // bool use_refree = 20;
   if (this->use_refree() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(22, this->use_refree(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteBool(20, this->use_refree(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -3208,24 +3165,14 @@ void DecisionConfig::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(18, this->can_shoot(), target);
   }
 
-  // bool can_dodge = 19;
-  if (this->can_dodge() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(19, this->can_dodge(), target);
-  }
-
-  // bool dodge_in_reload = 20;
-  if (this->dodge_in_reload() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(20, this->dodge_in_reload(), target);
-  }
-
-  // int32 shoot_hz = 21;
+  // int32 shoot_hz = 19;
   if (this->shoot_hz() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(21, this->shoot_hz(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(19, this->shoot_hz(), target);
   }
 
-  // bool use_refree = 22;
+  // bool use_refree = 20;
   if (this->use_refree() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(22, this->use_refree(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(20, this->use_refree(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -3372,31 +3319,21 @@ size_t DecisionConfig::ByteSizeLong() const {
         this->remain_bullet());
   }
 
+  // int32 shoot_hz = 19;
+  if (this->shoot_hz() != 0) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->shoot_hz());
+  }
+
   // bool can_shoot = 18;
   if (this->can_shoot() != 0) {
     total_size += 2 + 1;
   }
 
-  // bool can_dodge = 19;
-  if (this->can_dodge() != 0) {
-    total_size += 2 + 1;
-  }
-
-  // bool dodge_in_reload = 20;
-  if (this->dodge_in_reload() != 0) {
-    total_size += 2 + 1;
-  }
-
-  // bool use_refree = 22;
+  // bool use_refree = 20;
   if (this->use_refree() != 0) {
     total_size += 2 + 1;
-  }
-
-  // int32 shoot_hz = 21;
-  if (this->shoot_hz() != 0) {
-    total_size += 2 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->shoot_hz());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -3472,20 +3409,14 @@ void DecisionConfig::MergeFrom(const DecisionConfig& from) {
   if (from.remain_bullet() != 0) {
     set_remain_bullet(from.remain_bullet());
   }
+  if (from.shoot_hz() != 0) {
+    set_shoot_hz(from.shoot_hz());
+  }
   if (from.can_shoot() != 0) {
     set_can_shoot(from.can_shoot());
   }
-  if (from.can_dodge() != 0) {
-    set_can_dodge(from.can_dodge());
-  }
-  if (from.dodge_in_reload() != 0) {
-    set_dodge_in_reload(from.dodge_in_reload());
-  }
   if (from.use_refree() != 0) {
     set_use_refree(from.use_refree());
-  }
-  if (from.shoot_hz() != 0) {
-    set_shoot_hz(from.shoot_hz());
   }
 }
 
@@ -3533,11 +3464,9 @@ void DecisionConfig::InternalSwap(DecisionConfig* other) {
   swap(isblue_, other->isblue_);
   swap(usewifi_, other->usewifi_);
   swap(remain_bullet_, other->remain_bullet_);
-  swap(can_shoot_, other->can_shoot_);
-  swap(can_dodge_, other->can_dodge_);
-  swap(dodge_in_reload_, other->dodge_in_reload_);
-  swap(use_refree_, other->use_refree_);
   swap(shoot_hz_, other->shoot_hz_);
+  swap(can_shoot_, other->can_shoot_);
+  swap(use_refree_, other->use_refree_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 

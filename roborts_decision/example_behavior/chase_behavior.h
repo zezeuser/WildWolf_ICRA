@@ -41,7 +41,7 @@ class ChaseBehavior {
     auto executor_state = Update();
     auto robot_map_pose = blackboard_->GetRobotMapPose();
     auto enemy_pose = blackboard_->GetEnemy();
-
+    blackboard_->SetMyToward(enemy_pose);
     auto dx = enemy_pose.pose.position.x - robot_map_pose.pose.position.x;
     auto dy = enemy_pose.pose.position.y - robot_map_pose.pose.position.y;
     auto yaw = std::atan2(dy, dx);

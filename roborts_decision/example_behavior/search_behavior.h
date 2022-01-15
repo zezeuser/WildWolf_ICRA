@@ -79,8 +79,6 @@ class SearchBehavior {
               blackboard_->SetMyGoal(goal);
           }
           search_index_ = (search_index_ + 1) % search_region_1_.size();
-          
-
       }
       // search to find enemy
       else{

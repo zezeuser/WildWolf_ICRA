@@ -3,8 +3,8 @@ para_basic {
   is_debug: true
 }
 para_costmap_interface {
-  global_frame: "map"   #local planner global_frame  for get robort gobal pose
-  robot_base_frame: "gimbal"    # for get the robort pose
+  global_frame: "map"   #local planner get robort gobal pose
+  robot_base_frame: "base_link"    # for get the robort pose  , if no sim : "gimbal"
   footprint_padding: 0.05 
   transform_tolerance: 1.0
   distance_threshold: 1.0

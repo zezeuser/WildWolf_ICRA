@@ -32,7 +32,7 @@ class AmbushBehavior {
 
     geometry_msgs::PoseStamped my = blackboard_->GetRobotMapPose();
     geometry_msgs::PoseStamped enemy_map_pose = blackboard_->GetEnemy();
-
+    blackboard_->SetMyToward(enemy_map_pose);
 
     //面朝敌人
     if ((blackboard_->info.has_my_enemy || blackboard_->info.valid_front_camera_armor) 

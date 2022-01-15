@@ -21,19 +21,21 @@ add_action_files(
 )
 
 add_message_files(
-        DIRECTORY msg/referee_system
-        FILES
-        GameStatus.msg
-        GameResult.msg
-        GameRobotHP.msg
-        GameRobotBullet.msg
-        GameZone.msg
-        GameZoneArray.msg
-        RobotStatus.msg
-        RobotHeat.msg
-        RobotDamage.msg
-        RobotShoot.msg
+    DIRECTORY msg/referee_system
+    FILES
+    GameStatus.msg
+    GameResult.msg
+    GameRobotHP.msg
+    GameRobotBullet.msg
+    GameZone.msg
+    GameZoneArray.msg
+    RobotStatus.msg
+    RobotHeat.msg
+    RobotDamage.msg
+    RobotShoot.msg
+    LurkStatus.msg
 )
+
 
 add_message_files(
     DIRECTORY msg
@@ -56,7 +58,6 @@ add_message_files(
 add_service_files(
     DIRECTORY srv
     FILES
-    SwingDefend.srv
     GimbalMode.srv
     FricWhl.srv
     ShootCmd.srv

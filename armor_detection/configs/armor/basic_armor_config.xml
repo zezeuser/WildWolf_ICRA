@@ -61,7 +61,7 @@
   - 1 Enable
   - 0 Disable
 -->
-<LIGHT_DRAW>0</LIGHT_DRAW>
+<LIGHT_DRAW>1</LIGHT_DRAW>
 
 <!--
   LIGHT_RATIO_W_H_MIN - 灯条高宽比最小值

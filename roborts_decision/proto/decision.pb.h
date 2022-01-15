@@ -1130,35 +1130,23 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::int32 remain_bullet() const;
   void set_remain_bullet(::google::protobuf::int32 value);
 
+  // int32 shoot_hz = 19;
+  void clear_shoot_hz();
+  static const int kShootHzFieldNumber = 19;
+  ::google::protobuf::int32 shoot_hz() const;
+  void set_shoot_hz(::google::protobuf::int32 value);
+
   // bool can_shoot = 18;
   void clear_can_shoot();
   static const int kCanShootFieldNumber = 18;
   bool can_shoot() const;
   void set_can_shoot(bool value);
 
-  // bool can_dodge = 19;
-  void clear_can_dodge();
-  static const int kCanDodgeFieldNumber = 19;
-  bool can_dodge() const;
-  void set_can_dodge(bool value);
-
-  // bool dodge_in_reload = 20;
-  void clear_dodge_in_reload();
-  static const int kDodgeInReloadFieldNumber = 20;
-  bool dodge_in_reload() const;
-  void set_dodge_in_reload(bool value);
-
-  // bool use_refree = 22;
+  // bool use_refree = 20;
   void clear_use_refree();
-  static const int kUseRefreeFieldNumber = 22;
+  static const int kUseRefreeFieldNumber = 20;
   bool use_refree() const;
   void set_use_refree(bool value);
-
-  // int32 shoot_hz = 21;
-  void clear_shoot_hz();
-  static const int kShootHzFieldNumber = 21;
-  ::google::protobuf::int32 shoot_hz() const;
-  void set_shoot_hz(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:roborts_decision.DecisionConfig)
  private:
@@ -1181,11 +1169,9 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   bool isblue_;
   bool usewifi_;
   ::google::protobuf::int32 remain_bullet_;
-  bool can_shoot_;
-  bool can_dodge_;
-  bool dodge_in_reload_;
-  bool use_refree_;
   ::google::protobuf::int32 shoot_hz_;
+  bool can_shoot_;
+  bool use_refree_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_decision_2eproto::TableStruct;
 };
@@ -2409,35 +2395,7 @@ inline void DecisionConfig::set_can_shoot(bool value) {
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.can_shoot)
 }
 
-// bool can_dodge = 19;
-inline void DecisionConfig::clear_can_dodge() {
-  can_dodge_ = false;
-}
-inline bool DecisionConfig::can_dodge() const {
-  // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.can_dodge)
-  return can_dodge_;
-}
-inline void DecisionConfig::set_can_dodge(bool value) {
-  
-  can_dodge_ = value;
-  // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.can_dodge)
-}
-
-// bool dodge_in_reload = 20;
-inline void DecisionConfig::clear_dodge_in_reload() {
-  dodge_in_reload_ = false;
-}
-inline bool DecisionConfig::dodge_in_reload() const {
-  // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.dodge_in_reload)
-  return dodge_in_reload_;
-}
-inline void DecisionConfig::set_dodge_in_reload(bool value) {
-  
-  dodge_in_reload_ = value;
-  // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.dodge_in_reload)
-}
-
-// int32 shoot_hz = 21;
+// int32 shoot_hz = 19;
 inline void DecisionConfig::clear_shoot_hz() {
   shoot_hz_ = 0;
 }
@@ -2451,7 +2409,7 @@ inline void DecisionConfig::set_shoot_hz(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:roborts_decision.DecisionConfig.shoot_hz)
 }
 
-// bool use_refree = 22;
+// bool use_refree = 20;
 inline void DecisionConfig::clear_use_refree() {
   use_refree_ = false;
 }

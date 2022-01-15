@@ -1,27 +1,28 @@
 #include  "armor_detection_node.hpp"
-ArmorDetectionNode::ArmorDetectionNode():
-node_state_(roborts_common::IDLE),
-initialized_(false),
-detected_enemy_(false),
-undetected_armor_delay_(100),
-target_id_(1),
-shooting_(false),
-fricwhl_open_(false),
-as_(nh_, "armor_detection_node_action", boost::bind(&ArmorDetectionNode::ActionCB, this, _1), false),
-basic_armor_("/home/wildwolf-nuc02/catkin_ws/src/armor_detection/configs/armor/basic_armor_config.xml"),
-pnp_("/home/wildwolf-nuc02/catkin_ws/src/armor_detection/configs/camera/mv_camera_config_337.xml",
-                                         "/home/wildwolf-nuc02/catkin_ws/src/armor_detection/configs/angle_solve/basic_pnp_config.xml"),
-num_(2)
-{            
+ArmorDetectionNode::ArmorDetectionNode(std::string config_file):
+    node_state_(roborts_common::IDLE),
+    initialized_(false),
+    detected_enemy_(false),
+    target_id_(1),
+    shooting_(false),
+    fricwhl_open_(false),
+    as_(nh_, "armor_detection_node_action", boost::bind(&ArmorDetectionNode::ActionCB, this, _1), false),
+    basic_armor_(config_file + "/armor/basic_armor_config.xml"),
+    pnp_(config_file + "/camera/mv_camera_config_337.xml",
+        config_file + "/angle_solve/basic_pnp_config.xml"),
+    num_(2, config_file)
+{     
     mv_capture_ = new mindvision::VideoCapture(
-        mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
-    data_.my_color = uart::ALL;
-    data_.my_robot_id = uart::SUP_SHOOT;
-    data_.now_run_mode = uart::INFANTRY;
-    data_.bullet_velocity = 15;
-    data_.Receive_Pitch_Angle_Info.pitch_angle = 0.f;
-    data_.Receive_Yaw_Angle_Info.yaw_angle = 0.f;
-    tf_ptr_ = std::make_shared<tf::TransformListener>(ros::Duration(10));
+    mindvision::CameraParam(0, mindvision::RESOLUTION_1280_X_800, mindvision::EXPOSURE_600));
+    if(ParamInit(config_file).IsOK() && mv_capture_->isindustryimgInput()) {
+        initialized_ = true;
+        node_state_ = roborts_common::IDLE;
+        ROS_INFO("armor_detection server success start ! !");
+    } else {
+        ROS_ERROR("armor_detection_node initalized failed!");
+        node_state_ = roborts_common::FAILURE;
+    }
+    KalmanPredictInit();
     enemy_nh_ = ros::NodeHandle();
     enemy_info_pub_ = enemy_nh_.advertise<roborts_msgs::GimbalAngle>("cmd_gimbal_angle", 100);
     camera_armor_pub_ = enemy_nh_.advertise<roborts_msgs::ArmorsPos>("front_camera_robot_pos", 30);
@@ -29,22 +30,8 @@ num_(2)
     gimbal_info_sub_ = enemy_nh_.subscribe<roborts_msgs::GimbalInfo>("gimbal_info",100,&ArmorDetectionNode::UpdateGimbalDataCallBack,this);
     fricwhl_client_ = nh_.serviceClient<roborts_msgs::FricWhl>("cmd_fric_wheel");
     shoot_client_ = nh_.serviceClient<roborts_msgs::ShootCmd>("cmd_shoot");
-    initialized_ = true;
-
-    _Kalman::Matrix_xxd A = _Kalman::Matrix_xxd::Identity();
-    _Kalman::Matrix_zxd H;
-    H(0, 0) = 1;
-    _Kalman::Matrix_xxd R;
-    R(0, 0) = 10;
-    for (int i = 1; i < S; i++) {
-        R(i, i) = 100;
-    }
-    _Kalman::Matrix_zzd Q{20};
-    _Kalman::Matrix_x1d init{0, 0};
-    kalman = _Kalman(A, H, R, Q, init, 0);
     streamer.start(8080);
     as_.start();
-    ROS_INFO("armor_detection server success start ! !");
 }
 
 ArmorDetectionNode::~ArmorDetectionNode()
@@ -366,6 +353,39 @@ void ArmorDetectionNode::UpdateBulletVelocityCallBcak(const roborts_msgs::RobotS
     data_.bullet_velocity = (int)velocity->speed+0.5;  //四舍五入
 }
 
+ErrorInfo ArmorDetectionNode::ParamInit(std::string config_file){
+    data_.my_color = uart::ALL;
+    data_.my_robot_id = uart::SUP_SHOOT;
+    data_.now_run_mode = uart::INFANTRY;
+    data_.bullet_velocity = 15;
+    data_.Receive_Pitch_Angle_Info.pitch_angle = 0.f;
+    data_.Receive_Yaw_Angle_Info.yaw_angle = 0.f;
+    std::string file_name = config_file + "/armor_detection_node.prototxt";
+    using namespace armor_detection;
+    armor_detection::ArmorDetectionParam armor_detection_param;
+    bool read_state = roborts_common::ReadProtoFromTextFile(file_name, &armor_detection_param);
+    if (!read_state) {
+        ROS_ERROR("Cannot open %s", file_name.c_str());
+        return ErrorInfo(ErrorCode::DETECTION_INIT_ERROR);
+    }
+    undetected_armor_delay_ = armor_detection_param.undetected_armor_delay();
+    return ErrorInfo(ErrorCode::OK);
+}
+
+void ArmorDetectionNode::KalmanPredictInit(){
+    _Kalman::Matrix_xxd A = _Kalman::Matrix_xxd::Identity();
+    _Kalman::Matrix_zxd H;
+    H(0, 0) = 1;
+    _Kalman::Matrix_xxd R;
+    R(0, 0) = 10;
+    for (int i = 1; i < S; i++) {
+        R(i, i) = 100;
+    }
+    _Kalman::Matrix_zzd Q{20};
+    _Kalman::Matrix_x1d init{0, 0};
+    kalman = _Kalman(A, H, R, Q, init, 0);
+}
+
 void SignalHandler(int signal){
   if(ros::isInitialized() && ros::isStarted() && ros::ok() && !ros::isShuttingDown()){
     ros::shutdown();
@@ -376,7 +396,8 @@ int main(int argc, char **argv) {
     signal(SIGINT, SignalHandler);
     signal(SIGTERM,SignalHandler);
     ros::init(argc, argv, "armor_detection_node", ros::init_options::NoSigintHandler);
-    ArmorDetectionNode armor_detection;
+    std::string config_file = ros::package::getPath("armor_detection") + "/configs";
+    ArmorDetectionNode armor_detection(config_file);
     ros::AsyncSpinner async_spinner(1);
     async_spinner.start();
     ros::waitForShutdown();
