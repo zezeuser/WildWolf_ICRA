@@ -820,7 +820,7 @@ Num::Num(int num ,std::string config_file) {
     cv::cvtColor(src_img, gray_img, cv::COLOR_BGR2GRAY);
     cv::threshold(gray_img, thre_img, 80, 255, cv::THRESH_BINARY);
     src_img_[i] = thre_img.clone();
-    img_file.clear();
+    img_file.str("");
     // cv::imshow("num", final_img);
     // cv::waitKey(0);
   }
