@@ -54,10 +54,12 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::armor_detection::ArmorDetectionParam, undetected_armor_delay_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::armor_detection::ArmorDetectionParam, use_kalman_predict_),
   0,
+  1,
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 6, sizeof(::armor_detection::ArmorDetectionParam)},
+  { 0, 7, sizeof(::armor_detection::ArmorDetectionParam)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -86,11 +88,12 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\025armor_detection.proto\022\017armor_detection"
-      "\"5\n\023ArmorDetectionParam\022\036\n\026undetected_ar"
-      "mor_delay\030\001 \001(\r"
+      "\"Q\n\023ArmorDetectionParam\022\036\n\026undetected_ar"
+      "mor_delay\030\001 \001(\r\022\032\n\022use_kalman_predict\030\002 "
+      "\002(\010"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 95);
+      descriptor, 123);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "armor_detection.proto", &protobuf_RegisterTypes);
 }
@@ -114,6 +117,7 @@ void ArmorDetectionParam::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int ArmorDetectionParam::kUndetectedArmorDelayFieldNumber;
+const int ArmorDetectionParam::kUseKalmanPredictFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ArmorDetectionParam::ArmorDetectionParam()
@@ -128,12 +132,16 @@ ArmorDetectionParam::ArmorDetectionParam(const ArmorDetectionParam& from)
       _internal_metadata_(NULL),
       _has_bits_(from._has_bits_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  undetected_armor_delay_ = from.undetected_armor_delay_;
+  ::memcpy(&undetected_armor_delay_, &from.undetected_armor_delay_,
+    static_cast<size_t>(reinterpret_cast<char*>(&use_kalman_predict_) -
+    reinterpret_cast<char*>(&undetected_armor_delay_)) + sizeof(use_kalman_predict_));
   // @@protoc_insertion_point(copy_constructor:armor_detection.ArmorDetectionParam)
 }
 
 void ArmorDetectionParam::SharedCtor() {
-  undetected_armor_delay_ = 0u;
+  ::memset(&undetected_armor_delay_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&use_kalman_predict_) -
+      reinterpret_cast<char*>(&undetected_armor_delay_)) + sizeof(use_kalman_predict_));
 }
 
 ArmorDetectionParam::~ArmorDetectionParam() {
@@ -164,7 +172,12 @@ void ArmorDetectionParam::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  undetected_armor_delay_ = 0u;
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 3u) {
+    ::memset(&undetected_armor_delay_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&use_kalman_predict_) -
+        reinterpret_cast<char*>(&undetected_armor_delay_)) + sizeof(use_kalman_predict_));
+  }
   _has_bits_.Clear();
   _internal_metadata_.Clear();
 }
@@ -187,6 +200,20 @@ bool ArmorDetectionParam::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &undetected_armor_delay_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // required bool use_kalman_predict = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
+          set_has_use_kalman_predict();
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &use_kalman_predict_)));
         } else {
           goto handle_unusual;
         }
@@ -225,6 +252,11 @@ void ArmorDetectionParam::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->undetected_armor_delay(), output);
   }
 
+  // required bool use_kalman_predict = 2;
+  if (cached_has_bits & 0x00000002u) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->use_kalman_predict(), output);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         _internal_metadata_.unknown_fields(), output);
@@ -245,6 +277,11 @@ void ArmorDetectionParam::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->undetected_armor_delay(), target);
   }
 
+  // required bool use_kalman_predict = 2;
+  if (cached_has_bits & 0x00000002u) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->use_kalman_predict(), target);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target);
@@ -261,6 +298,10 @@ size_t ArmorDetectionParam::ByteSizeLong() const {
     total_size +=
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         _internal_metadata_.unknown_fields());
+  }
+  // required bool use_kalman_predict = 2;
+  if (has_use_kalman_predict()) {
+    total_size += 1 + 1;
   }
   // optional uint32 undetected_armor_delay = 1;
   if (has_undetected_armor_delay()) {
@@ -296,8 +337,15 @@ void ArmorDetectionParam::MergeFrom(const ArmorDetectionParam& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.has_undetected_armor_delay()) {
-    set_undetected_armor_delay(from.undetected_armor_delay());
+  cached_has_bits = from._has_bits_[0];
+  if (cached_has_bits & 3u) {
+    if (cached_has_bits & 0x00000001u) {
+      undetected_armor_delay_ = from.undetected_armor_delay_;
+    }
+    if (cached_has_bits & 0x00000002u) {
+      use_kalman_predict_ = from.use_kalman_predict_;
+    }
+    _has_bits_[0] |= cached_has_bits;
   }
 }
 
@@ -316,6 +364,7 @@ void ArmorDetectionParam::CopyFrom(const ArmorDetectionParam& from) {
 }
 
 bool ArmorDetectionParam::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000002) != 0x00000002) return false;
   return true;
 }
 
@@ -326,6 +375,7 @@ void ArmorDetectionParam::Swap(ArmorDetectionParam* other) {
 void ArmorDetectionParam::InternalSwap(ArmorDetectionParam* other) {
   using std::swap;
   swap(undetected_armor_delay_, other->undetected_armor_delay_);
+  swap(use_kalman_predict_, other->use_kalman_predict_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }

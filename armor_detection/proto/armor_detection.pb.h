@@ -160,15 +160,25 @@ class ArmorDetectionParam : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::uint32 undetected_armor_delay() const;
   void set_undetected_armor_delay(::google::protobuf::uint32 value);
 
+  // required bool use_kalman_predict = 2;
+  bool has_use_kalman_predict() const;
+  void clear_use_kalman_predict();
+  static const int kUseKalmanPredictFieldNumber = 2;
+  bool use_kalman_predict() const;
+  void set_use_kalman_predict(bool value);
+
   // @@protoc_insertion_point(class_scope:armor_detection.ArmorDetectionParam)
  private:
   void set_has_undetected_armor_delay();
   void clear_has_undetected_armor_delay();
+  void set_has_use_kalman_predict();
+  void clear_has_use_kalman_predict();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::HasBits<1> _has_bits_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 undetected_armor_delay_;
+  bool use_kalman_predict_;
   friend struct ::protobuf_armor_5fdetection_2eproto::TableStruct;
 };
 // ===================================================================
@@ -204,6 +214,30 @@ inline void ArmorDetectionParam::set_undetected_armor_delay(::google::protobuf::
   set_has_undetected_armor_delay();
   undetected_armor_delay_ = value;
   // @@protoc_insertion_point(field_set:armor_detection.ArmorDetectionParam.undetected_armor_delay)
+}
+
+// required bool use_kalman_predict = 2;
+inline bool ArmorDetectionParam::has_use_kalman_predict() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void ArmorDetectionParam::set_has_use_kalman_predict() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void ArmorDetectionParam::clear_has_use_kalman_predict() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void ArmorDetectionParam::clear_use_kalman_predict() {
+  use_kalman_predict_ = false;
+  clear_has_use_kalman_predict();
+}
+inline bool ArmorDetectionParam::use_kalman_predict() const {
+  // @@protoc_insertion_point(field_get:armor_detection.ArmorDetectionParam.use_kalman_predict)
+  return use_kalman_predict_;
+}
+inline void ArmorDetectionParam::set_use_kalman_predict(bool value) {
+  set_has_use_kalman_predict();
+  use_kalman_predict_ = value;
+  // @@protoc_insertion_point(field_set:armor_detection.ArmorDetectionParam.use_kalman_predict)
 }
 
 #ifdef __GNUC__

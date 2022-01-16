@@ -101,6 +101,7 @@ class ArmorDetectionNode{
         geometry_msgs::PoseStamped gimbal_pose_;
         bool fricwhl_open_;
         bool shooting_;
+        bool use_kalman_predict_;
         // 击打目标 id
         int target_id_;
 

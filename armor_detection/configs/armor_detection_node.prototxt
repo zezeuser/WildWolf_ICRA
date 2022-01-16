@@ -1,1 +1,2 @@
 undetected_armor_delay: 100
+use_kalman_predict: false
