@@ -812,7 +812,7 @@ inline cv::Mat Detector::hsvPretreat(const cv::Mat& _src_img,
 Num::Num(int num ,std::string config_file) {
   char img_;
   std::ostringstream img_file;
-  for (int i = 1; i < num; ++i) {
+  for (int i = 1; i <= num; ++i) {
     img_file << config_file;
     img_file << "/number_img/" << i << ".png";
     cv::Mat src_img = cv::imread(img_file.str());
@@ -820,9 +820,9 @@ Num::Num(int num ,std::string config_file) {
     cv::cvtColor(src_img, gray_img, cv::COLOR_BGR2GRAY);
     cv::threshold(gray_img, thre_img, 80, 255, cv::THRESH_BINARY);
     src_img_[i] = thre_img.clone();
+    std::cout << img_file.str() << std::endl;
     img_file.str("");
-    // cv::imshow("num", final_img);
-    // cv::waitKey(0);
+    std::cout << img_file.str() << std::endl;
   }
 }
 
